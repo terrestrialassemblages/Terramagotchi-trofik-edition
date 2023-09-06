@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Falling Sand Simulation</title>
+    <style>
+        /* Styles to make the canvas visible */
+        #sandCanvas {
+            border: 1px solid black;
+            display: block;
+            margin: 20px auto;
+            background-color: #222;
+        }
+
+        /* Prevent dragging of the canvas */
+        canvas {
+            user-drag: none;
+            user-select: none;
+        }
+
+        /* Styles for the buttons */
+        button {
+            margin: 5px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="sandCanvas" width="800" height="600"></canvas>
+    <div>
+        <button onclick="setParticleType('sand')">Sand</button>
+        <button onclick="setParticleType('water')">Water</button>
+        <!-- Add more buttons for other particle types -->
+    </div>
+
+    <script src="sandSim.js"></script>
+</body>
+</html>
