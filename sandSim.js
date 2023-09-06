@@ -14,6 +14,23 @@ const elements = {
         //density: 0.7, gravity: 0.8, slip: 0, slide: 0.8, scatter: 0,
         behavior: [],
     },
+
+////placeholder implementation of soil, needed to simulate plant roots
+    soil: {
+        color: "brown",   
+        behavior: [],
+    },
+
+    root: {
+        color: "#776a54",
+        max_size: 20,       // Biggest size a root can grow to
+        behavior: [],
+    },
+
+    fungi: {
+        colour: "white",
+        behaviour: [],
+    },
 };
 
 let elementId = 0;
@@ -21,7 +38,7 @@ for(const elementName in elements){
     elements[elementName].id = elementId++;
 }
 
-let currentParticleType = 'sand';
+let currentParticleType = 'root';
 
 
 
@@ -40,6 +57,100 @@ elements.sand.behavior.push(function(y, x, grid) {
     // ... rest of the sand behavior ...
 });
 
+//// Placeholder implementation of soil
+elements.soil.behavior.push(function(y, x, grid) {
+    // Soil behavior logic goes here, based on the extracted updateGrid function
+    if (grid[y + 1][x] === null) {
+        grid[y + 1][x] = 'soil';
+        grid[y][x] = null;
+    } else if (grid[y + 1][x] === 'water') {
+        grid[y + 1][x] = 'soil';
+        grid[y][x] = 'water';
+    }
+});
+
+
+// // Implementation of root growing straight downwards
+// elements.root.behavior.push(function(y, x, grid) {
+//     let connectedRootCount = dfs(y, x,'root');
+
+//     // Check if root can still grow
+//     if (connectedRootCount < elements.root.max_size) {
+
+//         // If there is soil below the root and enough space to grow, grow
+//         if (grid[y + 1][x] === 'soil') {
+//             grid[y + 1][x] = 'root';
+
+//         // No soil below root, root cannot grow
+//         } else if (grid[y + 1][x] === null) {
+//             alert("Cannot place roots here");
+//             grid[y][x] = null;
+//         }
+//     }
+// });
+
+
+
+
+
+//// NEED TO FIX, NOT SURE IF THIS IS CORRECT WAY OF IMPLEMENTING?
+// Implementation of root with random growth direction
+elements.root.behavior.push(function(y, x, grid) {
+
+    // Get the number of connected root elements
+    let connectedRootCount = dfs(y, x, 'root');
+
+    // Compare with max_size to see if root can still grow
+    if (connectedRootCount < elements.root.max_size) {
+        let growthDirection = Math.floor(Math.random() * 3) - 1; // Randomly choose -1, 0, or 1 for growth direction
+
+        // Check if there is soil below the root and enough space to grow
+        if (grid[y + 1][x] === 'soil') {
+            // Adjust growth direction
+            if (x + growthDirection >= 0 && x + growthDirection < gridWidth) {
+                grid[y + 1][x + growthDirection] = 'root';
+            } else {
+                grid[y + 1][x] = 'root'; // Grow straight down if no space in the chosen direction
+            }
+        }
+    }
+});
+
+
+//// NEED TO FIX
+// DFS helper function to get the number of connected elements
+function dfs(y, x, element) {
+    if (y < 0 || y >= gridHeight || x < 0 || x >= gridWidth || grid[y][x] !== element) {
+        return 0;
+    }
+
+    let count = 1;
+
+    // Mark the current cell as visited
+    grid[y][x] = 'visited';
+
+
+    // check all 8 neighbours
+    // const neighbors = [
+    //     [-1, 0], [1, 0], [0, -1], [0, 1],   // Up, Down, Left, Right
+    //     [-1, -1], [-1, 1], [1, -1], [1, 1] // Diagonal neighbors
+    // ];
+
+    // check only up, down, left, right neighbours
+    const neighbors = [
+        [-1, 0], [1, 0], [0, -1], [0, 1]   // Up, Down, Left, Right
+
+    ];
+
+    for (const [dy, dx] of neighbors) {
+        count += dfs(y + dy, x + dx, element);
+    }
+
+    // Reset the current cell to its original element
+    grid[y][x] = element;
+
+    return count;
+}
 
 
 
@@ -70,12 +181,27 @@ function drawGrid() {
 
 }
 
+
+// User actions
 canvas.addEventListener('mousedown', (event) => {
     const rect = canvas.getBoundingClientRect();
     const x = Math.floor((event.clientX - rect.left) / cellSize);
     const y = Math.floor((event.clientY - rect.top) / cellSize);
-    grid[y][x] = currentParticleType;
+
+    if (event.button === 1) {
+        // Cycle to the next element with middle mouse button
+//// ERROR WITH FLOATING SOIL IF YOU CYCLE ELEMENTS TOO MUCH
+        const elementNames = Object.keys(elements);
+        const currentIndex = elementNames.indexOf(currentParticleType);
+        const nextIndex = (currentIndex + 1) % elementNames.length;
+        currentParticleType = elementNames[nextIndex];
+    } else {
+        // Place the current element on the grid with Mouse1
+        grid[y][x] = currentParticleType;
+    }
 });
+
+
 
 function loop() {
     updateGrid();
@@ -95,7 +221,14 @@ function drawSandAutomatically() {
     // This is a placeholder; the actual logic will depend on the structure of the JS code.
     // For example:
     
-    grid[20][20] = 'sand'; // Fill the grid with sand
+    
+    // fill background up with soil
+    for (let i = 80; i < 150; i++) {
+        for (let j = 0; j < 200; j++) {
+            grid[i][j] = 'soil';
+        }
+        
+    }
 
     // Call any other functions required to render the grid on the canvas.
 }
