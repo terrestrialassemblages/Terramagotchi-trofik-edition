@@ -100,8 +100,12 @@ const elements = {
     },
 
     root: {
-        color: "#776a54",
-        max_size: 20,       // Biggest size a root can grow to
+        color: "#4d4436",
+        max_size: 30,       // Biggest size a root can grow to
+        behavior: [],
+    },
+    rootTip: {
+        color: "#6b5e4a",
         behavior: [],
     },
 
@@ -126,8 +130,6 @@ let currentParticleType = 'rootTip';
 let timeStep = 0;
 let rootIndex = 0;
 let totalRootIndex = 0;
-
-
 
 
 elements.sand.behavior.push(function(y, x, grid) {
@@ -209,8 +211,6 @@ elements.rootTip.behavior.push(function (y, x, grid) {
 // });
 
 
-
-
 function updateGrid() {
     for (let y = gridHeight - 2; y >= 0; y--) {
         for (let x = 0; x < gridWidth; x++) {
@@ -266,12 +266,17 @@ canvas.addEventListener('mousedown', (event) => {
 
 
 
+
 function loop() {
     updateGrid();
     drawGrid();
     requestAnimationFrame(loop);
     timeStep++;
     console.log(timeStep);
+    // ADJUSTED FPS TO 10 SO TIME PROGRESSES SLOWER IN BROWSER
+    requestAnimationFrame(function() {
+        setTimeout(loop, 50); // Delay for 100 milliseconds (10 FPS)
+    });
 }
 
 window.addEventListener('load', function() {
