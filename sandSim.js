@@ -22,8 +22,12 @@ const elements = {
     },
 
     root: {
-        color: "#776a54",
-        max_size: 20,       // Biggest size a root can grow to
+        color: "#4d4436",
+        max_size: 30,       // Biggest size a root can grow to
+        behavior: [],
+    },
+    rootTip: {
+        color: "#6b5e4a",
         behavior: [],
     },
 
@@ -38,7 +42,7 @@ for(const elementName in elements){
     elements[elementName].id = elementId++;
 }
 
-let currentParticleType = 'root';
+let currentParticleType = 'rootTip';
 
 
 
@@ -70,86 +74,93 @@ elements.soil.behavior.push(function(y, x, grid) {
 });
 
 
-// // Implementation of root growing straight downwards
-// elements.root.behavior.push(function(y, x, grid) {
-//     let connectedRootCount = dfs(y, x,'root');
-
-//     // Check if root can still grow
-//     if (connectedRootCount < elements.root.max_size) {
-
-//         // If there is soil below the root and enough space to grow, grow
-//         if (grid[y + 1][x] === 'soil') {
-//             grid[y + 1][x] = 'root';
-
-//         // No soil below root, root cannot grow
-//         } else if (grid[y + 1][x] === null) {
-//             alert("Cannot place roots here");
-//             grid[y][x] = null;
-//         }
-//     }
-// });
-
-
-
-
-
-//// NEED TO FIX, NOT SURE IF THIS IS CORRECT WAY OF IMPLEMENTING?
-// Implementation of root with random growth direction
+// The body of the root
 elements.root.behavior.push(function(y, x, grid) {
-
-    // Get the number of connected root elements
-    let connectedRootCount = dfs(y, x, 'root');
-
-    // Compare with max_size to see if root can still grow
-    if (connectedRootCount < elements.root.max_size) {
-        let growthDirection = Math.floor(Math.random() * 3) - 1; // Randomly choose -1, 0, or 1 for growth direction
-
-        // Check if there is soil below the root and enough space to grow
-        if (grid[y + 1][x] === 'soil') {
-            // Adjust growth direction
-            if (x + growthDirection >= 0 && x + growthDirection < gridWidth) {
-                grid[y + 1][x + growthDirection] = 'root';
-            } else {
-                grid[y + 1][x] = 'root'; // Grow straight down if no space in the chosen direction
-            }
-        }
+    // If no block below, remove root
+    if (grid[y + 1][x] === null) {
+        grid[y][x] = null;
     }
 });
 
 
-//// NEED TO FIX
-// DFS helper function to get the number of connected elements
-function dfs(y, x, element) {
-    if (y < 0 || y >= gridHeight || x < 0 || x >= gridWidth || grid[y][x] !== element) {
-        return 0;
+// This is the ends of the roots
+elements.rootTip.behavior.push(function(y, x, grid) {
+    // Every update, either expand roots or produce liquid sugar //////////////////
+
+    //If expanding roots //////////////////////////////////////////////////////////
+    // Count the number of roots connected to this rootTip
+    const rootCount = countRoots(y, x, grid);
+    console.log(rootCount);
+
+    // If root is not at max size, expand root
+    if (rootCount < elements.root.max_size) {
+        expandRoot(y, x);
     }
-
-    let count = 1;
-
-    // Mark the current cell as visited
-    grid[y][x] = 'visited';
+    ///////////////////////////////////////////////////////////////////////////////
 
 
-    // check all 8 neighbours
-    // const neighbors = [
-    //     [-1, 0], [1, 0], [0, -1], [0, 1],   // Up, Down, Left, Right
-    //     [-1, -1], [-1, 1], [1, -1], [1, 1] // Diagonal neighbors
-    // ];
+    //If producing liquid sugar ///////////////////////////////////////////////////
+    // CODE HERE 
+    ///////////////////////////////////////////////////////////////////////////////
 
-    // check only up, down, left, right neighbours
-    const neighbors = [
-        [-1, 0], [1, 0], [0, -1], [0, 1]   // Up, Down, Left, Right
+});
 
-    ];
+// Fuction to grow root by one grid cell
+function expandRoot(y, x) {
+    
+    // Randomly choose -1, 0, or 1 for x growth direction (either grow left-down, down, right-down)
+    let x_direction = Math.floor(Math.random() * 3) - 1; 
 
-    for (const [dy, dx] of neighbors) {
-        count += dfs(y + dy, x + dx, element);
+    // Set the probability to branch into 2 roots
+    let shouldBranch = Math.random() < 0.1; 
+
+    // If shouldBranch is true, and there is enough space to grow, grow 2 roots in opposite directions (enough space means the grid it is growing onto + both adjacent grids to that are soil)
+    if (grid[y + 1][x - 1] === 'soil' && grid[y + 1][x - 2] === 'soil' && grid[y + 1][x] === 'soil' &&
+    grid[y + 1][x + 1] === 'soil' && grid[y + 1][x + 2] === 'soil' && shouldBranch) {
+        grid[y + 1][x - 1] = 'rootTip';
+        grid[y + 1][x + 1] = 'rootTip';
+        grid[y][x] = 'root';
+
+    // Not branching but there is enough space to grow, grow in that direction
+    } else if (grid[y + 1][x + x_direction] === 'soil' && grid[y + 1][x + x_direction + 1] === 'soil' && grid[y + 1][x + x_direction - 1] === 'soil') { 
+        grid[y + 1][x + x_direction] = 'rootTip';
+        grid[y][x] = 'root';
+
+    // If no block is below the root, remove root
+    } else if (grid[y + 1][x] === null) {
+        grid[y][x] = null;
     }
+}
 
-    // Reset the current cell to its original element
-    grid[y][x] = element;
 
-    return count;
+// Function to count the number of roots connected to a rootTip
+function countRoots(y, x, grid) {
+    let rootCount = 0;
+    // Create a visited array to keep track of which cells have been visited
+    const visited = Array(gridHeight).fill().map(() => Array(gridWidth).fill(false));
+
+    // Define all 8 possible neighbours
+    const neighbours = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+
+    // Recursive dfs function to count the number of connected roots
+    function dfs(row, col) {
+        // Check if cell is out of bounds or has been visited, if so, exit
+        if (row < 0 || row >= gridHeight || col < 0 || col >= gridWidth || visited[row][col]) {
+            return;
+        }
+        visited[row][col] = true;
+        if (grid[row][col] === 'rootTip' || grid[row][col] === 'root') {
+            rootCount++;
+            // Explore all neighbouring cells, halt if count is the max root size
+            if (rootCount < elements.root.max_size) {
+                for (const [dx, dy] of neighbours) {
+                    dfs(row + dy, col + dx);
+                }
+            }
+        }
+    }
+    dfs(y, x);
+    return rootCount;
 }
 
 
@@ -203,10 +214,15 @@ canvas.addEventListener('mousedown', (event) => {
 
 
 
+
 function loop() {
     updateGrid();
     drawGrid();
-    requestAnimationFrame(loop);
+
+    // ADJUSTED FPS TO 10 SO TIME PROGRESSES SLOWER IN BROWSER
+    requestAnimationFrame(function() {
+        setTimeout(loop, 100); // Delay for 100 milliseconds (10 FPS)
+    });
 }
 
 window.addEventListener('load', function() {
@@ -229,6 +245,14 @@ function drawSandAutomatically() {
         }
         
     }
+
+    // grow some roots
+    grid[79][25] = 'rootTip';
+    grid[79][75] = 'rootTip';
+    grid[79][90] = 'rootTip';
+    grid[79][160] = 'rootTip';
+    grid[79][165] = 'rootTip';
+
 
     // Call any other functions required to render the grid on the canvas.
 }
