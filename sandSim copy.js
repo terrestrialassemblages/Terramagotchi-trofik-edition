@@ -14,6 +14,10 @@ const elements = {
         //density: 0.7, gravity: 0.8, slip: 0, slide: 0.8, scatter: 0,
         behavior: [],
     },
+    bacteria: {
+        color: "#800080", 
+        behavior: [],
+    }
 };
 
 let elementId = 0;
@@ -39,6 +43,29 @@ elements.sand.behavior.push(function(y, x, grid) {
     }
     // ... rest of the sand behavior ...
 });
+
+elements.bacteria.behavior.push(function(y, x, grid) {
+    const directions = [
+        { dx: 0, dy: 1 }, 
+        { dx: 0, dy: -1 },  
+        { dx: 1, dy: 0 },
+        { dx: -1, dy: 0 },  
+    ];
+
+    // Make bacteria move in a random direction
+    const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+    const newX = x + randomDirection.dx;
+    const newY = y + randomDirection.dy;
+
+    // make sure new position is within the grid
+    if (newX >= 0 && newX < gridWidth && newY >= 0 && newY < gridHeight) {
+        if (grid[newY][newX] === null) {
+            grid[newY][newX] = 'bacteria';
+            grid[y][x] = null;
+        }
+    }
+});
+
 
 function updateGrid() {
     for (let y = gridHeight - 2; y >= 0; y--) {
@@ -101,6 +128,11 @@ function drawSandAutomatically() {
     // For example:
     
     grid[20][20] = 'sand'; // Fill the grid with sand
+    grid[10][10] = 'bacteria';
+    grid[30][30] = 'bacteria';
+    grid[40][40] = 'bacteria';
+    grid[50][50] = 'bacteria';
+    grid[60][60] = 'bacteria';
 
     // Call any other functions required to render the grid on the canvas.
 }
