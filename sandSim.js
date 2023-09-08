@@ -7,6 +7,84 @@ const cellSize = canvas.width / gridWidth;
 
 let grid = Array(gridHeight).fill().map(() => Array(gridWidth).fill(null));
 
+// Test class for Roots
+class RootTip {
+    constructor(startingY, startingX, index) {
+        this.startingY = startingY;
+        this.startingX = startingX;
+        // Reference it in the list of roots
+        this.index = index;
+        // Every growthSpeed number of time steps, it will grow (Higher growthSpeed means it grows slower)
+        this.growthSpeed = 100;
+        this.maxGrowthLength = 40;
+        this.length = 1;
+    }
+
+    // Determines if root should grow or not
+    growBool() {
+        return ((timeStep % this.growthSpeed == 0) && (this.length < this.maxGrowthLength));
+    }
+
+    // Adjusts the growth speed depending on the current length
+    updateGrowthSpeed(y, x) {
+        // Pythagoras from starting location
+        let distance = Math.sqrt(Math.pow(Math.abs(y - this.startingY), 2) + (Math.pow(Math.abs(x - this.startingX), 2)));
+        this.growthSpeed = 1 + Math.ceil(distance / this.maxGrowthLength) * 100;
+        console.log("GROWTH SPEED", this.growthSpeed);
+    }
+
+    // Checks if neighboring cells are soil
+    canGrow(y, x) {
+        if (grid[y][x - 1] === 'soil' &&
+            grid[y][x + 1] === 'soil' &&
+            grid[y + 1][x] === 'soil' &&
+            grid[y + 1][x - 1] === 'soil' &&
+            grid[y + 1][x + 1] === 'soil') {
+            return true;
+        }
+        return false;
+    }
+
+    // Fuction to grow root by one grid cell
+    expandRoot(y, x) {
+
+        // Randomly choose -1, 0, or 1 for x growth direction (either grow left-down, down, right-down)
+        let x_direction = Math.floor(Math.random() * 3) - 1;
+
+        // Set the probability to branch into 2 roots
+        let shouldBranch = Math.random() < 0.2;
+
+        // If shouldBranch is true, and there is enough space to grow, grow 2 roots diagonally down in opposite directions (enough space means the grid it is growing onto + both adjacent grids to that are soil)
+        if (grid[y + 1][x - 1] === 'soil' && this.canGrow(y + 1, x - 1) &&
+            grid[y + 1][x + 1] === 'soil' && this.canGrow(y + 1, x + 1) && shouldBranch) {
+            grid[y + 1][x - 1] = 'rootTip';
+
+
+            // Need to create a new rootTip object
+
+
+            grid[y + 1][x + 1] = 'rootTip';
+            grid[y][x] = 'root';
+            // Update length
+            this.length += 1 + x_direction;
+
+            // Not branching but there is enough space to grow, grow in that direction
+        } else if (grid[y + 1][x + x_direction] === 'soil' && this.canGrow(y + 1, x + x_direction)) {
+            // Update length
+            this.length += 1 + x_direction;
+            grid[y + 1][x + x_direction] = 'rootTip';
+            grid[y][x] = 'root';
+
+            // If no block is below the root, remove root
+        } else if (grid[y + 1][x] === null) {
+            grid[y][x] = null;
+        }
+        console.log("GROWING", rootIndex);
+        this.updateGrowthSpeed(y, x);
+        console.log("UPDATED GROWTH SPEED");
+    }
+
+}
 
 const elements = {
     sand: {
@@ -27,6 +105,12 @@ const elements = {
         behavior: [],
     },
 
+    rootTip: {
+        color: "#6b5e4a",
+        rootElements: [],
+        behavior: [],
+    },
+
     fungi: {
         colour: "white",
         behaviour: [],
@@ -38,7 +122,10 @@ for(const elementName in elements){
     elements[elementName].id = elementId++;
 }
 
-let currentParticleType = 'root';
+let currentParticleType = 'rootTip';
+let timeStep = 0;
+let rootIndex = 0;
+let totalRootIndex = 0;
 
 
 
@@ -69,6 +156,38 @@ elements.soil.behavior.push(function(y, x, grid) {
     }
 });
 
+// The body of the root
+elements.root.behavior.push(function (y, x, grid) {
+    // If no block below, remove root
+    if (grid[y + 1][x] === null) {
+        grid[y][x] = null;
+    }
+});
+
+// This is the ends of the roots
+elements.rootTip.behavior.push(function (y, x, grid) {
+    curr = elements[grid[y][x]].rootElements[rootIndex];
+    // Every update, either expand roots or produce liquid sugar //////////////////
+
+    //If expanding roots //////////////////////////////////////////////////////////
+    // Count the number of roots connected to this rootTip
+    // If root is not at max size, expand root
+    if (curr.growBool()) {
+        curr.expandRoot(y, x);
+    }
+    rootIndex++;
+    if (rootIndex == totalRootIndex) {
+        rootIndex = 0;
+    }
+    ///////////////////////////////////////////////////////////////////////////////
+
+
+    //If producing liquid sugar ///////////////////////////////////////////////////
+    // CODE HERE 
+    ///////////////////////////////////////////////////////////////////////////////
+
+});
+
 
 // // Implementation of root growing straight downwards
 // elements.root.behavior.push(function(y, x, grid) {
@@ -89,68 +208,6 @@ elements.soil.behavior.push(function(y, x, grid) {
 //     }
 // });
 
-
-
-
-
-//// NEED TO FIX, NOT SURE IF THIS IS CORRECT WAY OF IMPLEMENTING?
-// Implementation of root with random growth direction
-elements.root.behavior.push(function(y, x, grid) {
-
-    // Get the number of connected root elements
-    let connectedRootCount = dfs(y, x, 'root');
-
-    // Compare with max_size to see if root can still grow
-    if (connectedRootCount < elements.root.max_size) {
-        let growthDirection = Math.floor(Math.random() * 3) - 1; // Randomly choose -1, 0, or 1 for growth direction
-
-        // Check if there is soil below the root and enough space to grow
-        if (grid[y + 1][x] === 'soil') {
-            // Adjust growth direction
-            if (x + growthDirection >= 0 && x + growthDirection < gridWidth) {
-                grid[y + 1][x + growthDirection] = 'root';
-            } else {
-                grid[y + 1][x] = 'root'; // Grow straight down if no space in the chosen direction
-            }
-        }
-    }
-});
-
-
-//// NEED TO FIX
-// DFS helper function to get the number of connected elements
-function dfs(y, x, element) {
-    if (y < 0 || y >= gridHeight || x < 0 || x >= gridWidth || grid[y][x] !== element) {
-        return 0;
-    }
-
-    let count = 1;
-
-    // Mark the current cell as visited
-    grid[y][x] = 'visited';
-
-
-    // check all 8 neighbours
-    // const neighbors = [
-    //     [-1, 0], [1, 0], [0, -1], [0, 1],   // Up, Down, Left, Right
-    //     [-1, -1], [-1, 1], [1, -1], [1, 1] // Diagonal neighbors
-    // ];
-
-    // check only up, down, left, right neighbours
-    const neighbors = [
-        [-1, 0], [1, 0], [0, -1], [0, 1]   // Up, Down, Left, Right
-
-    ];
-
-    for (const [dy, dx] of neighbors) {
-        count += dfs(y + dy, x + dx, element);
-    }
-
-    // Reset the current cell to its original element
-    grid[y][x] = element;
-
-    return count;
-}
 
 
 
@@ -198,6 +255,12 @@ canvas.addEventListener('mousedown', (event) => {
     } else {
         // Place the current element on the grid with Mouse1
         grid[y][x] = currentParticleType;
+        console.log("PLACING");
+        console.log(currentParticleType);
+        if (currentParticleType == 'rootTip') {
+            console.log("PLACING ROOT Tip");
+            elements[currentParticleType].rootElements.push(new RootTip(y, x, totalRootIndex++));
+        }
     }
 });
 
@@ -207,6 +270,8 @@ function loop() {
     updateGrid();
     drawGrid();
     requestAnimationFrame(loop);
+    timeStep++;
+    console.log(timeStep);
 }
 
 window.addEventListener('load', function() {
