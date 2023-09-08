@@ -36,6 +36,8 @@ elements.liquid_sugar.behavior.push(function(y, x, grid) {
     } 
 });
 
+const COLOR_CHANGE_INTERVAL = 400; // Change to update how fast bacteria die out
+
 elements.bacterial.behavior.push(function(y, x, grid) {
 
     let DISTANCE = 8;
@@ -90,15 +92,31 @@ elements.bacterial.behavior.push(function(y, x, grid) {
     }
 
     
+    let currentColorIndex = elements.bacterial.color.indexOf(colorGrid[y][x]);
+    
     if (hasEaten) {
-        let currentColorIndex = elements.bacterial.color.indexOf(colorGrid[y][x]);
-        console.log("Current color index:", currentColorIndex);
+        elements.bacterial.hasEat = 0; 
 
         if (currentColorIndex < elements.bacterial.color.length - 1) {
-            colorGrid[y][x] = elements.bacterial.color[currentColorIndex + 1];
+            currentColorIndex++; 
         }
-        
+    } else {
+        elements.bacterial.hasEat++; // Add to hunger counter
+
+        // Check if we have to change to previous color from hunger
+        if (elements.bacterial.hasEat % COLOR_CHANGE_INTERVAL === 0) {
+            if (currentColorIndex > 0) {
+                currentColorIndex--; // Change to previous color
+            } else {
+                // Bacterial dies 
+                grid[y][x] = null;
+                colorGrid[y][x] = null;
+                return; 
+            }
+        }
     }
+
+    colorGrid[y][x] = elements.bacterial.color[currentColorIndex];
 
 
 
