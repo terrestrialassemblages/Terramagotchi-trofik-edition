@@ -94,7 +94,7 @@ elements.rootTip.behavior.push(function(y, x, grid) {
 
     // If root is not at max size, expand root
     if (rootCount < elements.root.max_size) {
-        expandRoot(y, x);
+        expandRoot(y, x, rootCount);
     }
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -112,17 +112,17 @@ function expandRoot(y, x) {
     let x_direction = Math.floor(Math.random() * 3) - 1; 
 
     // Set the probability to branch into 2 roots
-    let shouldBranch = Math.random() < 0.1; 
+    let shouldBranch = Math.random() < 0.2; 
 
-    // If shouldBranch is true, and there is enough space to grow, grow 2 roots in opposite directions (enough space means the grid it is growing onto + both adjacent grids to that are soil)
-    if (grid[y + 1][x - 1] === 'soil' && grid[y + 1][x - 2] === 'soil' && grid[y + 1][x] === 'soil' &&
-    grid[y + 1][x + 1] === 'soil' && grid[y + 1][x + 2] === 'soil' && shouldBranch) {
+    // If shouldBranch is true, and there is enough space to grow, grow 2 roots diagonally down in opposite directions (enough space means the grid it is growing onto + both adjacent grids to that are soil)
+    if (grid[y + 1][x - 1] === 'soil' && canGrow(y + 1, x - 1) &&
+        grid[y + 1][x + 1] === 'soil' && canGrow(y + 1, x + 1) && shouldBranch) {
         grid[y + 1][x - 1] = 'rootTip';
         grid[y + 1][x + 1] = 'rootTip';
         grid[y][x] = 'root';
-
+    
     // Not branching but there is enough space to grow, grow in that direction
-    } else if (grid[y + 1][x + x_direction] === 'soil' && grid[y + 1][x + x_direction + 1] === 'soil' && grid[y + 1][x + x_direction - 1] === 'soil') { 
+    } else if (grid[y + 1][x + x_direction] === 'soil' && canGrow(y + 1, x + x_direction)) { 
         grid[y + 1][x + x_direction] = 'rootTip';
         grid[y][x] = 'root';
 
@@ -130,6 +130,17 @@ function expandRoot(y, x) {
     } else if (grid[y + 1][x] === null) {
         grid[y][x] = null;
     }
+}
+
+function canGrow(y, x) {
+    if (grid[y][x - 1] === 'soil' &&
+        grid[y][x + 1] === 'soil' &&
+        grid[y + 1][x] === 'soil' && 
+        grid[y + 1][x - 1] === 'soil' && 
+        grid[y + 1][x + 1] === 'soil') {
+        return true;
+    }
+    return false;
 }
 
 
@@ -221,7 +232,7 @@ function loop() {
 
     // ADJUSTED FPS TO 10 SO TIME PROGRESSES SLOWER IN BROWSER
     requestAnimationFrame(function() {
-        setTimeout(loop, 100); // Delay for 100 milliseconds (10 FPS)
+        setTimeout(loop, 50); // Delay for 100 milliseconds (10 FPS)
     });
 }
 
