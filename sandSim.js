@@ -12,29 +12,41 @@ class RootTip {
     constructor(startingY, startingX, index) {
         this.startingY = startingY;
         this.startingX = startingX;
+        this.y = startingY;
+        this.x = startingX;
         // Reference it in the list of roots
         this.index = index;
         // Every growthSpeed number of time steps, it will grow (Higher growthSpeed means it grows slower)
         this.growthSpeed = 100;
-        this.maxGrowthLength = 40;
+        this.maxGrowthLength = 20;
         this.length = 1;
     }
 
     // Determines if root should grow or not
     growBool() {
+        if (this.length == this.maxGrowthLength) {
+            console.log(this.length, "CANT GROW");
+            // Remove from array if length is max
+            elements['rootTip'].rootElements.splice(rootIndex, 1);
+            totalRootIndex--;
+            console.log(elements['rootTip'].rootElements, totalRootIndex);
+        }
         return ((timeStep % this.growthSpeed == 0) && (this.length < this.maxGrowthLength));
     }
 
     // Adjusts the growth speed depending on the current length
-    updateGrowthSpeed(y, x) {
+    updateGrowthSpeed() {
         // Pythagoras from starting location
-        let distance = Math.sqrt(Math.pow(Math.abs(y - this.startingY), 2) + (Math.pow(Math.abs(x - this.startingX), 2)));
-        this.growthSpeed = 1 + Math.ceil(distance / this.maxGrowthLength) * 100;
+        // let distance = Math.sqrt(Math.pow(Math.abs(this.y - this.startingY), 2) + (Math.pow(Math.abs(this.x - this.startingX), 2)));
+        // Growth speed scaled according to difference in length from maxGrowthLength
+        this.growthSpeed = Math.ceil(1000 / (1 + this.maxGrowthLength/this.length));
         console.log("GROWTH SPEED", this.growthSpeed);
+        console.log(elements['rootTip'].rootElements);
     }
 
     // Checks if neighboring cells are soil
     canGrow(y, x) {
+        console.log(y, x);
         if (grid[y][x - 1] === 'soil' &&
             grid[y][x + 1] === 'soil' &&
             grid[y + 1][x] === 'soil' &&
@@ -46,7 +58,7 @@ class RootTip {
     }
 
     // Fuction to grow root by one grid cell
-    expandRoot(y, x) {
+    expandRoot() {
 
         // Randomly choose -1, 0, or 1 for x growth direction (either grow left-down, down, right-down)
         let x_direction = Math.floor(Math.random() * 3) - 1;
@@ -55,32 +67,47 @@ class RootTip {
         let shouldBranch = Math.random() < 0.2;
 
         // If shouldBranch is true, and there is enough space to grow, grow 2 roots diagonally down in opposite directions (enough space means the grid it is growing onto + both adjacent grids to that are soil)
-        if (grid[y + 1][x - 1] === 'soil' && this.canGrow(y + 1, x - 1) &&
-            grid[y + 1][x + 1] === 'soil' && this.canGrow(y + 1, x + 1) && shouldBranch) {
-            grid[y + 1][x - 1] = 'rootTip';
+        if (grid[this.y + 1][this.x - 1] === 'soil' && this.canGrow(this.y + 1, this.x - 1) &&
+            grid[this.y + 1][this.x + 1] === 'soil' && this.canGrow(this.y + 1, this.x + 1) && shouldBranch) {
+            grid[this.y + 1][this.x - 1] = 'rootTip';
 
+            // Create a new rootTip object for branched root tip
+            let branchRootTip = new RootTip(this.y + 1, this.x + 1, totalRootIndex++);
+            branchRootTip.length = this.length + 2;
+            elements['rootTip'].rootElements.push(branchRootTip);
 
-            // Need to create a new rootTip object
-
-
-            grid[y + 1][x + 1] = 'rootTip';
-            grid[y][x] = 'root';
+            grid[this.y + 1][this.x + 1] = 'rootTip';
+            grid[this.y][this.x] = 'root';
             // Update length
-            this.length += 1 + x_direction;
+            this.length += 2;
+            this.y++;
+            this.x--;
+            console.log("GROWING1", rootIndex);
+
 
             // Not branching but there is enough space to grow, grow in that direction
-        } else if (grid[y + 1][x + x_direction] === 'soil' && this.canGrow(y + 1, x + x_direction)) {
+        } else if (grid[this.y + 1][this.x + x_direction] === 'soil' && this.canGrow(this.y + 1, this.x + x_direction)) {
             // Update length
-            this.length += 1 + x_direction;
-            grid[y + 1][x + x_direction] = 'rootTip';
-            grid[y][x] = 'root';
+            this.length += 1;
+            grid[this.y + 1][this.x + x_direction] = 'rootTip';
+            grid[this.y][this.x] = 'root';
+            this.y++;
+            this.x += x_direction;
+            console.log("GROWING2", rootIndex);
 
             // If no block is below the root, remove root
-        } else if (grid[y + 1][x] === null) {
-            grid[y][x] = null;
+        } else if (grid[this.y + 1][this.x] === null) {
+            grid[this.y][this.x] = null;
+            console.log("GROWING3", rootIndex);
         }
-        console.log("GROWING", rootIndex);
-        this.updateGrowthSpeed(y, x);
+            // No space to grow
+        else {
+            // Remove from array
+            elements['rootTip'].rootElements.splice(rootIndex, 1);
+            totalRootIndex--;
+            console.log("NOT WORKING");
+        }
+        this.updateGrowthSpeed();
         console.log("UPDATED GROWTH SPEED");
     }
 
@@ -168,18 +195,20 @@ elements.root.behavior.push(function (y, x, grid) {
 
 // This is the ends of the roots
 elements.rootTip.behavior.push(function (y, x, grid) {
-    curr = elements[grid[y][x]].rootElements[rootIndex];
-    // Every update, either expand roots or produce liquid sugar //////////////////
+    if (totalRootIndex > 0) {
+        curr = elements[grid[y][x]].rootElements[rootIndex];
+        // Every update, either expand roots or produce liquid sugar //////////////////
 
-    //If expanding roots //////////////////////////////////////////////////////////
-    // Count the number of roots connected to this rootTip
-    // If root is not at max size, expand root
-    if (curr.growBool()) {
-        curr.expandRoot(y, x);
-    }
-    rootIndex++;
-    if (rootIndex == totalRootIndex) {
-        rootIndex = 0;
+        //If expanding roots //////////////////////////////////////////////////////////
+        // Count the number of roots connected to this rootTip
+        // If root is not at max size, expand root
+        if (curr.growBool()) {
+            curr.expandRoot(y, x);
+        }
+        rootIndex++;
+        if (rootIndex >= totalRootIndex) {
+            rootIndex = 0;
+        }
     }
     ///////////////////////////////////////////////////////////////////////////////
 
@@ -272,11 +301,6 @@ function loop() {
     drawGrid();
     requestAnimationFrame(loop);
     timeStep++;
-    console.log(timeStep);
-    // ADJUSTED FPS TO 10 SO TIME PROGRESSES SLOWER IN BROWSER
-    requestAnimationFrame(function() {
-        setTimeout(loop, 50); // Delay for 100 milliseconds (10 FPS)
-    });
 }
 
 window.addEventListener('load', function() {
