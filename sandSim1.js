@@ -76,7 +76,7 @@ function drawSandAutomatically() {
             if (grid[y][x] === null) {
                 grid[y][x] = 'soil';
 
-                if (Math.random() < 0.01) {
+                if (Math.random() < 0.005) {
                     const stoneSizeX = Math.floor(Math.random() * 2) + 4;
                     const stoneSizeY = Math.floor(Math.random() * 2) + 4;
                     const stoneId = `stone-${stoneIdCounter++}`;
