@@ -26,10 +26,14 @@ class RootTip {
     growBool() {
         if (this.length == this.maxGrowthLength) {
             console.log(this.length, "CANT GROW");
+            
             // Remove from array if length is max
             elements['rootTip'].rootElements.splice(rootIndex, 1);
             totalRootIndex--;
             console.log(elements['rootTip'].rootElements, totalRootIndex);
+
+            // Produces sugar when the root is max length
+            this.produceSugar();
         }
         return ((timeStep % this.growthSpeed == 0) && (this.length < this.maxGrowthLength));
     }
@@ -44,7 +48,7 @@ class RootTip {
         console.log(elements['rootTip'].rootElements);
     }
 
-    // Checks if neighboring cells are soil
+    // Checks if neighboring cells are soil (left, right, down, down-left, and down-right)
     canGrow(y, x) {
         console.log(y, x);
         if (grid[y][x - 1] === 'soil' &&
@@ -58,7 +62,7 @@ class RootTip {
     }
 
     // Fuction to grow root by one grid cell
-    expandRoot() {
+    expandRoot() {    
 
         // Randomly choose -1, 0, or 1 for x growth direction (either grow left-down, down, right-down)
         let x_direction = Math.floor(Math.random() * 3) - 1;
@@ -85,7 +89,7 @@ class RootTip {
             console.log("GROWING1", rootIndex);
 
 
-            // Not branching but there is enough space to grow, grow in that direction
+        // Not branching but there is enough space to grow, grow in that direction
         } else if (grid[this.y + 1][this.x + x_direction] === 'soil' && this.canGrow(this.y + 1, this.x + x_direction)) {
             // Update length
             this.length += 1;
@@ -95,22 +99,38 @@ class RootTip {
             this.x += x_direction;
             console.log("GROWING2", rootIndex);
 
-            // If no block is below the root, remove root
+        // If no block is below the root, remove root
         } else if (grid[this.y + 1][this.x] === null) {
             grid[this.y][this.x] = null;
             console.log("GROWING3", rootIndex);
         }
-            // No space to grow
+        // No space to grow
         else {
             // Remove from array
             elements['rootTip'].rootElements.splice(rootIndex, 1);
             totalRootIndex--;
             console.log("NOT WORKING");
         }
+
         this.updateGrowthSpeed();
         console.log("UPDATED GROWTH SPEED");
     }
 
+    // Function to produce liquid sugar around the rootTip
+    produceSugar() {
+    // Choose the rage around rootTip where sugar is produced
+    const sugarRange = 1;
+    
+    for (let y = this.y - sugarRange; y <= this.y + sugarRange; y++) {
+        for (let x = this.x - sugarRange; x <= this.x + sugarRange; x++) {
+            // Check if the grid cell is within bounds and contains soil
+            if (y >= 0 && y < gridHeight && x >= 0 && x < gridWidth && grid[y][x] === 'soil') {
+                // Replace soil with liquidsugar
+                grid[y][x] = 'liquidSugar';
+            }
+        }
+    }
+    }
 }
 
 const elements = {
@@ -131,14 +151,15 @@ const elements = {
         max_size: 30,       // Biggest size a root can grow to
         behavior: [],
     },
-    rootTip: {
-        color: "#6b5e4a",
-        behavior: [],
-    },
 
     rootTip: {
         color: "#6b5e4a",
         rootElements: [],
+        behavior: [],
+    },
+
+    liquidSugar: {
+        color: "#ffbf00",
         behavior: [],
     },
 
@@ -195,13 +216,11 @@ elements.root.behavior.push(function (y, x, grid) {
 
 // This is the ends of the roots
 elements.rootTip.behavior.push(function (y, x, grid) {
+
     if (totalRootIndex > 0) {
         curr = elements[grid[y][x]].rootElements[rootIndex];
-        // Every update, either expand roots or produce liquid sugar //////////////////
 
-        //If expanding roots //////////////////////////////////////////////////////////
-        // Count the number of roots connected to this rootTip
-        // If root is not at max size, expand root
+        // If root is allow to grow, grow
         if (curr.growBool()) {
             curr.expandRoot(y, x);
         }
@@ -210,35 +229,7 @@ elements.rootTip.behavior.push(function (y, x, grid) {
             rootIndex = 0;
         }
     }
-    ///////////////////////////////////////////////////////////////////////////////
-
-
-    //If producing liquid sugar ///////////////////////////////////////////////////
-    // CODE HERE 
-    ///////////////////////////////////////////////////////////////////////////////
-
 });
-
-
-// // Implementation of root growing straight downwards
-// elements.root.behavior.push(function(y, x, grid) {
-//     let connectedRootCount = dfs(y, x,'root');
-
-//     // Check if root can still grow
-//     if (connectedRootCount < elements.root.max_size) {
-
-//         // If there is soil below the root and enough space to grow, grow
-//         if (grid[y + 1][x] === 'soil') {
-//             grid[y + 1][x] = 'root';
-
-//         // No soil below root, root cannot grow
-//         } else if (grid[y + 1][x] === null) {
-//             alert("Cannot place roots here");
-//             grid[y][x] = null;
-//         }
-//     }
-// });
-
 
 function updateGrid() {
     for (let y = gridHeight - 2; y >= 0; y--) {
@@ -323,6 +314,18 @@ function drawSandAutomatically() {
         }
         
     }
+
+    // // grow some roots
+    grid[79][25] = 'rootTip';
+    elements[currentParticleType].rootElements.push(new RootTip(79, 25, totalRootIndex++));
+    grid[79][75] = 'rootTip';
+    elements[currentParticleType].rootElements.push(new RootTip(79, 75, totalRootIndex++));
+    grid[79][90] = 'rootTip';
+    elements[currentParticleType].rootElements.push(new RootTip(79, 90, totalRootIndex++));
+    grid[79][160] = 'rootTip';
+    elements[currentParticleType].rootElements.push(new RootTip(79, 160, totalRootIndex++));
+    grid[79][165] = 'rootTip';
+    elements[currentParticleType].rootElements.push(new RootTip(79, 165, totalRootIndex++));
 
     // Call any other functions required to render the grid on the canvas.
 }
