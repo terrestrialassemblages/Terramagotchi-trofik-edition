@@ -37,6 +37,9 @@ elements.liquid_sugar.behavior.push(function(y, x, grid) {
 });
 
 const COLOR_CHANGE_INTERVAL = 400; // Change to update how fast bacteria die out
+const timeStep = 1000 / 60; 
+let lastUpdateTime = performance.now();
+let timeDifference = 0;
 
 elements.bacterial.behavior.push(function(y, x, grid) {
 
@@ -141,6 +144,19 @@ elements.bacterial.behavior.push(function(y, x, grid) {
     elements.bacterial.frameCounter++;
 });
 
+function updateLoop() {
+    const currentTime = performance.now();
+    timeDifference += currentTime - lastUpdateTime;
+    lastUpdateTime = currentTime;
+
+    while (timeDifference >= timeStep) {
+        updateGrid();
+        timeDifference -= timeStep;
+    }
+
+    drawGrid();
+    requestAnimationFrame(updateLoop);
+}
 
 function updateGrid() {
     for (let y = gridHeight - 1; y >= 0; y--) {
@@ -190,9 +206,8 @@ function drawGrid() {
 
 
 function loop() {
-    updateGrid();
-    drawGrid();
-    requestAnimationFrame(loop);
+    lastUpdateTime = performance.now();
+    updateLoop();
 }
 
 
