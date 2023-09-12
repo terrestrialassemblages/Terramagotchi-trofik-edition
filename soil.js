@@ -94,7 +94,7 @@ elements.water.behavior.push(function (y, x, grid) {
 });
 
 
-function drawSandAutomatically() {
+function generateSoil() {
 
     // water
     for (let y = 130; y < 150; y++) {
@@ -104,7 +104,7 @@ function drawSandAutomatically() {
             }
         }
     }
-
+    //load soil and stone
     for (let y = 80; y < 150; y++) {
         for (let x = 0; x < gridWidth; x++) {
 
@@ -219,7 +219,7 @@ function adjustColor(hexColor, amount) {
 
 window.addEventListener('load', function () {
     loop();
-    drawSandAutomatically();
+    generateSoil();
 });
 
 function isStone(cell) {
