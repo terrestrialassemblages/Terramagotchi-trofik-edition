@@ -60,7 +60,7 @@ class RootStructure {
         if (rootTipBool == false) {
             element2 = 'root';
         }
-        if ((grid[y][x - 1] === element || grid[y][x - 1] == element2)&&
+        if ((grid[y][x - 1] === element || grid[y][x - 1] == element2) &&
             (grid[y][x + 1] === element || grid[y][x + 1] == element2) &&
             (grid[y + 1][x] === element || grid[y + 1][x] == element2) &&
             (grid[y + 1][x - 1] === element || grid[y + 1][x - 1] == element2) &&
@@ -99,8 +99,8 @@ class RootStructure {
         let shouldBranch = Math.random() < prob;
 
         // If shouldBranch is true, and there is enough space to grow, grow 2 roots diagonally down in opposite directions (enough space means the grid it is growing onto + both adjacent grids to that are soil)
-        if ( ( (grid[this.y + 1][this.x - 1] === 'soil' || grid[this.y + 1][this.x - 1] == element2) && this.canGrow(this.y + 1, this.x - 1, 'soil', rootTipBool)) &&
-            ( (grid[this.y + 1][this.x + 1] === 'soil' || grid[this.y + 1][this.x + 1] == element2) && this.canGrow(this.y + 1, this.x + 1, 'soil', rootTipBool)) && shouldBranch) {
+        if (((grid[this.y + 1][this.x - 1] === 'soil' || grid[this.y + 1][this.x - 1] == element2) && this.canGrow(this.y + 1, this.x - 1, 'soil', rootTipBool)) &&
+            ((grid[this.y + 1][this.x + 1] === 'soil' || grid[this.y + 1][this.x + 1] == element2) && this.canGrow(this.y + 1, this.x + 1, 'soil', rootTipBool)) && shouldBranch) {
             grid[this.y + 1][this.x - 1] = 'soil';
 
 
@@ -149,8 +149,8 @@ class RootStructure {
         } else if (grid[this.y + 1][this.x] === null) {
             grid[this.y][this.x] = null;
         }
-        else {
-             // No space to grow
+/*        else {
+            // No space to grow
             if ((grid[this.y + 1][this.x - x_direction] != 'soil' ||
                 (grid[this.y + 1][this.x - x_direction] != element2)) && !(this.canGrow(this.y + 1, this.x - x_direction, 'soil', rootTipBool))) {
                 // Remove from array
@@ -159,7 +159,7 @@ class RootStructure {
                 totalIndex--;
             }
             console.log("CANT DO ANYTHING");
-        }
+        }*/
 
         this.updateGrowthSpeed();
         console.log("UPDATED GROWTH SPEED", totalIndex, totalRootIndex);
@@ -168,7 +168,7 @@ class RootStructure {
 }
 
 // Test class for Roots
-class RootTip extends RootStructure{
+class RootTip extends RootStructure {
     constructor(startingY, startingX, index) {
         super(startingY, startingX, 30, 100, 'rootTip', 1000, index);
     }
@@ -245,42 +245,42 @@ class Fungi extends RootStructure {
         this.updateGrowthSpeed();
 
 
-/*                if (this.attachedRootDistance[0] != 0 ) {
-                    // Move up
-                    if (this.attachedRootDistance[0] < 0) {
-                        grid[--this.y][this.x] = 'fungi';
-                        this.attachedRootDistance[0]--;
-                    }
-                    else {
-                        grid[++this.y][this.x] = 'fungi';
-                        this.attachedRootDistance[0]++;
-                    }
-                }
-
-                if (x_branch == 1 && this.attachedRootDistance[1] != 0) {
-                    // Move up
-                    if (this.attachedRootDistance[1] < 0) {
-                        grid[this.y][--this.x] = 'fungi';
-                        this.attachedRootDistance[1]--;
-                    }
-                    else {
-                        grid[this.y][++this.x] = 'fungi';
-                        this.attachedRootDistance[1]++;
-                    }
-                }*/
+        /*                if (this.attachedRootDistance[0] != 0 ) {
+                            // Move up
+                            if (this.attachedRootDistance[0] < 0) {
+                                grid[--this.y][this.x] = 'fungi';
+                                this.attachedRootDistance[0]--;
+                            }
+                            else {
+                                grid[++this.y][this.x] = 'fungi';
+                                this.attachedRootDistance[0]++;
+                            }
+                        }
+        
+                        if (x_branch == 1 && this.attachedRootDistance[1] != 0) {
+                            // Move up
+                            if (this.attachedRootDistance[1] < 0) {
+                                grid[this.y][--this.x] = 'fungi';
+                                this.attachedRootDistance[1]--;
+                            }
+                            else {
+                                grid[this.y][++this.x] = 'fungi';
+                                this.attachedRootDistance[1]++;
+                            }
+                        }*/
     }
 }
 
 const elements = {
     sand: {
-        color: "#FFD700",   
+        color: "#FFD700",
         //density: 0.7, gravity: 0.8, slip: 0, slide: 0.8, scatter: 0,
         behavior: [],
     },
 
-////placeholder implementation of soil, needed to simulate plant roots
+    ////placeholder implementation of soil, needed to simulate plant roots
     soil: {
-        color: "brown",   
+        color: "brown",
         behavior: [],
     },
 
@@ -304,11 +304,11 @@ const elements = {
 };
 
 let elementId = 0;
-for(const elementName in elements){
+for (const elementName in elements) {
     elements[elementName].id = elementId++;
 }
 
-elements.sand.behavior.push(function(y, x, grid) {
+elements.sand.behavior.push(function (y, x, grid) {
     // Sand behavior logic goes here, based on the extracted updateGrid function
     if (grid[y + 1][x] === null) {
         // Move sand down
@@ -323,7 +323,7 @@ elements.sand.behavior.push(function(y, x, grid) {
 });
 
 //// Placeholder implementation of soil
-elements.soil.behavior.push(function(y, x, grid) {
+elements.soil.behavior.push(function (y, x, grid) {
     // Soil behavior logic goes here, based on the extracted updateGrid function
     if (grid[y + 1][x] === null) {
         grid[y + 1][x] = 'soil';
@@ -431,14 +431,14 @@ function updateGrid() {
         }
     }
 }
-            
+
 function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     for (let y = 0; y < gridHeight; y++) {
         for (let x = 0; x < gridWidth; x++) {
-            if (grid[y][x] in elements){
-                ctx.fillStyle = elements[grid[y][x]].color; 
+            if (grid[y][x] in elements) {
+                ctx.fillStyle = elements[grid[y][x]].color;
                 ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
             }
         }
@@ -455,7 +455,7 @@ canvas.addEventListener('mousedown', (event) => {
 
     if (event.button === 1) {
         // Cycle to the next element with middle mouse button
-//// ERROR WITH FLOATING SOIL IF YOU CYCLE ELEMENTS TOO MUCH
+        //// ERROR WITH FLOATING SOIL IF YOU CYCLE ELEMENTS TOO MUCH
         const elementNames = Object.keys(elements);
         const currentIndex = elementNames.indexOf(currentParticleType);
         const nextIndex = (currentIndex + 1) % elementNames.length;
@@ -483,7 +483,7 @@ function loop() {
     timeStep++;
 }
 
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
     // Logic to draw sand on the canvas automatically
     // This is a placeholder; the actual logic will depend on the structure of the JS code.
     loop();
@@ -494,14 +494,14 @@ function drawSandAutomatically() {
     // Logic to draw sand on the canvas
     // This is a placeholder; the actual logic will depend on the structure of the JS code.
     // For example:
-    
-    
+
+
     // fill background up with soil
     for (let i = 80; i < 150; i++) {
         for (let j = 0; j < 200; j++) {
             grid[i][j] = 'soil';
         }
-        
+
     }
 
     // // grow some roots
@@ -539,16 +539,16 @@ function drawSandAutomatically() {
     newFungi.branchElement = rootBranch;
 
     grid[87][75] = 'fungi';
-    newFungi = new Fungi(86, 77, false, totalFungiIndex++);
+    newFungi = new Fungi(87, 75, false, totalFungiIndex++);
     elements.fungi.fungiElements.push(newFungi);
-    rootBranch = new Fungi(86, 77, true, totalFungiIndex++);
+    rootBranch = new Fungi(87, 75, true, totalFungiIndex++);
     elements.fungi.fungiElements.push(rootBranch);
     newFungi.branchElement = rootBranch;
 
     grid[85][78] = 'fungi';
-    newFungi = new Fungi(85, 82, false, totalFungiIndex++);
+    newFungi = new Fungi(85, 78, false, totalFungiIndex++);
     elements.fungi.fungiElements.push(newFungi);
-    rootBranch = new Fungi(85, 82, true, totalFungiIndex++);
+    rootBranch = new Fungi(85, 78, true, totalFungiIndex++);
     elements.fungi.fungiElements.push(rootBranch);
     newFungi.branchElement = rootBranch;
 
