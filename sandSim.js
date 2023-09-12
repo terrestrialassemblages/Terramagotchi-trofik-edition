@@ -1,3 +1,14 @@
+class Bacteria {
+    constructor(color, frameTimer, currentDirection, directionTimer, behavior) {
+        this.color = color;
+        this.frameTimer = frameTimer;
+        this.currentDirection = currentDirection;
+        this.directionTimer = directionTimer;
+        this.behavior = behavior;
+    }
+}
+
+
 const canvas = document.getElementById('sandCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -5,22 +16,31 @@ const gridWidth = 200;  // Change for finer granularity
 const gridHeight = 150; // Change for finer granularity
 const cellSize = canvas.width / gridWidth;
 
-let grid = Array(gridHeight).fill().map(() => Array(gridWidth).fill(null));
+let timeMove = 0;
+let chosenDirection = null;
 
-let colorGrid = Array(gridHeight).fill().map(() => Array(gridWidth).fill(null));
+let grid = Array(gridHeight).fill().map(() => Array(gridWidth).fill(null));
+let processed = Array(gridHeight).fill().map(() => Array(gridWidth).fill(false));
+let bacteriaDirection = Array(gridHeight).fill().map(() => Array(gridWidth).fill(null));
+//let directionTimer = Array(gridHeight).fill().map(() => Array(gridWidth).fill(Math.floor(Math.random() * 5)));
+
 
 
 const elements = {
+    sand: {
+        color: "#FFD700",   
+        //density: 0.7, gravity: 0.8, slip: 0, slide: 0.8, scatter: 0,
+        behavior: [],
+    },
+
+    bacteria: new Bacteria("#800080", 15, null, 0, []),
+
     liquid_sugar: {
         color: "#FFD700",   
         transparency: 0.5, 
         behavior: [],
     },
-    bacterial: {
-        color: ["#4287f5", "#aa71f0", "#f59de2", "#f59da0", "#f5b69d"],  //bacterial has different color 
-        transparency: 1, frameCounter: 0, currentDirection: null, hasEat: 0,
-        behavior: [],
-    },
+
 };
 
 let elementId = 0;
@@ -28,24 +48,12 @@ for(const elementName in elements){
     elements[elementName].id = elementId++;
 }
 
-elements.liquid_sugar.behavior.push(function(y, x, grid) {
+//let currentParticleType = 'sand';
+
+
+function choseDirection(currentDirection) { //currentDirection is a integer
     
-    if (grid[y][x] === null) {
-        grid[y][x] = 'liquid_sugar';
-        //stay at the place where it's been draw
-    } 
-});
 
-const COLOR_CHANGE_INTERVAL = 400; // Change to update how fast bacteria die out
-const timeStep = 1000 / 60; 
-let lastUpdateTime = performance.now();
-let timeDifference = 0;
-
-elements.bacterial.behavior.push(function(y, x, grid) {
-
-    let DISTANCE = 8;
-
-    // Random movement direction
     const directions = [
         {dy: -1, dx: 0},  // Up
         {dy: 1, dx: 0},  // Down
@@ -53,123 +61,167 @@ elements.bacterial.behavior.push(function(y, x, grid) {
         {dy: 0, dx: 1},  // Right
     ];
 
-    // If the frameCounter is not divisible by 3, skip the movement and just increment the counter
-    if (elements.bacterial.frameCounter % 13 !== 0) {
-        elements.bacterial.frameCounter++;
-        return;
-    }
-    
-    if (elements.bacterial.frameCounter >= 8 || !elements.bacterial.currentDirection) {
-        elements.bacterial.currentDirection = directions[Math.floor(Math.random() * directions.length)];
-        elements.bacterial.frameCounter = 0;
-    }
-    let chosenDirection = elements.bacterial.currentDirection;
+    //return directions[Math.floor(Math.random() * directions.length)];
+    let newDirection = Math.floor(Math.random() * directions.length);
 
-    // Check for nearby liquid_sugar
+    if(elements.bacteria.currentDirection ==null){
+        elements.bacteria.currentDirection = newDirection
+        return directions[newDirection];    
+    }
+
+
+    if(newDirection % 2 == currentDirection % 2){
+        newDirection = (currentDirection + 1) % 4; 
+    }
+    elements.bacteria.currentDirection = newDirection;
+    return directions[newDirection];    
+        
+}
+
+
+
+// Check for nearby liquid_sugar
+function IfNearLiquidSugar(DISTANCE, y, x) {
+    const directions = [
+        {dy: -1, dx: 0},  // Up
+        {dy: 1, dx: 0},  // Down
+        {dy: 0, dx: -1}, // Left
+        {dy: 0, dx: 1},  // Right
+    ];
+
     for (let dy = -DISTANCE; dy <= DISTANCE; dy++) {
         for (let dx = -DISTANCE; dx <= DISTANCE; dx++) {
             if (y+dy >= 0 && y+dy < gridHeight && x+dx >= 0 && x+dx < gridWidth) {
                 if (grid[y+dy][x+dx] === 'liquid_sugar') {
                     const distance = Math.sqrt(dy*dy + dx*dx);
                     if (distance <= DISTANCE) {
-                        if (dy < 0) chosenDirection = directions[0]; // Up
-                        else if (dy > 0) chosenDirection = directions[1]; // Down
-                        if (dx < 0) chosenDirection = directions[2]; // Left
-                        else if (dx > 0) chosenDirection = directions[3]; // Right
+                        
+                        
+                        
+                        if (dy < 0) return{
+                            ifNear:true,
+                            priorityDirection: directions[0]
+                        }; // Up
+                        else if (dy > 0) return{
+                            ifNear:true,
+                            priorityDirection: directions[1]
+                        }; // Down
+                        if (dx < 0) return{
+                            ifNear:true,
+                            priorityDirection: directions[2]
+                        }; // Left
+                        else if (dx > 0) return{
+                            ifNear:true,
+                            priorityDirection: directions[3]
+                        }; // Right
+                        
                     }
                 }
             }
         }
     }
-
-    let hasEaten = false;
-
-    // Clear neighboring liquid_sugar cells
-    for (let dir of directions) {
-        let neighborY = y + dir.dy;
-        let neighborX = x + dir.dx;
-        if (neighborY >= 0 && neighborY < gridHeight && neighborX >= 0 && neighborX < gridWidth && grid[neighborY][neighborX] === 'liquid_sugar') {
-            grid[neighborY][neighborX] = null;  // Clear the neighboring liquid_sugar
-            hasEaten = true;
-        }
-    }
-
-    
-    let currentColorIndex = elements.bacterial.color.indexOf(colorGrid[y][x]);
-    
-    if (hasEaten) {
-        elements.bacterial.hasEat = 0; 
-
-        if (currentColorIndex < elements.bacterial.color.length - 1) {
-            currentColorIndex++; 
-        }
-    } else {
-        elements.bacterial.hasEat++; // Add to hunger counter
-
-        // Check if we have to change to previous color from hunger
-        if (elements.bacterial.hasEat % COLOR_CHANGE_INTERVAL === 0) {
-            if (currentColorIndex > 0) {
-                currentColorIndex--; // Change to previous color
-            } else {
-                // Bacterial dies 
-                grid[y][x] = null;
-                colorGrid[y][x] = null;
-                return; 
-            }
-        }
-    }
-
-    colorGrid[y][x] = elements.bacterial.color[currentColorIndex];
-
-
-
-    // Apply the movement
-    let newY = y + chosenDirection.dy;
-    let newX = x + chosenDirection.dx;
-
-        
-        
-    if (newY >= 0 && newY < gridHeight && newX >= 0 && newX < gridWidth && grid[newY][newX] === null) {
-        grid[newY][newX] = 'bacterial';
-        colorGrid[newY][newX] = colorGrid[y][x];
-        grid[y][x] = null;
-        colorGrid[y][x] = null;
-    }
-
-    //console.log("Current color index:", colorGrid[newY][newX]);
-
-    
-
-    // Increment the frameCounter
-    elements.bacterial.frameCounter++;
-});
-
-function updateLoop() {
-    const currentTime = performance.now();
-    timeDifference += currentTime - lastUpdateTime;
-    lastUpdateTime = currentTime;
-
-    while (timeDifference >= timeStep) {
-        updateGrid();
-        timeDifference -= timeStep;
-    }
-
-    drawGrid();
-    requestAnimationFrame(updateLoop);
+    return{
+        ifNear:false,
+        priorityDirection: directions[0]
+    };
 }
 
-function updateGrid() {
-    for (let y = gridHeight - 1; y >= 0; y--) {
-        for (let x = 0; x < gridWidth; x++) {
-            let element = grid[y][x];
-            if (element && elements[element] && Array.isArray(elements[element].behavior)) {
-                for (let func of elements[element].behavior) {
-                    func(y, x, grid);
+
+
+
+elements.bacteria.behavior.push(function(y, x, grid) {
+    let DISDANCE = 8;
+    const result = IfNearLiquidSugar(DISDANCE, y, x);
+    let ifNear = result.ifNear;
+    let priorityDirection = result.priorityDirection;
+
+    //console.log(ifNear);
+    if(ifNear){
+        if (timeMove % elements.bacteria.frameTimer == 0){
+        
+            chosenDirection = priorityDirection;
+            console.log(chosenDirection);
+
+            // Apply the movement
+            let newY = y + chosenDirection.dy;
+            let newX = x + chosenDirection.dx;
+
+            grid[newY][newX] = 'bacteria';
+            processed[newY][newX] = true;
+            bacteriaDirection[newY][newX] = chosenDirection;
+            grid[y][x] = null;
+            bacteriaDirection[y][x] = null;
+        }
+    }
+    else{
+        if (timeMove % elements.bacteria.frameTimer == 0){
+
+            if(elements.bacteria.directionTimer % 5 !== 0){
+                chosenDirection = choseDirection(elements.bacteria.currentDirection);
+            }
+            else{
+                if(bacteriaDirection[y][x] !== null){
+                    chosenDirection = bacteriaDirection[y][x];
+                }
+                else{
+                    chosenDirection = choseDirection(elements.bacteria.currentDirection);
                 }
             }
+            elements.bacteria.directionTimer++;
+
+            // If the bacteria is touching any boundary, choose a new direction
+            if(y == 0 || y == gridHeight - 1 || x == 0 || x == gridWidth - 1) {
+                chosenDirection = choseDirection(elements.bacteria.currentDirection);
+            }
+
+            
+
+            // Apply the movement
+            let newY = y + chosenDirection.dy;
+            let newX = x + chosenDirection.dx;
+
+            // If new position is out of bounds or occupied, choose a new direction
+            let attempts = 0;
+            while ((newY < 0 || newY >= gridHeight || newX < 0 || newX >= gridWidth || grid[newY][newX] !== null) && attempts < 4) {
+                chosenDirection = choseDirection(elements.bacteria.currentDirection, true);
+                newY = y + chosenDirection.dy;
+                newX = x + chosenDirection.dx;
+                attempts++;
+            }
+
+            grid[newY][newX] = 'bacteria';
+            processed[newY][newX] = true;
+            bacteriaDirection[newY][newX] = chosenDirection;
+            grid[y][x] = null;
+            bacteriaDirection[y][x] = null;
+        }
+    }
+});
+
+
+
+
+
+
+function updateGrid() {
+    processed = Array(gridHeight).fill().map(() => Array(gridWidth).fill(false));
+
+    for (let y = gridHeight - 2; y >= 0; y--) {
+        for (let x = 0; x < gridWidth; x++) {
+            let element = grid[y][x];
+            let IsProcessed = processed[y][x];
+            if(!IsProcessed){
+                if (element && elements[element] && Array.isArray(elements[element].behavior)) {
+                    for (let func of elements[element].behavior) {
+                        func(y, x, grid);
+                    }
+                }
+            } 
         }
     }
 }
+
+
             
 
 
@@ -178,36 +230,31 @@ function drawGrid() {
 
     for (let y = 0; y < gridHeight; y++) {
         for (let x = 0; x < gridWidth; x++) {
-            /*
-            if (grid[y][x] == "bacterial"){
-                ctx.fillStyle = elements[grid[y][x]].color[0]; 
+            if (grid[y][x] in elements) {
+                ctx.fillStyle = elements[grid[y][x]].color;
                 ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
-            }
-            */
-            
-            if (grid[y][x] == 'bacterial') {
-                ctx.fillStyle = colorGrid[y][x]
-                console.log("Current color:", colorGrid[y][x]);
-                ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
-                // ... rest of the drawing logic
-            }
-            else if (grid[y][x] in elements){
-                ctx.fillStyle = elements[grid[y][x]].color; 
-                ctx.globalAlpha = elements.liquid_sugar.transparency || 1;
-                ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
-                ctx.globalAlpha = 1;
             }
         }
     }
 
 }
 
+/*
+canvas.addEventListener('mousedown', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = Math.floor((event.clientX - rect.left) / cellSize);
+    const y = Math.floor((event.clientY - rect.top) / cellSize);
+    grid[y][x] = currentParticleType;
+});
+*/
 
 
 
 function loop() {
-    lastUpdateTime = performance.now();
-    updateLoop();
+    updateGrid();
+    drawGrid();
+    requestAnimationFrame(loop);
+    timeMove++;
 }
 
 
@@ -231,12 +278,9 @@ function generateBacterial() {
     for (let i = 0; i < 30; i++) {
         const randomX = Math.floor(Math.random() * gridWidth);
         const randomY = Math.floor(Math.random() * gridHeight);
-        grid[randomY][randomX] = 'bacterial';
-        colorGrid[randomY][randomX] = elements.bacterial.color[0];
+        grid[randomY][randomX] = 'bacteria';
+        
         
 
     }
 }
-
-
-
