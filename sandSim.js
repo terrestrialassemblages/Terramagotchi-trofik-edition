@@ -279,6 +279,10 @@ const elements = {
         fungiElements: [],
         behavior: [],
     },
+    liquidSugar: {
+        color: "#FF0000", 
+        behavior: [],
+    }
 };
 elements.stone.behavior.push(function (y, x, grid) {
 });
@@ -555,6 +559,30 @@ function drawSoilAutomatically() {
     }
     
 }
+
+function spawnLiquidSugarNearRoots() {
+    for (let y = 0; y < gridHeight; y++) {
+        for (let x = 0; x < gridWidth; x++) {
+            if (grid[y][x] === 'root' || grid[y][x] === 'rootTip') {
+                // spawn liquid sugar randomly
+                if (Math.random() < 0.0001) { 
+                    // Spawn liquidSugar near root
+                    const xOffset = Math.floor(Math.random() * 3) - 1; 
+                    const yOffset = Math.floor(Math.random() * 3) - 1;
+                    const newX = x + xOffset;
+                    const newY = y + yOffset;
+
+                    // Make sure new position is valid
+                    if (newX >= 0 && newX < gridWidth && newY >= 0 && newY < gridHeight && grid[newY][newX] === 'soil') {
+                        grid[newY][newX] = 'liquidSugar';
+                    }
+                }
+            }
+        }
+    }
+}
+
+
 function updateGrid() {
     for (let y = gridHeight - 2; y >= 0; y--) {
         for (let x = 0; x < gridWidth; x++) {
@@ -571,6 +599,7 @@ function updateGrid() {
 function loop() {
     updateGrid();
     drawGrid();
+    spawnLiquidSugarNearRoots(); 
     requestAnimationFrame(loop);
     timeStep++;
 }
