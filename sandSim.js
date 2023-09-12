@@ -13,6 +13,7 @@ let stoneIdCounter = 0;
 let stoneColors = {};
 
 // Test class for Roots
+/*
 class RootTip {
     constructor(startingY, startingX, index) {
         this.startingY = startingY;
@@ -136,7 +137,7 @@ class RootTip {
             }
         }
     }
-}
+}*/
 
 const elements = {
     sand: {
@@ -553,7 +554,7 @@ function generateBacterial() {
 
 function generateSoil() {
 
-    // water
+    //load water
     for (let y = 130; y < 150; y++) {
         for (x = 0; x < gridWidth; x++) {
             if (grid[y][x] === null) {
