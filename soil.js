@@ -112,7 +112,7 @@ function generateSoil() {
                 grid[y][x] = 'soil';
 
             }
-            if (grid[y][x] === 'water' || grid[y][x] === 'soil') {
+            if (y >= 85 && (grid[y][x] === 'water' || grid[y][x] === 'soil') {
                 if (Math.random() < 0.005) {
 
                     let stoneSizeX = Math.floor(Math.random() * 2) + 4;
