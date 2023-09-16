@@ -14,8 +14,9 @@ let totalRootIndex = 0;
 let fungiIndex = 0;
 let totalFungiIndex = 0;
 
-// FOR TESTING PURPOSES
-let growthspeed_updates = 0;   // tracks total number of times growthspeed was updated
+// Variables for stone
+let stoneIdCounter = 0;
+let stoneColors = {};
 
 
 class RootStructure {
@@ -36,11 +37,12 @@ class RootStructure {
 
     // Determines if root should grow or not
     //////////// LATER NEED TO REMOVE INPUT PARAMETERS AS THEY ARE NOT USED AND ADJUST BEHAVIOUR FOR FUNGI AND ROOT TIP 
-    growBool(totalIndex) {
+    growBool(elementsArray, index, totalIndex) {
         if (this.length == this.maxGrowthLength) {
             // Mark the root as Developed
             this.developed = true;
-            console.log(this.length, "CANT GROW, SET TO DEVELOPED");
+            console.log(totalIndex, this.developed, "SET TO DEVELOPED");
+            console.log(this.length, "CANT GROW");
         }
         if (this.developed == true && this.elementName == 'rootTip') {
             // If root is developed, produce sugar
@@ -51,7 +53,7 @@ class RootStructure {
     }
 
     sugarEaten() {
-        // If developed == true, and there is no sugar surrounding the root, sugar must have been eaten. Set developed to false and increase max_growth length for rootTip
+        // If developed == true, and there is no sugar surrounding the root, sugar must have been eaten. Set developed to false and increase max_growth length
         // IMPLEMENT LATER
     }
 
@@ -62,8 +64,6 @@ class RootStructure {
         // Growth speed scaled according to difference in length from maxGrowthLength
         this.growthSpeed = Math.ceil(this.startingSpeed / (1 + this.maxGrowthLength / this.length));
         console.log("GROWTH SPEED", this.growthSpeed);
-
-        growthspeed_updates++;  // FOR TESTING PURPOSES
     }
 
     // Checks neighboring cells
@@ -87,7 +87,7 @@ class RootStructure {
     produceSugar() {
         if (grid[this.y][this.x] == 'rootTip') {
             // Produce sugar to the left, right, and under root tip if there is space
-            //console.log("PRODUCING SUGAR");
+            console.log("PRODUCING SUGAR");
             if (grid[this.y][this.x - 1] === 'soil') {
                 grid[this.y][this.x - 1] = 'liquidSugar';
                 //elements.liquidSugar.sugarElements.push(new LiquidSugar(this.y, this.x - 1, this));
@@ -103,76 +103,114 @@ class RootStructure {
         }
     }
 
-    // Fuction to grow root by one block
-    expandRoot(elementsArray, index, totalIndex) {
+    // Fuction to grow root by one grid cell
+    expandRoot(elementsArray, newElement, oldElement, index, totalIndex) {
 
         // Randomly choose -1, 0, or 1 for x growth direction (either grow left-down, down, right-down)
         let x_direction = Math.floor(Math.random() * 3) - 1;
 
-        console.log("GROWING rootTip", index);
+        console.log("GROWING", newElement, index);
 
-        // Set initial values
+        // Change function depending on if expandRoot is for fungi or rootTip
+        let element2 = 'fungi';
         let rootTipBool = true;
-        let prob = 0.2;
+        let prob = 0.5;
+
+        if (newElement == 'fungi') {
+            element2 = 'root';
+            rootTipBool = false;
+            prob = 0.3;
+        }
+
+        if (newElement == 'fungi' && this.branchElemenet != null && this.branchElement.attached == true && this.nutrientBoosted == false) {
+            this.growthSpeed = Math.ceil(this.growthSpeed * (2 / 3));
+            this.startingSpeed = Math.ceil(this.startingSpeed * (2 / 3));
+            this.nutrientBoosted = true;
+        }
 
         // Set the probability to branch into 2 roots
         let shouldBranch = Math.random() < prob;
 
-        // If shouldBranch is true, and there is enough space to grow, grow an additional branch in the bottom right direction
-        if (((grid[this.y + 1][this.x - 1] === 'soil' || grid[this.y + 1][this.x - 1] == 'fungi') && this.canGrow(this.y + 1, this.x - 1, 'soil', rootTipBool)) &&
-            ((grid[this.y + 1][this.x + 1] === 'soil' || grid[this.y + 1][this.x + 1] == 'fungi') && this.canGrow(this.y + 1, this.x + 1, 'soil', rootTipBool)) && shouldBranch) {
-
+        // If shouldBranch is true, and there is enough space to grow, grow 2 roots diagonally down in opposite directions (enough space means the grid it is growing onto + both adjacent grids to that are soil)
+        if (((grid[this.y + 1][this.x - 1] === 'soil' || grid[this.y + 1][this.x - 1] == element2) && this.canGrow(this.y + 1, this.x - 1, 'soil', rootTipBool)) &&
+            ((grid[this.y + 1][this.x + 1] === 'soil' || grid[this.y + 1][this.x + 1] == element2) && this.canGrow(this.y + 1, this.x + 1, 'soil', rootTipBool)) && shouldBranch) {
+            
             // GROWS TOO QUICK IF YOU HAVE THIS. BUT THIS IS CORRECT IMPLEMENTATION
-            //grid[this.y + 1][this.x - 1] = 'rootTip';
+            // grid[this.y + 1][this.x - 1] = 'rootTip';
 
-            console.log("CREATING ROOT TIP");
+            // Incorrect implementation but grows at desired speed
+            grid[this.y + 1][this.x - 1] = 'soil';
 
-            // Create a new rootTip object for new branch
-            let branchRootTip = new RootTip(this.y + 1, this.x + 1, totalIndex++);
 
-            branchRootTip.length = this.length + 2;
+            switch (newElement) {
+                case 'rootTip':
+                    console.log("CREATING ROOT TIP", newElement);
+                    // Create a new rootTip object for branched root tip
+                    let branchRootTip = new RootTip(this.y + 1, this.x + 1, totalIndex++);
+                    branchRootTip.length = this.length + 2;
+                    elementsArray.push(branchRootTip);
+                    break;
+                case 'fungi':
+                    console.log("CREATING FUNGI", newElement);
+                    // Create a new rootTip object for branched root tip
+                    let branchFungi = new Fungi(this.y + 1, this.x + 1, false, totalIndex++);
+                    branchFungi.length = this.length + 2;
+                    branchFungi.branchElement = this.branchElement;
+                    elementsArray.push(branchFungi);
+                    break;
+            }
 
-            elementsArray.push(branchRootTip);
-            grid[this.y + 1][this.x + 1] = 'rootTip';
-            grid[this.y][this.x] = 'root';
-
-            // Update Current branch
+            grid[this.y + 1][this.x + 1] = newElement;
+            grid[this.y][this.x] = oldElement;
+            // Update length
             this.length += 2;
             this.y++;
             this.x--;
 
             // Not branching but there is enough space to grow, grow in that direction
-        } else if ((grid[this.y + 1][this.x + x_direction] === 'soil' || grid[this.y + 1][this.x + x_direction] === 'fungi') && this.canGrow(this.y + 1, this.x + x_direction, 'soil', rootTipBool)) {
+        } else if ((grid[this.y + 1][this.x + x_direction] === 'soil' || grid[this.y + 1][this.x + x_direction] === element2) && this.canGrow(this.y + 1, this.x + x_direction, 'soil', rootTipBool)) {
             // Update length
             this.length += 1;
-            grid[this.y + 1][this.x + x_direction] = 'rootTip';
-            grid[this.y][this.x] = 'root';
+            grid[this.y + 1][this.x + x_direction] = newElement;
+            grid[this.y][this.x] = oldElement;
             this.y++;
             this.x += x_direction;
             // Just grow at the same height and branch out sideways
-        } else if ((grid[this.y][this.x + x_direction] === 'soil' || grid[this.y][this.x + x_direction] === 'fungi') && this.canGrow(this.y, this.x + x_direction, 'soil', rootTipBool)) {
+        } else if ((grid[this.y][this.x + x_direction] === 'soil' || grid[this.y][this.x + x_direction] === element2) && this.canGrow(this.y, this.x + x_direction, 'soil', rootTipBool)) {
             // Update length
             this.length += 1;
-            grid[this.y][this.x + x_direction] = 'rootTip';
-            grid[this.y][this.x] = 'root';
+            grid[this.y][this.x + x_direction] = newElement;
+            grid[this.y][this.x] = oldElement;
             this.x += x_direction;
 
             // If no block is below the root, remove root
         } else if (grid[this.y + 1][this.x] === null) {
             grid[this.y][this.x] = null;
         }
+        /////// NEED TO FIX THIS PART IF REIMPLEMENTING. SO WE DONT REMOVE ROOTTIP FROM ARRAY
+/*        else {
+            // No space to grow
+            if ((grid[this.y + 1][this.x - x_direction] != 'soil' ||
+                (grid[this.y + 1][this.x - x_direction] != element2)) && !(this.canGrow(this.y + 1, this.x - x_direction, 'soil', rootTipBool))) {
+                // Remove from array
+                console.log("REMOVING");
+                elementsArray.splice(index, 1);
+                totalIndex--;
+            }
+            console.log("CANT DO ANYTHING");
+        }*/
 
         this.updateGrowthSpeed();
         console.log("UPDATED GROWTH SPEED", totalIndex, totalRootIndex);
         return totalIndex;
-    }
-
+    } 
+    
 }
 
 // Test class for Roots
 class RootTip extends RootStructure {
     constructor(startingY, startingX, index) {
-        super(startingY, startingX, 15, 500, 'rootTip', 1000, index);
+        super(startingY, startingX, 30, 100, 'rootTip', 1000, index);
     }
 }
 
@@ -270,74 +308,6 @@ class Fungi extends RootStructure {
                             }
                         }*/
     }
-
-    // Fuction to grow fungi by one block, Fungi can only grow into soil
-    expandRoot(elementsArray, index, totalIndex) {
-
-        // Randomly choose -1, 0, or 1 for x growth direction (either grow left-down, down, right-down)
-        let x_direction = Math.floor(Math.random() * 3) - 1;
-
-        console.log("GROWING fungi", index);
-
-        // Set initial values
-        let rootTipBool = false;
-        let prob = 0.2;
-
-        if (this.branchElemenet != null && this.branchElement.attached == true && this.nutrientBoosted == false) {
-            this.growthSpeed = Math.ceil(this.growthSpeed * (2 / 3));
-            this.startingSpeed = Math.ceil(this.startingSpeed * (2 / 3));
-            this.nutrientBoosted = true;
-        }
-
-        // Set the probability to branch into 2 roots
-        let shouldBranch = Math.random() < prob;
-
-        // If shouldBranch is true, and there is enough space to grow, grow an additional branch in the bottom right direction
-        if (((grid[this.y + 1][this.x - 1] === 'soil') && this.canGrow(this.y + 1, this.x - 1, 'soil', rootTipBool)) &&
-            ((grid[this.y + 1][this.x + 1] === 'soil') && this.canGrow(this.y + 1, this.x + 1, 'soil', rootTipBool)) && shouldBranch) {
-
-            // GROWS TOO QUICK IF YOU HAVE THIS. BUT THIS IS CORRECT IMPLEMENTATION
-            //grid[this.y + 1][this.x - 1] = 'rootTip';
-
-            console.log("CREATING FUNGI");
-            // Create a new rootTip object for branched root tip
-            let branchFungi = new Fungi(this.y + 1, this.x + 1, false, totalIndex++);
-            branchFungi.length = this.length + 2;
-            branchFungi.branchElement = this.branchElement;
-            elementsArray.push(branchFungi);
-
-            grid[this.y + 1][this.x + 1] = 'fungi';
-            grid[this.y][this.x] = 'fungi';
-            // Update length
-            this.length += 2;
-            this.y++;
-            this.x--;
-
-            // Not branching but there is enough space to grow, grow in that direction
-        } else if ((grid[this.y + 1][this.x + x_direction] === 'soil') && this.canGrow(this.y + 1, this.x + x_direction, 'soil', rootTipBool)) {
-            // Update length
-            this.length += 1;
-            grid[this.y + 1][this.x + x_direction] = 'fungi';
-            grid[this.y][this.x] = 'fungi';
-            this.y++;
-            this.x += x_direction;
-            // Just grow at the same height and branch out sideways
-        } else if ((grid[this.y][this.x + x_direction] === 'soil') && this.canGrow(this.y, this.x + x_direction, 'soil', rootTipBool)) {
-            // Update length
-            this.length += 1;
-            grid[this.y][this.x + x_direction] = 'fungi';
-            grid[this.y][this.x] = 'fungi';
-            this.x += x_direction;
-
-            // If no block is below the root, remove root
-        } else if (grid[this.y + 1][this.x] === null) {
-            grid[this.y][this.x] = null;
-        }
-
-        this.updateGrowthSpeed();
-        console.log("UPDATED GROWTH SPEED", totalIndex, totalRootIndex);
-        return totalIndex;
-    }
 }
 
 const elements = {
@@ -398,21 +368,6 @@ elements.sand.behavior.push(function (y, x, grid) {
     // ... rest of the sand behavior ...
 });
 
-elements.sand.behavior.push(function (y, x, grid) {
-    // Sand behavior logic goes here, based on the extracted updateGrid function
-    if (grid[y + 1][x] === null) {
-        // Move sand down
-        grid[y + 1][x] = 'sand';
-        grid[y][x] = null;
-    } else if (grid[y + 1][x] === 'water') {
-        // If there's water below the sand, swap the two
-        grid[y + 1][x] = 'sand';
-        grid[y][x] = 'water';
-    }
-    // ... rest of the sand behavior ...
-});
-
-
 elements.soil.behavior.push(function (y, x, grid) {
     if (grid[y + 1][x] === null) {
         // If the bottom is empty, let the dirt move downward
@@ -448,6 +403,30 @@ elements.soil.behavior.push(function (y, x, grid) {
     }
 });
 
+elements.stone.behavior.push(function (y, x, grid) {
+});
+
+elements.water.behavior.push(function (y, x, grid) {
+    if (grid[y + 1][x] === null) {
+        grid[y + 1][x] = 'water';
+        grid[y][x] = null;
+    }
+    else if (grid[y + 1][x] === 'soil') {
+        if (Math.random() < 0.2) {
+            grid[y + 1][x] = 'water';
+            grid[y][x] = 'water';
+        }
+    }
+    else if (grid[y + 1][x].startsWith('stone-')) {
+        const randomDirection = Math.random() < 0.5 ? -1 : 1;
+        const newX = x + randomDirection;
+        if (newX >= 0 && newX < gridWidth && grid[y][newX] === null) {
+            grid[y + 1][newX] = 'water';
+            grid[y][x] = null;
+        }
+    }
+});
+
 // The body of the root
 elements.root.behavior.push(function (y, x, grid) {
     // If no block below, remove root
@@ -459,23 +438,17 @@ elements.root.behavior.push(function (y, x, grid) {
 // This is the ends of the roots
 elements.rootTip.behavior.push(function (y, x, grid) {
 
-    // Update for every RootTip instance in the grid array
+    // For every RootTip instance in the grid array, check if it can grow
     if (totalRootIndex > 0) {
-
-        // Get the current rootTip object and check if it can grow
         curr = elements[grid[y][x]].rootElements[rootIndex];
-        result = curr.growBool(totalRootIndex);
 
-        // Update totalRootIndex
+        result = curr.growBool(elements.rootTip.rootElements, rootIndex, totalRootIndex);
         totalRootIndex = result[1];
-
-        // If it can grow, expand root
+        // If root is not at max size, expand root
         if (result[0]) {
-            totalRootIndex = curr.expandRoot(elements.rootTip.rootElements, rootIndex, totalRootIndex);
+            totalRootIndex = curr.expandRoot(elements.rootTip.rootElements, 'rootTip', 'root', rootIndex, totalRootIndex);
         }
         rootIndex++;
-
-        // Reset index once we finish iterating through all the rootTips
         if (rootIndex >= totalRootIndex) {
             rootIndex = 0;
         }
@@ -487,7 +460,7 @@ elements.fungi.behavior.push(function (y, x, grid) {
     if (totalFungiIndex > 0) {
         curr = elements[grid[y][x]].fungiElements[fungiIndex];
         // If root is not at max size, expand root
-        result = curr.growBool(totalFungiIndex);
+        result = curr.growBool(elements.fungi.fungiElements, fungiIndex, totalFungiIndex);
         totalFungiIndex = result[1];
         if (result[0]) {
             // Branch out the root tip and attach to it
@@ -501,11 +474,10 @@ elements.fungi.behavior.push(function (y, x, grid) {
                 }
             }
             else {
-                totalFungiIndex = curr.expandRoot(elements.fungi.fungiElements, fungiIndex, totalFungiIndex);
+                totalFungiIndex = curr.expandRoot(elements.fungi.fungiElements, 'fungi', 'fungi', fungiIndex, totalFungiIndex);
             }
         }
         fungiIndex++;
-
         if (fungiIndex >= totalFungiIndex) {
             fungiIndex = 0;
         }
@@ -534,18 +506,41 @@ function updateGrid() {
     }
 }
 
+// function drawGrid() {
+//     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+//     for (let y = 0; y < gridHeight; y++) {
+//         for (let x = 0; x < gridWidth; x++) {
+//             if (grid[y][x] in elements) {
+//                 ctx.fillStyle = elements[grid[y][x]].color;
+//                 ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+//             }
+//         }
+//     }
+
+// }
 function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
     for (let y = 0; y < gridHeight; y++) {
         for (let x = 0; x < gridWidth; x++) {
-            if (grid[y][x] in elements) {
-                ctx.fillStyle = elements[grid[y][x]].color;
+            const element = grid[y][x];
+            if (element && element.startsWith('stone-')) {
+                if (isBoundary(x, y, grid, element)) {
+                    // If it's a boundary pixel, paint it black
+                    ctx.fillStyle = "#140e01"; // black color for outline
+                } else {
+                    ctx.fillStyle = stoneColors[element];
+                }
+                ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+            
+            } 
+            
+            else if (element in elements) {
+                ctx.fillStyle = elements[element].color;
                 ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
             }
         }
     }
-
 }
 
 
@@ -576,23 +571,29 @@ canvas.addEventListener('mousedown', (event) => {
 });
 
 
+
 function loop() {
     updateGrid();
     drawGrid();
     requestAnimationFrame(loop);
     timeStep++;
-    console.log("TOTAL GROWTH SPEED", growthspeed_updates);
 }
 
+// Run once at the start to initialize the grid
 window.addEventListener('load', function () {
     // Logic to draw sand on the canvas automatically
     // This is a placeholder; the actual logic will depend on the structure of the JS code.
     loop();
-    drawAutomatically();
+    //drawSandAutomatically();
+    drawFungiAutomatically();
+    drawSoilAutomatically();
 });
 
-function drawAutomatically() {
-    // Logic to preload elements onto the grid
+function drawSandAutomatically() {
+    // Logic to draw sand on the canvas
+    // This is a placeholder; the actual logic will depend on the structure of the JS code.
+    // For example:
+
 
     // fill background up with soil
     for (let i = 80; i < 150; i++) {
@@ -666,4 +667,144 @@ function drawAutomatically() {
     newFungi.branchElement = rootBranch;
 
     // Call any other functions required to render the grid on the canvas.
+}
+
+function drawFungiAutomatically() {
+    // Logic to draw sand on the canvas
+    // This is a placeholder; the actual logic will depend on the structure of the JS code.
+    // For example:
+
+    // fill background up with soil
+    /*
+    for (let i = 80; i < 150; i++) {
+        for (let j = 0; j < 200; j++) {
+            grid[i][j] = 'soil';
+        }
+    }
+    */
+    // // grow some roots
+    grid[79][25] = 'rootTip';
+    elements.rootTip.rootElements.push(new RootTip(79, 25, totalRootIndex++));
+    grid[79][75] = 'rootTip';
+    elements.rootTip.rootElements.push(new RootTip(79, 75, totalRootIndex++));
+    grid[79][90] = 'rootTip';
+    elements.rootTip.rootElements.push(new RootTip(79, 90, totalRootIndex++));
+    // Grow some fungi
+    // Testing fungi for root 1
+    grid[84][21] = 'fungi';
+    let newFungi = new Fungi(84, 21, false, totalFungiIndex++);
+    elements.fungi.fungiElements.push(newFungi);
+    let rootBranch = new Fungi(84, 21, true, totalFungiIndex++);
+    elements.fungi.fungiElements.push(rootBranch);
+    newFungi.branchElement = rootBranch;
+    grid[90][29] = 'fungi';
+    newFungi = new Fungi(90, 29, false, totalFungiIndex++);
+    elements.fungi.fungiElements.push(newFungi);
+    // Root that will branch to RootTip
+    rootBranch = new Fungi(90, 29, true, totalFungiIndex++);
+    elements.fungi.fungiElements.push(rootBranch);
+    newFungi.branchElement = rootBranch;
+
+    // Testing fungi for root 2
+    grid[85][72] = 'fungi';
+    newFungi = new Fungi(85, 72, false, totalFungiIndex++);
+    elements.fungi.fungiElements.push(newFungi);
+    rootBranch = new Fungi(85, 72, true, totalFungiIndex++);
+    elements.fungi.fungiElements.push(rootBranch);
+    newFungi.branchElement = rootBranch;
+    grid[87][75] = 'fungi';
+    newFungi = new Fungi(87, 75, false, totalFungiIndex++);
+    elements.fungi.fungiElements.push(newFungi);
+    rootBranch = new Fungi(87, 75, true, totalFungiIndex++);
+    elements.fungi.fungiElements.push(rootBranch);
+    newFungi.branchElement = rootBranch;
+    grid[85][78] = 'fungi';
+    newFungi = new Fungi(85, 78, false, totalFungiIndex++);
+    elements.fungi.fungiElements.push(newFungi);
+    rootBranch = new Fungi(85, 78, true, totalFungiIndex++);
+    elements.fungi.fungiElements.push(rootBranch);
+    newFungi.branchElement = rootBranch;
+    // Testing fungi for root 3
+    grid[83][87] = 'fungi';
+    newFungi = new Fungi(83, 87, false, totalFungiIndex++);
+    elements.fungi.fungiElements.push(newFungi);
+    rootBranch = new Fungi(83, 87, true, totalFungiIndex++);
+    elements.fungi.fungiElements.push(rootBranch);
+    newFungi.branchElement = rootBranch;
+    grid[84][95] = 'fungi';
+    newFungi = new Fungi(84, 95, false, totalFungiIndex++);
+    elements.fungi.fungiElements.push(newFungi);
+    rootBranch = new Fungi(84, 95, true, totalFungiIndex++);
+    elements.fungi.fungiElements.push(rootBranch);
+    newFungi.branchElement = rootBranch;
+    // Call any other functions required to render the grid on the canvas.
+}
+
+function drawSoilAutomatically() {
+    // water
+    for (let y = 130; y < 150; y++) {
+        for (x = 0; x < gridWidth; x++) {
+            if (grid[y][x] === null) {
+                grid[y][x] = 'water';
+            }
+        }
+    }
+    for (let y = 80; y < 150; y++) {
+        for (let x = 0; x < gridWidth; x++) {
+            if (grid[y][x] === null) {
+                grid[y][x] = 'soil';
+            }
+            if (grid[y][x] === 'water' || grid[y][x] === 'soil') {
+                if (Math.random() < 0.005) {
+                    let stoneSizeX = Math.floor(Math.random() * 2) + 4;
+                    let stoneSizeY = Math.floor(Math.random() * 2) + 4;
+                    const stoneId = `stone-${stoneIdCounter++}`;
+                    const variation = Math.floor(Math.random() * 20) - 10; // Random value between -10 and 10
+                    stoneColors[stoneId] = adjustColor(elements.stone.color, variation);
+                    for (let i = 0; i < stoneSizeX; i++) {
+                        for (let j = 0; j < stoneSizeY; j++) {
+                            const stoneX = x + i;
+                            const stoneY = y - j;
+                            const rotationAngle = Math.random() * Math.PI * 2;
+                            for (let i = 0; i < stoneSizeX; i++) {
+                                for (let j = 0; j < stoneSizeY; j++) {
+                                    const stoneX = x + i;
+                                    const stoneY = y - j;
+                                    // Calculate elliptical values with increased noise
+                                    const noise = Math.random() * 0.3 - 0.15;
+                                    let ellipseX = (i - stoneSizeX / 2 + noise) / (stoneSizeX / 2);
+                                    let ellipseY = (j - stoneSizeY / 2 + noise) / (stoneSizeY / 2);
+                                    // Rotate the coordinates
+                                    const rotatedX = ellipseX * Math.cos(rotationAngle) - ellipseY * Math.sin(rotationAngle);
+                                    const rotatedY = ellipseX * Math.sin(rotationAngle) + ellipseY * Math.cos(rotationAngle);
+                                    // Use the elliptical equation to determine if a pixel is inside the ellipse
+                                    if (rotatedX * rotatedX + rotatedY * rotatedY <= 1) {
+                                        grid[stoneY][stoneX] = stoneId;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+}
+// Function used to get color of stone?
+function adjustColor() {
+    const colors = ["#2a1f04", "#362804", "#201703"];
+    const randomIndex = Math.floor(Math.random() * colors.length);
+    return colors[randomIndex];
+}
+
+function isStone(cell) {
+    return cell && cell.startsWith('stone-');
+}
+function isBoundary(x, y, grid, stoneId) {
+    if (x > 0 && !isStone(grid[y][x - 1])) return true;          // Left
+    if (x < gridWidth - 1 && !isStone(grid[y][x + 1])) return true; // Right
+    if (y > 0 && !isStone(grid[y - 1][x])) return true;          // Above
+    if (y < gridHeight - 1 && !isStone(grid[y + 1][x])) return true; // Below
+    return false;
 }
