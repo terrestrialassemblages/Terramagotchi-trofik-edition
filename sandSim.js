@@ -35,8 +35,8 @@ class RootStructure {
     }
 
     // Determines if root should grow or not
-    //////////// LATER NEED TO REMOVE INPUT PARAMETERS AS THEY ARE NOT USED AND ADJUST BEHAVIOUR FOR FUNGI AND ROOT TIP 
     growBool(totalIndex) {
+        // If root is at max size, stop growing
         if (this.length == this.maxGrowthLength) {
             // Mark the root as Developed
             this.developed = true;
@@ -50,7 +50,9 @@ class RootStructure {
     }
 
     sugarEaten() {
-        // If developed == true, and there is no sugar surrounding the root, sugar must have been eaten. Set developed to false and increase max_growth length for rootTip
+        // If developed == true, and a full bacteria that has eaten liquid sugar touches the tip of the root, increase length of the root.
+        // Set developed to false and increase max_growth length for rootTip
+
         // IMPLEMENT LATER
     }
 
@@ -81,21 +83,13 @@ class RootStructure {
     }
 
     // Function to produce liquid sugar from root tip
+    // CHANGED TO PRODUCE ONLY 1 LIQUID SUGAR AT A TIME, CURRENTLY DOES NOT RESTORE THE PREVIOUS BLOCK IF LIQUID SUGAR GETS EATEN
     produceSugar() {
         if (grid[this.y][this.x] == 'rootTip') {
-            // Produce sugar to the left, right, and under root tip if there is space
-            //console.log("PRODUCING SUGAR");
-            if (grid[this.y][this.x - 1] === 'soil') {
-                grid[this.y][this.x - 1] = 'liquidSugar';
-                //elements.liquidSugar.sugarElements.push(new LiquidSugar(this.y, this.x - 1, this));
-            }
-            if (grid[this.y][this.x + 1] === 'soil') {
-                grid[this.y][this.x + 1] = 'liquidSugar';
-                //elements.liquidSugar.sugarElements.push(new LiquidSugar(this.y, this.x + 1, this));
-            }
-            if (grid[this.y + 1][this.x] === 'soil') {
+
+            // If the block below is soil or fungi, produce liquid sugar
+            if (grid[this.y + 1][this.x] === 'soil' || grid[this.y + 1][this.x] === 'fungi') {
                 grid[this.y + 1][this.x] = 'liquidSugar';
-                //elements.liquidSugar.sugarElements.push(new LiquidSugar(this.y + 1, this.x, this));
             }
         }
     }
@@ -117,19 +111,17 @@ class RootStructure {
         if (((grid[this.y + 1][this.x - 1] === 'soil' || grid[this.y + 1][this.x - 1] == 'fungi') && this.canGrow(this.y + 1, this.x - 1, 'soil', rootTipBool)) &&
             ((grid[this.y + 1][this.x + 1] === 'soil' || grid[this.y + 1][this.x + 1] == 'fungi') && this.canGrow(this.y + 1, this.x + 1, 'soil', rootTipBool)) && shouldBranch) {
 
-            // GROWS TOO QUICK IF YOU HAVE THIS. BUT THIS IS CORRECT IMPLEMENTATION
-            //grid[this.y + 1][this.x - 1] = 'rootTip';
-
             // Create a new rootTip object for new branch
             let branchRootTip = new RootTip(this.y + 1, this.x + 1, totalIndex++);
-
             branchRootTip.length = this.length + 2;
-
             elementsArray.push(branchRootTip);
             grid[this.y + 1][this.x + 1] = 'rootTip';
-            grid[this.y][this.x] = 'root';
 
-            // Update Current branch
+            // Produce sugar at branching point
+            this.produceSugar();
+
+            // Update Current rootTip object
+            grid[this.y][this.x] = 'root';
             this.length += 2;
             this.y++;
             this.x--;
@@ -158,7 +150,6 @@ class RootStructure {
         this.updateGrowthSpeed();
         return totalIndex;
     }
-
 }
 
 // Test class for Roots
@@ -505,7 +496,7 @@ const elements = {
     },
 
     fungi: {
-        color: "white",
+        color: "#808080",
         fungiElements: [],
         behavior: [],
     },
@@ -653,7 +644,6 @@ elements.fungi.behavior.push(function (y, x, grid) {
 });
 
 elements.liquidSugar.behavior.push(function (y, x, grid) {
-
     // If no block below, remove
     if (grid[y + 1][x] === null) {
         grid[y][x] = null;
@@ -740,70 +730,34 @@ function drawAutomatically() {
 
     }
 
-    // // grow some roots
+    // Grow some roots and fungi
+
+    // 79 25
     grid[79][25] = 'rootTip';
     elements.rootTip.rootElements.push(new RootTip(79, 25, totalRootIndex++));
+    grid[79][25] = 'fungi';
+    elements.fungi.fungiElements.push(new Fungi(79, 25, false, totalFungiIndex++));
+    
+
+    // 79 75
     grid[79][75] = 'rootTip';
     elements.rootTip.rootElements.push(new RootTip(79, 75, totalRootIndex++));
+    grid[79][75] = 'fungi';
+    elements.fungi.fungiElements.push(new Fungi(79, 75, false, totalFungiIndex++));
+
+
+    // 79 90
     grid[79][90] = 'rootTip';
     elements.rootTip.rootElements.push(new RootTip(79, 90, totalRootIndex++));
-
-    // Grow some fungi
-    // Testing fungi for root 1
-    // 84 21
-    grid[79][25] = 'fungi';
-    let newFungi = new Fungi(79, 25, false, totalFungiIndex++);
-    elements.fungi.fungiElements.push(newFungi);
-    /*let rootBranch = new Fungi(84, 21, true, totalFungiIndex++);
-    elements.fungi.fungiElements.push(rootBranch);
-    newFungi.branchElement = rootBranch;*/
-
-    // 90 29
-    grid[79][75] = 'fungi';
-    newFungi = new Fungi(79, 75, false, totalFungiIndex++);
-    elements.fungi.fungiElements.push(newFungi);
-    /*// Root that will branch to RootTip
-    rootBranch = new Fungi(90, 29, true, totalFungiIndex++);
-    elements.fungi.fungiElements.push(rootBranch);
-    newFungi.branchElement = rootBranch;*/
+    // grid[79][90] = 'fungi';
+    // elements.fungi.fungiElements.push(new Fungi(79, 90, false, totalFungiIndex++));
 
 
-    /*// Testing fungi for root 2
-    grid[85][72] = 'fungi';
-    newFungi = new Fungi(85, 72, false, totalFungiIndex++);
-    elements.fungi.fungiElements.push(newFungi);
-    rootBranch = new Fungi(85, 72, true, totalFungiIndex++);
-    elements.fungi.fungiElements.push(rootBranch);
-    newFungi.branchElement = rootBranch;
+    // 79 140
+    grid[79][140] = 'fungi';
+    elements.fungi.fungiElements.push(new Fungi(79, 140, false, totalFungiIndex++));
+    
 
-    grid[87][75] = 'fungi';
-    newFungi = new Fungi(87, 75, false, totalFungiIndex++);
-    elements.fungi.fungiElements.push(newFungi);
-    rootBranch = new Fungi(87, 75, true, totalFungiIndex++);
-    elements.fungi.fungiElements.push(rootBranch);
-    newFungi.branchElement = rootBranch;
-
-    grid[85][78] = 'fungi';
-    newFungi = new Fungi(85, 78, false, totalFungiIndex++);
-    elements.fungi.fungiElements.push(newFungi);
-    rootBranch = new Fungi(85, 78, true, totalFungiIndex++);
-    elements.fungi.fungiElements.push(rootBranch);
-    newFungi.branchElement = rootBranch;
-
-    // Testing fungi for root 3
-    grid[83][87] = 'fungi';
-    newFungi = new Fungi(83, 87, false, totalFungiIndex++);
-    elements.fungi.fungiElements.push(newFungi);
-    rootBranch = new Fungi(83, 87, true, totalFungiIndex++);
-    elements.fungi.fungiElements.push(rootBranch);
-    newFungi.branchElement = rootBranch;
-
-    grid[84][95] = 'fungi';
-    newFungi = new Fungi(84, 95, false, totalFungiIndex++);
-    elements.fungi.fungiElements.push(newFungi);
-    rootBranch = new Fungi(84, 95, true, totalFungiIndex++);
-    elements.fungi.fungiElements.push(rootBranch);
-    newFungi.branchElement = rootBranch;*/
 
     // Call any other functions required to render the grid on the canvas.
 }
