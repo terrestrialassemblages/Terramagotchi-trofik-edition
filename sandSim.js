@@ -14,9 +14,6 @@ let totalRootIndex = 0;
 let fungiIndex = 0;
 let totalFungiIndex = 0;
 
-// FOR TESTING PURPOSES
-let growthspeed_updates = 0;   // tracks total number of times growthspeed was updated
-
 
 class RootStructure {
     constructor(startingY, startingX, growthLimit, growthSpeed, elementName, startingSpeed, index) {
@@ -44,6 +41,7 @@ class RootStructure {
         if (this.developed == true && this.elementName == 'rootTip') {
             // If root is developed, produce sugar
             this.produceSugar();
+            //console.log("FULLY GROWN, PRODUCING SUGAR");
             return ([false, totalIndex]);
         }
         return ([(timeStep % this.growthSpeed == 0) && (this.length < this.maxGrowthLength), (totalIndex)]);
@@ -62,8 +60,6 @@ class RootStructure {
         // let distance = Math.sqrt(Math.pow(Math.abs(this.y - this.startingY), 2) + (Math.pow(Math.abs(this.x - this.startingX), 2)));
         // Growth speed scaled according to difference in length from maxGrowthLength
         this.growthSpeed = Math.ceil(this.startingSpeed / (1 + this.maxGrowthLength / this.length));
-
-        growthspeed_updates++;  // FOR TESTING PURPOSES
     }
 
     // Checks neighboring cells
@@ -97,6 +93,8 @@ class RootStructure {
     // Fuction to grow root by one block
     expandRoot(elementsArray, index, totalIndex) {
 
+        console.log("EXPANDING ROOT NOW", this.elementName);
+
         // Randomly choose -1, 0, or 1 for x growth direction (either grow left-down, down, right-down)
         let x_direction = Math.floor(Math.random() * 3) - 1;
 
@@ -112,13 +110,14 @@ class RootStructure {
             ((grid[this.y + 1][this.x + 1] === 'soil' || grid[this.y + 1][this.x + 1] == 'fungi') && this.canGrow(this.y + 1, this.x + 1, 'soil', rootTipBool)) && shouldBranch) {
 
             // Create a new rootTip object for new branch
+            grid[this.y + 1][this.x + 1] = 'rootTip';
             let branchRootTip = new RootTip(this.y + 1, this.x + 1, totalIndex++);
             branchRootTip.length = this.length + 2;
             elementsArray.push(branchRootTip);
-            grid[this.y + 1][this.x + 1] = 'rootTip';
 
             // Produce sugar at branching point
             this.produceSugar();
+            console.log("BRANCHING, PRODUCE SUGAR");
 
             // Update Current rootTip object
             grid[this.y][this.x] = 'root';
@@ -194,17 +193,17 @@ class Fungi extends RootStructure {
     }
 
     findRootTip() {
-        console.log("FINDING ROOT TIP");
+        //console.log("FINDING ROOT TIP");
         let minX = Number.MAX_VALUE;
         let minY = Number.MAX_VALUE;
         let minDistance = Number.MAX_VALUE;
         for (let i = 0; i < totalRootIndex; i++) {
             curr = elements.rootTip.rootElements[i];
-            console.log("TESTING X", curr.x, curr.y, this.x, this.y);
+            //console.log("TESTING X", curr.x, curr.y, this.x, this.y);
             // Find pathagoras distance away from it
             let distance = Math.sqrt(Math.pow(this.x - curr.x, 2) + Math.pow(this.y - curr.y, 2));
             if (distance < minDistance) {
-                console.log("FOUND MIN", distance, minDistance, minX, minY, curr.x, curr.y);
+                //console.log("FOUND MIN", distance, minDistance, minX, minY, curr.x, curr.y);
                 minDistance = distance;
                 // Could just set to the element itself and not its exact coordinates at that point
                 minX = curr.x;
@@ -216,11 +215,11 @@ class Fungi extends RootStructure {
         this.attachedRootDistance[0] = minY - this.y;
         this.attachedRootDistance[1] = minX - this.x;
         this.nearestRootFound = true;
-        console.log("NEAREST ROOT", this.attachedRootCoord, this.y, this.x, this.attachedRootDistance);
+        //console.log("NEAREST ROOT", this.attachedRootCoord, this.y, this.x, this.attachedRootDistance);
     }
 
     expandFungiToRoot() {
-        console.log("EXPANDING TO ROOT", rootIndex, this.growthSpeed, timeStep);
+        //console.log("EXPANDING TO ROOT", rootIndex, this.growthSpeed, timeStep);
         // Nothing can stop Fungi as it can go through aggregates and can simply work around the bacteria
         for (let i = -1; i <= 1; i++) {
             for (let j = -1; j <= 1; j++) {
@@ -229,7 +228,7 @@ class Fungi extends RootStructure {
                     this.attached = true;
                     elements.fungi.fungiElements.splice(this.index, 1);
                     totalFungiIndex--;
-                    console.log("ATTACHED");
+                    //console.log("ATTACHED");
                     return;
                 }
             }
@@ -252,11 +251,11 @@ class Fungi extends RootStructure {
             for (let spaceX = -1; spaceX <= this.spacing; spaceX++) {
                 //console.log("CANGROW CHECK", y, (yDir * spaceY), y + (yDir * spaceY), this.y, x, (xDir * spaceX), x + (xDir * spaceX), this.x);
                 for (let element of forbElements) {
-                    console.log("CHECKING ELEMENT", element);
+                    //console.log("CHECKING ELEMENT", element);
                     if (grid[y + (yDir * spaceY)][x + (xDir * spaceX)] == element) {
-                        console.log("FOUND FUNGI");
+                        //console.log("FOUND FUNGI");
                         if (y + (yDir * spaceY) == this.y && (x + (xDir * spaceX)) == this.x) {
-                            console.log("CHECKING OG POS");
+                            //console.log("CHECKING OG POS");
                             continue;
                         }
                         //console.log("CAN'T GROW")
@@ -265,7 +264,7 @@ class Fungi extends RootStructure {
                 }
             }
         }
-        console.log("FUNGI CAN INDEED GROW HERE", y, x, xDir);
+        //console.log("FUNGI CAN INDEED GROW HERE", y, x, xDir);
         return true;
     }
 
@@ -281,7 +280,7 @@ class Fungi extends RootStructure {
 
     // Fuction to grow fungi by one block, Fungi can only grow into soil
     expandRoot(elementsArray, index, totalIndex) {
-        console.log("EXPANDING FUNGI NOW", this.index, totalFungiIndex, totalIndex, this.countY, this.countX);
+        //console.log("EXPANDING FUNGI NOW", this.index, totalFungiIndex, totalIndex, this.countY, this.countX);
         let remove = false;
         let finalGrowDir = null;
         let growIndex = null;
@@ -312,7 +311,7 @@ class Fungi extends RootStructure {
             growOptions.splice(1, 1);
         }
 
-        console.log("GROWING fungi", index);
+        //console.log("GROWING fungi", index);
 
         // Set initial values
         let rootTipBool = false;
@@ -365,7 +364,7 @@ class Fungi extends RootStructure {
 
         // No valid grow directions, so remove from fungiElements
         if (remove == true) {
-            console.log("REMOVING");
+            //console.log("REMOVING");
             elements.fungi.fungiElements.splice(this.index, 1);
             totalFungiIndex--;
             return;
@@ -401,16 +400,16 @@ class Fungi extends RootStructure {
             // If original fungi grows horizontal, branch grows vertical
             if (finalGrowY == 0 && finalGrowX == this.expandXDir) {
                 newY = this.y + 1;
-                console.log("BRANCING DOWN");
+                //console.log("BRANCING DOWN");
             }
             // If original fungi grows vertical (both up and down), branch goes horizontal
             else if (finalGrowX == 0 && finalGrowY == this.expandYDir) {
                 //newX = this.x + this.expandXDir;
-                console.log("BRANCING HORIZ");
+                //console.log("BRANCING HORIZ");
             }
             else if (finalGrowX == this.expandXDir && finalGrowY == this.expandYDir) {
                 newY = this.y + 1;
-                console.log("BRANCING DIAG", finalGrowY, finalGrowX);
+                //console.log("BRANCING DIAG", finalGrowY, finalGrowX);
             }
             // If original fungi grows diagonal, branch
             // Diagonal must be downwards as if it is upwards, it mean that going 
@@ -420,9 +419,9 @@ class Fungi extends RootStructure {
                 newXDir = -(this.expandXDir);
                 console.log("BRANCING DIAG", finalGrowY, finalGrowX);
             }*/
-            console.log("CHECKING BRANCH", newXDir);
+            //console.log("CHECKING BRANCH", newXDir);
             if (this.canGrow(newY, newX, newYDir, newXDir, forbElements)) {
-                console.log("BRANCHING", newY, newX, this.y + finalGrowY, this.x + finalGrowX);
+                //console.log("BRANCHING", newY, newX, this.y + finalGrowY, this.x + finalGrowX);
                 let branchFungi = new Fungi(newY, newX, false, totalFungiIndex++);
                 // Update all the variables
                 branchFungi.expandXDir = newXDir;
@@ -441,7 +440,7 @@ class Fungi extends RootStructure {
             else {
                 this.branchProb += 0.02;
             }
-            console.log("CHANGING Y X BRANCH");
+            //console.log("CHANGING Y X BRANCH");
             this.y += finalGrowY;
             this.x += finalGrowX;
         }
@@ -461,7 +460,7 @@ class Fungi extends RootStructure {
         //this.updateGrowthSpeed();
         this.growthSpeed = Math.round(this.growthSpeed * 1.3);
         this.updateSpacing();
-        console.log("UPDATED VALUES", this.growthSpeed, this.spacing, this.length, totalFungiIndex);
+        //console.log("UPDATED VALUES", this.growthSpeed, this.spacing, this.length, totalFungiIndex);
 
 
     }
@@ -617,7 +616,7 @@ elements.fungi.behavior.push(function (y, x, grid) {
         result = curr.growBool(totalFungiIndex);
         totalFungiIndex = result[1];
         if (result[0]) {
-            console.log("TIME TO GROW");
+            //console.log("TIME TO GROW");
             // Branch out to the root tip and attach to it
             if (curr.branchingToRoot == true && curr.attached == false) {
                 if (curr.nearestRootFound == false) {
@@ -694,7 +693,7 @@ canvas.addEventListener('mousedown', (event) => {
     } else {
         // Place the current element on the grid with Mouse1
         grid[y][x] = currentParticleType;
-        console.log(currentParticleType);
+        //console.log(currentParticleType);
         if (currentParticleType == 'rootTip') {
             elements[currentParticleType].rootElements.push(new RootTip(y, x, totalRootIndex++));
         }
