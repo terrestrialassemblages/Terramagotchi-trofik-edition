@@ -247,6 +247,11 @@ class Fungi extends RootStructure {
 
     // Should check 1 to right as well when going diagonal
     canGrow(y, x, yDir, xDir, forbElements) {
+        // If exceeds boundaries
+        if (y > gridHeight || y < 80 || x < 0 || x > gridWidth) {
+            return false;
+        }
+        // Loops through one above, one below, to spacing
         for (let spaceY = -1; spaceY <= this.spacing; spaceY++) {
             for (let spaceX = -1; spaceX <= this.spacing; spaceX++) {
                 //console.log("CANGROW CHECK", y, (yDir * spaceY), y + (yDir * spaceY), this.y, x, (xDir * spaceX), x + (xDir * spaceX), this.x);
@@ -731,30 +736,30 @@ function drawAutomatically() {
 
     // Grow some roots and fungi
 
-    // 79 25
-    grid[79][25] = 'rootTip';
-    elements.rootTip.rootElements.push(new RootTip(79, 25, totalRootIndex++));
-    grid[79][25] = 'fungi';
-    elements.fungi.fungiElements.push(new Fungi(79, 25, false, totalFungiIndex++));
+    // 80 25
+    grid[80][25] = 'rootTip';
+    elements.rootTip.rootElements.push(new RootTip(80, 25, totalRootIndex++));
+    grid[81][25] = 'fungi';
+    elements.fungi.fungiElements.push(new Fungi(81, 25, false, totalFungiIndex++));
     
 
-    // 79 75
-    grid[79][75] = 'rootTip';
-    elements.rootTip.rootElements.push(new RootTip(79, 75, totalRootIndex++));
-    grid[79][75] = 'fungi';
-    elements.fungi.fungiElements.push(new Fungi(79, 75, false, totalFungiIndex++));
+    // 80 75
+    grid[80][75] = 'rootTip';
+    elements.rootTip.rootElements.push(new RootTip(80, 75, totalRootIndex++));
+    grid[81][75] = 'fungi';
+    elements.fungi.fungiElements.push(new Fungi(81, 75, false, totalFungiIndex++));
 
 
-    // 79 90
-    grid[79][90] = 'rootTip';
-    elements.rootTip.rootElements.push(new RootTip(79, 90, totalRootIndex++));
+    // 80 90
+    grid[80][90] = 'rootTip';
+    elements.rootTip.rootElements.push(new RootTip(80, 90, totalRootIndex++));
     // grid[79][90] = 'fungi';
     // elements.fungi.fungiElements.push(new Fungi(79, 90, false, totalFungiIndex++));
 
 
-    // 79 140
-    grid[79][140] = 'fungi';
-    elements.fungi.fungiElements.push(new Fungi(79, 140, false, totalFungiIndex++));
+    // 81 140
+    grid[81][140] = 'fungi';
+    elements.fungi.fungiElements.push(new Fungi(81, 140, false, totalFungiIndex++));
     
 
 
