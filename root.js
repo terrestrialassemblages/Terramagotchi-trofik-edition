@@ -31,20 +31,13 @@ export default class RootStructure {
             // Mark the root as Developed
             this.developed = true;
         }
-        if (this.developed == true && this.elementName == 'rootTip') {
+        if ((timeStep % this.growthSpeed == 0) && this.developed == true && this.elementName == 'rootTip') {
             // If root is developed, produce sugar
             this.produceSugar();
             //console.log("FULLY GROWN, PRODUCING SUGAR");
             return ([false, totalIndex]);
         }
         return ([(timeStep % this.growthSpeed == 0) && (this.length < this.maxGrowthLength), (totalIndex)]);
-    }
-
-    sugarEaten() {
-        // If developed == true, and a full bacteria that has eaten liquid sugar touches the tip of the root, increase length of the root.
-        // Set developed to false and increase max_growth length for rootTip
-
-        // IMPLEMENT LATER
     }
 
     // Adjusts the growth speed depending on the current length
@@ -83,10 +76,25 @@ export default class RootStructure {
         }
     }
 
+    // Function to check if liquid sugar has been eaten. If yes, allows root to grow larger
+    sugarEaten() {
+        // If developed == true, and a full bacteria that has eaten liquid sugar touches the tip of the root, increase length of the root.
+        // Set developed to false and increase max_growth length for rootTip
+
+
+
+        if (this.developed == true && grid[this.y + 1][this.x] == 'bacteria') {
+            // Increase max length of rootTip
+            this.developed = false;
+            this.maxGrowthLength += 2;
+            console.log("SUGAR EATEN, INCREASING LENGTH FOR ROOT: ", this.index); 
+        }
+    }
+
     // Fuction to grow root by one block
     expandRoot(elementsArray, index, totalIndex) {
 
-        console.log("EXPANDING ROOT NOW", this.elementName);
+        console.log("EXPANDING ROOT NOW NO: ", this.index);
 
         // Randomly choose -1, 0, or 1 for x growth direction (either grow left-down, down, right-down)
         let x_direction = Math.floor(Math.random() * 3) - 1;
@@ -110,7 +118,7 @@ export default class RootStructure {
 
             // Produce sugar at branching point
             this.produceSugar();
-            console.log("BRANCHING, PRODUCE SUGAR");
+            //console.log("BRANCHING, PRODUCE SUGAR");
 
             // Update Current rootTip object
             grid[this.y][this.x] = 'root';

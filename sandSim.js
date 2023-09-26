@@ -172,25 +172,6 @@ elements.bacteria.behavior.push(function(y, x, grid) {
 });
 
 
-
-
-
-
-
-elements.sand.behavior.push(function (y, x, grid) {
-    // Sand behavior logic goes here, based on the extracted updateGrid function
-    if (grid[y + 1][x] === null) {
-        // Move sand down
-        grid[y + 1][x] = 'sand';
-        grid[y][x] = null;
-    } else if (grid[y + 1][x] === 'water') {
-        // If there's water below the sand, swap the two
-        grid[y + 1][x] = 'sand';
-        grid[y][x] = 'water';
-    }
-    // ... rest of the sand behavior ...
-});
-
 elements.sand.behavior.push(function (y, x, grid) {
     // Sand behavior logic goes here, based on the extracted updateGrid function
     if (grid[y + 1][x] === null) {
@@ -241,6 +222,7 @@ elements.soil.behavior.push(function (y, x, grid) {
     }
 });
 
+
 // The body of the root
 elements.root.behavior.push(function (y, x, grid) {
     // If no block below, remove root
@@ -249,14 +231,20 @@ elements.root.behavior.push(function (y, x, grid) {
     }
 });
 
+
 // This is the ends of the roots
 elements.rootTip.behavior.push(function (y, x, grid) {
 
     // Update for every RootTip instance in the grid array
     if (totalRootIndex > 0) {
 
-        // Get the current rootTip object and check if it can grow
+        // Get the current rootTip object
         let curr = elements[grid[y][x]].rootElements[rootIndex];
+        
+        // Check if sugar produced has been eaten
+        curr.sugarEaten()
+
+        // Ckeck if root can grow
         let result = curr.growBool(totalRootIndex);
 
         // Update totalRootIndex
@@ -275,6 +263,7 @@ elements.rootTip.behavior.push(function (y, x, grid) {
     }
 
 });
+
 
 elements.fungi.behavior.push(function (y, x, grid) {
     if (totalFungiIndex > 0) {
@@ -309,12 +298,16 @@ elements.fungi.behavior.push(function (y, x, grid) {
 
 });
 
+
 elements.liquidSugar.behavior.push(function (y, x, grid) {
     // If no block below, remove
     if (grid[y + 1][x] === null) {
         grid[y][x] = null;
     }
 });
+
+
+
 
 function updateGrid() {
     processed = Array(gridHeight).fill().map(() => Array(gridWidth).fill(false));
@@ -428,14 +421,11 @@ function drawAutomatically() {
     elements.fungi.fungiElements.push(new Fungi(81, 75, false, totalFungiIndex++));
 
 
-    // 80 90
-    grid[80][90] = 'rootTip';
-    elements.rootTip.rootElements.push(new RootTip(80, 90, totalRootIndex++));
-    // grid[79][90] = 'fungi';
-    // elements.fungi.fungiElements.push(new Fungi(79, 90, false, totalFungiIndex++));
 
 
     // 81 140
+    grid[80][140] = 'rootTip';
+    elements.rootTip.rootElements.push(new RootTip(80, 140, totalRootIndex++));
     grid[81][140] = 'fungi';
     elements.fungi.fungiElements.push(new Fungi(81, 140, false, totalFungiIndex++));
     
