@@ -1,42 +1,11 @@
 class Bacteria {
-    constructor(color, frameTimer, currentDirection, directionTimer, behavior, x, y) {
-        this.x = x;
-        this.y = y;
+    constructor(color, frameTimer, currentDirection, directionTimer, behavior) {
         this.color = color;
         this.frameTimer = frameTimer;
         this.currentDirection = currentDirection;
         this.directionTimer = directionTimer;
         this.behavior = behavior;
-        this.oldElement = "soil"  // Default value
-        this.index = 0;
     }
-    
-    updatePosition(newX, newY) {
-        this.x = newX;
-        this.y = newY;
-    };
-    
-    
-
-    
-    createBacteriaHistoryTracker() {
-        //let oldElement = "soil";  // Default value
-    
-        return function(newElement) {
-            if (newElement == "liquid_sugar"){
-                newElement = "soil";
-            }
-            let output = this.oldElement;
-            this.oldElement = newElement;
-            return output;
-        };
-    }
-    
-    bacteriaHistory = this.createBacteriaHistoryTracker();
-    
-    
-    
-    
 }
 
 
@@ -49,8 +18,6 @@ const cellSize = canvas.width / gridWidth;
 
 let timeMove = 0;
 let chosenDirection = null;
-let bacteriaIndex = 0;
-let totalBacteriaIndex = 29;
 
 let grid = Array(gridHeight).fill().map(() => Array(gridWidth).fill(null));
 let processed = Array(gridHeight).fill().map(() => Array(gridWidth).fill(false));
@@ -81,12 +48,8 @@ const elements = {
         behavior: [],
     },
 
-    bacteria: {
-        color: "#800080", frameTimer: 15,
-        bacteriaElements: [],
-        behavior: [],
-    },
-    //bacteria: new Bacteria("#800080", 15, null, 0, []),
+
+    bacteria: new Bacteria("#800080", 15, null, 0, []),
 
     liquid_sugar: {
         color: "#FFD700",   
@@ -104,7 +67,44 @@ for(const elementName in elements){
 //let currentParticleType = 'sand';
 
 
+function choseDirection(currentDirection, y, x) { //currentDirection is a integer
+    
 
+    const directions = [
+        {dy: -1, dx: 0},  // Up
+        {dy: 0, dx: -1}, // Left
+        {dy: 1, dx: 0},  // Down
+        {dy: 0, dx: 1},  // Right
+    ];
+   
+    //return directions[Math.floor(Math.random() * directions.length)];
+    let newDirectionIndex = Math.floor(Math.random() * directions.length);
+
+    if(currentDirection ==null){
+        bacteriaDirection[y][x] = directions[newDirectionIndex];
+        return directions[newDirectionIndex];
+    }
+
+
+    let index = 0;
+    directions.forEach((dir, idx) => {
+        //console.log(`Direction at index ${idx}:`, dir);
+        if (dir.dy === currentDirection.dy && dir.dx === currentDirection.dx) {
+            console.log(`Match found at index ${idx}`);
+            index = idx;
+        }
+    });
+    
+
+    if(newDirectionIndex % 2 == index % 2){
+        newDirectionIndex = (index + 1) % 4; 
+    }
+
+    console.log("new direction", newDirectionIndex);
+    bacteriaDirection[y][x] = directions[newDirectionIndex];
+    return directions[newDirectionIndex];
+        
+}
 
 
 
@@ -154,71 +154,19 @@ function IfNearLiquidSugar(DISTANCE, y, x) {
     };
 }
 
-function findBacteriaByPosition(bacteriaElements, x, y) {
-    for (let bacteria of bacteriaElements) {
-        if (bacteria.x === x && bacteria.y === y) {
-            return bacteria;
-        }
-    }
-    return null;  // Return null if no matching bacteria is found
-}
 
-
-function choseDirection(currentDirection, y, x) { //currentDirection is a integer
-    
-
-    const directions = [
-        {dy: -1, dx: 0},  // Up
-        {dy: 0, dx: -1}, // Left
-        {dy: 1, dx: 0},  // Down
-        {dy: 0, dx: 1},  // Right
-    ];
-   
-    //return directions[Math.floor(Math.random() * directions.length)];
-    let newDirectionIndex = Math.floor(Math.random() * directions.length);
-
-    if(currentDirection ==null){
-        bacteriaDirection[y][x] = directions[newDirectionIndex];
-        return directions[newDirectionIndex];
-    }
-
-
-    let index = 0;
-    directions.forEach((dir, idx) => {
-
-        if (dir.dy === currentDirection.dy && dir.dx === currentDirection.dx) {
-            //console.log(`Match found at index ${idx}`);
-            index = idx;
-        }
-    });
-    
-
-    if(newDirectionIndex % 2 == index % 2){
-        newDirectionIndex = (index + 1) % 4; 
-    }
-
-    //console.log("new direction", newDirectionIndex);
-    bacteriaDirection[y][x] = directions[newDirectionIndex];
-    return directions[newDirectionIndex];
-        
-}
 
 
 elements.bacteria.behavior.push(function(y, x, grid) {
-    
-
     let DISDANCE = 8;
     const result = IfNearLiquidSugar(DISDANCE, y, x);
-
-    
     let ifNear = result.ifNear;
     let priorityDirection = result.priorityDirection;
-    //console.log(priorityDirection);
     
+    //console.log(ifNear);
     if(ifNear){
-        //console.log(timeMove % elements.bacteria.frameTimer);
         if (timeMove % elements.bacteria.frameTimer == 0){
-            
+        
             chosenDirection = priorityDirection;
             //console.log(chosenDirection);
 
@@ -230,9 +178,7 @@ elements.bacteria.behavior.push(function(y, x, grid) {
         }
     }
     else{
-        //console.log(timeMove % elements.bacteria.frameTimer);
         if (timeMove % elements.bacteria.frameTimer == 0){
-            
             //directionTimer smaller change direction more frequentlly
             if(elements.bacteria.directionTimer % 5 !== 0){
                 chosenDirection = choseDirection(bacteriaDirection[y][x], y, x);
@@ -276,35 +222,38 @@ elements.bacteria.behavior.push(function(y, x, grid) {
     }
 });
 
+function createBacteriaHistoryTracker() {
+    let oldElement = "soil";  // Default value
+
+    return function(newElement) {
+        if (newElement == "liquid_sugar"){
+            newElement = "soil";
+        }
+        let output = oldElement;
+        oldElement = newElement;
+        return output;
+    };
+}
+
+const bacteriaHistory = createBacteriaHistoryTracker();
 
 
 function bacteriaMovement(newY, newX, y, x) {
-    currBacteria = findBacteriaByPosition(elements.bacteria.bacteriaElements, x, y);
-    
-    //console.log(currBacteria instanceof Bacteria );
     try {
         if (newX < 0 || newY < 0 || newX >= gridWidth || newY >= gridHeight) {
             return; // Exit the function if out of bounds
         }
         
-        let elementToRestore = currBacteria.bacteriaHistory(grid[newY][newX]);
-        //console.log(grid[newY][newX])
-        //console.log(elementToRestore);
+        let elementToRestore = bacteriaHistory(grid[newY][newX]);
+        console.log("element", elementToRestore);
         
         // Move the bacteria to the new cell
         grid[newY][newX] = 'bacteria';
         grid[y][x] = elementToRestore;
-
-        currBacteria.updatePosition(newX, newY);
         
         processed[newY][newX] = true;
         bacteriaDirection[newY][newX] = chosenDirection;
         bacteriaDirection[y][x] = null;
-
-        bacteriaIndex++;
-        if (bacteriaIndex > totalBacteriaIndex){
-            bacteriaIndex = 0;
-        }
     } catch (error) {
         // If an error occurs, log it and return from the function
         console.error('An error occurred:', error.message);
@@ -404,16 +353,12 @@ function generateRandomLiquidSugar() {
 function generateBacterial() {
     //grid[129][20] = 'bacteria';
     
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 1; i++) {
         const randomX = Math.floor(Math.random() * gridWidth);
         const randomY = Math.floor(Math.random() * gridHeight);
         grid[randomY][randomX] = 'bacteria';
-        //console.log(new Bacteria("#800080", 15, null, 0, []));
-        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY))
-        //currBacteria.updatePosition(newY, newX);
-
-
-        //bacteriaIndex++;
         
+        
+
     }
 }
