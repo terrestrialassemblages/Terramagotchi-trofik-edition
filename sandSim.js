@@ -192,6 +192,14 @@ function loop() {
     drawGrid();
     requestAnimationFrame(loop);
     timeMove++;
+    elements.bacteria.bacteriaElements.forEach((bacteria, index) => {
+        bacteria.decreaseLifespan();
+        if (bacteria.lifespan <= 0) {
+            // Bacteria dies out
+            grid[bacteria.y][bacteria.x] = 'soil';
+            elements.bacteria.bacteriaElements.splice(index, 1);
+        }
+    });
 }
 
 
@@ -232,7 +240,7 @@ function generateBacterial() {
         const randomY = Math.floor(Math.random() * gridHeight);
         grid[randomY][randomX] = 'bacteria';
         //console.log(new Bacteria("#800080", 15, null, 0, []));
-        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY))
+        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 40000))
         //currBacteria.updatePosition(newY, newX);
 
 

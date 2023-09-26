@@ -1,5 +1,5 @@
 export default class Bacteria {
-    constructor(color, frameTimer, currentDirection, directionTimer, behavior, x, y) {
+    constructor(color, frameTimer, currentDirection, directionTimer, behavior, x, y, lifespan) {
         this.x = x;
         this.y = y;
         this.color = color;
@@ -9,6 +9,7 @@ export default class Bacteria {
         this.behavior = behavior;
         this.oldElement = "soil"  // Default value
         this.index = 0;
+        this.lifespan = lifespan;
     }
     
     updatePosition(newX, newY) {
@@ -16,7 +17,9 @@ export default class Bacteria {
         this.y = newY;
     };
     
-    
+    decreaseLifespan() {
+        this.lifespan--;
+    }
 
     
     createBacteriaHistoryTracker() {
