@@ -133,7 +133,8 @@ export default class Bacteria {
         
         //console.log(currBacteria instanceof Bacteria );
         try {
-            if (newX < 0 || newY < 0 || newX >= gridWidth || newY >= gridHeight || grid[newY][newX] == null) {
+            if (newX < 0 || newY < 0 || newX >= gridWidth || newY >= gridHeight-1 || grid[newY][newX] == null
+                || grid[newY][newX] == 'bacteria') {
                 return; // Exit the function if out of bounds
             }
             

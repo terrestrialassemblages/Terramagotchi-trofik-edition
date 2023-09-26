@@ -440,7 +440,7 @@ function generateBacterial() {
     for (let i = 0; i < 100; i++) {
         
         const randomX = Math.floor(Math.random() * (200 - 0 + 1)) + i;
-        const randomY = Math.floor(Math.random() * (150 - 80 + 1)) + i;
+        const randomY = Math.floor(Math.random() * (149 - 80 + 1)) + i;
         if (grid[randomY][randomX]== 'soil') {
             grid[randomY][randomX] = 'bacteria';
         }
