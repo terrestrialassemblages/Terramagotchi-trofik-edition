@@ -27,7 +27,7 @@ export default class RootStructure {
     // Determines if root should grow or not
     growBool(totalIndex) {
         // If root is at max size, stop growing
-        if (this.length == this.maxGrowthLength) {
+        if (this.length >= this.maxGrowthLength) {
             // Mark the root as Developed
             this.developed = true;
         }
@@ -45,7 +45,7 @@ export default class RootStructure {
         // Pythagoras from starting location
         // let distance = Math.sqrt(Math.pow(Math.abs(this.y - this.startingY), 2) + (Math.pow(Math.abs(this.x - this.startingX), 2)));
         // Growth speed scaled according to difference in length from maxGrowthLength
-        this.growthSpeed = Math.ceil(this.startingSpeed / (1 + this.maxGrowthLength / this.length));
+        this.growthSpeed += Math.ceil(this.startingSpeed / (1 + this.maxGrowthLength / this.length));
     }
 
     // Checks neighboring cells
@@ -87,7 +87,8 @@ export default class RootStructure {
             // Increase max length of rootTip
             this.developed = false;
             this.maxGrowthLength += 2;
-            console.log("SUGAR EATEN, INCREASING LENGTH FOR ROOT: ", this.index); 
+            // this.growthSpeed = Math.round(this.growthSpeed * (2 / 3));
+            console.log("SUGAR EATEN, INCREASING LENGTH FOR ROOT: ", this.index);
         }
     }
 

@@ -18,7 +18,7 @@ export default class Fungi extends RootStructure {
             super(startingY, startingX, 50, 700, 'fungi', 300, index);
         }
         else {
-            super(startingY, startingX, 20, 200, 'fungi', 800, index);
+            super(startingY, startingX, 60, 400, 'fungi', 1000, index);
         }
         // Variables for the fungi branch that will attach to the root
         this.attached = false;
@@ -41,7 +41,7 @@ export default class Fungi extends RootStructure {
         this.countX = 0;
         this.countY = 0;
         // Branching probability
-        this.branchProb = 0.4;
+        this.branchProb = 0.85;
     }
 
     findRootTip() {
@@ -129,7 +129,7 @@ export default class Fungi extends RootStructure {
     }
 
     updateSpacing() {
-        // 1,2, 4, 4, 4, 
+        // 1, 2, 3
         if (this.length / this.maxGrowthLength > 0.5) {
             this.spacing = 2;
         }
@@ -298,6 +298,7 @@ export default class Fungi extends RootStructure {
                 branchFungi.updateGrowthSpeed();
                 elements.fungi.fungiElements.push(branchFungi);
                 grid[branchFungi.y][branchFungi.x] = 'fungi';
+                this.branchProb = 0.5;
             }
             else {
                 this.branchProb += 0.02;
