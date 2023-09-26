@@ -8,6 +8,7 @@ let timeMove = 0;
 let chosenDirection = null;
 let bacteriaIndex = 0;
 let totalBacteriaIndex = 29;
+let aggregateIdCounter = 0;
 
 
 
@@ -91,6 +92,10 @@ export const elements = {
         bacteriaElements: [],
         behavior: [],
     },
+    aggregate: {
+        color: '#593e2b',
+        behavior: [],
+    },
 };
 
 // let elementId = 0;
@@ -98,8 +103,90 @@ export const elements = {
 //     elements[elementName].id = elementId++;
 // }
 
+function generateSoil(y, x, currentBac) {
+    //currentBac.oldElement = 'aggregate';
 
-function findBacteriaByPosition(bacteriaElements, x, y) {
+
+
+
+    let aggregateSizeX = Math.floor(Math.random() * 2) + 3;
+    let aggregateSizeY = Math.floor(Math.random() * 2) + 2;
+    //const aggregateId = `aggregate-${aggregateIdCounter++}`;
+    const variation = Math.floor(Math.random() * 20) - 10; // Random value between -10 and 10
+    //aggregateColors[aggregateId] = adjustColor(elements.aggregate.color, variation);
+    for (let i = 0; i < aggregateSizeX; i++) {
+        for (let j = 0; j < aggregateSizeY; j++) {
+            const aggregateX = x + i;
+            const aggregateY = y - j;
+            const rotationAngle = Math.random() * Math.PI * 2;
+            for (let i = 0; i < aggregateSizeX; i++) {
+                for (let j = 0; j < aggregateSizeY; j++) {
+                    const aggregateX = x + i;
+                    const aggregateY = y - j;
+                    // Calculate elliptical values with increased noise
+                    const noise = Math.random() * 0.3 - 0.15;
+                    let ellipseX = (i - aggregateSizeX / 2 + noise) / (aggregateSizeX / 2);
+                    let ellipseY = (j - aggregateSizeY / 2 + noise) / (aggregateSizeY / 2);
+                    // Rotate the coordinates
+                    const rotatedX = ellipseX * Math.cos(rotationAngle) - ellipseY * Math.sin(rotationAngle);
+                    const rotatedY = ellipseX * Math.sin(rotationAngle) + ellipseY * Math.cos(rotationAngle);
+                    // Use the elliptical equation to determine if a pixel is inside the ellipse
+                    if (rotatedX * rotatedX + rotatedY * rotatedY <= 1) {
+                        grid[aggregateY][aggregateX] = 'aggregate';
+                    }
+                }
+            }
+        }
+    }
+    //currentBac.oldElement = 'aggregate';
+
+
+    /*
+    //load soil and aggregate
+    for (let y = 80; y < 150; y++) {
+        for (let x = 0; x < gridWidth; x++) {
+            
+            if (y >= 85 && (grid[y][x] === 'water' || grid[y][x] === 'soil')) {
+                if (Math.random() < 0.005) {
+                    let aggregateSizeX = Math.floor(Math.random() * 2) + 4;
+                    let aggregateSizeY = Math.floor(Math.random() * 2) + 4;
+                    //const aggregateId = `aggregate-${aggregateIdCounter++}`;
+                    const variation = Math.floor(Math.random() * 20) - 10; // Random value between -10 and 10
+                    //aggregateColors[aggregateId] = adjustColor(elements.aggregate.color, variation);
+                    for (let i = 0; i < aggregateSizeX; i++) {
+                        for (let j = 0; j < aggregateSizeY; j++) {
+                            const aggregateX = x + i;
+                            const aggregateY = y - j;
+                            const rotationAngle = Math.random() * Math.PI * 2;
+                            for (let i = 0; i < aggregateSizeX; i++) {
+                                for (let j = 0; j < aggregateSizeY; j++) {
+                                    const aggregateX = x + i;
+                                    const aggregateY = y - j;
+                                    // Calculate elliptical values with increased noise
+                                    const noise = Math.random() * 0.3 - 0.15;
+                                    let ellipseX = (i - aggregateSizeX / 2 + noise) / (aggregateSizeX / 2);
+                                    let ellipseY = (j - aggregateSizeY / 2 + noise) / (aggregateSizeY / 2);
+                                    // Rotate the coordinates
+                                    const rotatedX = ellipseX * Math.cos(rotationAngle) - ellipseY * Math.sin(rotationAngle);
+                                    const rotatedY = ellipseX * Math.sin(rotationAngle) + ellipseY * Math.cos(rotationAngle);
+                                    // Use the elliptical equation to determine if a pixel is inside the ellipse
+                                    if (rotatedX * rotatedX + rotatedY * rotatedY <= 1) {
+                                        grid[aggregateY][aggregateX] = 'aggregate';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }*/
+}
+
+
+
+
+export function findBacteriaByPosition(bacteriaElements, x, y) {
     for (let bacteria of bacteriaElements) {
         if (bacteria.x === x && bacteria.y === y) {
             return bacteria;
@@ -117,7 +204,12 @@ elements.bacteria.behavior.push(function(y, x, grid) {
     let DISDANCE = 8;
     const result = currentBac.IfNearLiquidSugar(DISDANCE, grid);
 
-    
+    let Agregate = currentBac.IfNearBacteria(5, grid, 2)
+    console.log("agr", Agregate)
+    if (Agregate){
+        generateSoil(y, x, currentBac);
+    }
+
     let ifNear = result.ifNear;
     let priorityDirection = result.priorityDirection;
     //console.log(priorityDirection);
@@ -373,6 +465,7 @@ function loop() {
     updateGrid();
     drawGrid();
     requestAnimationFrame(loop);
+    
     timeStep++;
     timeMove++;
 
@@ -390,7 +483,9 @@ window.addEventListener('load', function () {
     // Logic to draw sand on the canvas automatically
     // This is a placeholder; the actual logic will depend on the structure of the JS code.
     loop();
+    
     drawAutomatically();
+    //generateSoil();
     generateBacterial();
 });
 
@@ -437,7 +532,7 @@ function drawAutomatically() {
 function generateBacterial() {
     //grid[129][20] = 'bacteria';
     
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 50; i++) {
         
         const randomX = Math.floor(Math.random() * (200 - 0 + 1)) + 0;
         const randomY = Math.floor(Math.random() * (148 - 80 + 1)) + 80;

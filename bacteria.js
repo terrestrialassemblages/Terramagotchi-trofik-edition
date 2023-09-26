@@ -1,3 +1,6 @@
+import { elements } from './sandSim.js';
+import { findBacteriaByPosition } from './sandSim.js';
+
 export default class Bacteria {
     constructor(color, frameTimer, currentDirection, directionTimer, behavior, x, y, lifespan) {
         this.x = x;
@@ -10,6 +13,7 @@ export default class Bacteria {
         this.oldElement = "soil"  // Default value
         this.index = 0;
         this.lifespan = lifespan;
+        this.hasGenerated = false;
     }
     
     updatePosition(newX, newY) {
@@ -125,6 +129,51 @@ export default class Bacteria {
             priorityDirection: directions[0]
         };
     }
+
+
+
+    //implement for aggregate
+    // Check for nearby liquidSugar
+    IfNearBacteria(DISTANCE, grid, number) {
+
+        let bacNum = 0
+        const gridHeight = grid.length;
+        const gridWidth = grid[0].length;
+
+        for (let dy = -DISTANCE; dy <= DISTANCE; dy++) {
+            for (let dx = -DISTANCE; dx <= DISTANCE; dx++) {
+                if (this.y+dy >= 0 && this.y+dy < gridHeight && this.x+dx >= 0 && this.x+dx < gridWidth) {
+                    if (grid[this.y+dy][this.x+dx] === 'bacteria') {
+
+
+                        const distance = Math.sqrt(dy*dy + dx*dx);
+                        if (distance <= DISTANCE) {
+                            let curr = findBacteriaByPosition(elements.bacteria.bacteriaElements, this.x+dx, this.y+dy)
+                            if (curr.hasGenerated == false){
+                                bacNum ++;
+                                //curr.hasGenerated == true
+                            }
+                            
+                        }
+                    }
+                }
+            }
+        }
+
+        if (bacNum >= number){
+            if(this.hasGenerated == false){
+                this.hasGenerated = true;
+            }
+            
+            //this.oldElement = 'aggregate'
+            return true;
+        }
+        return false;
+    }
+
+
+
+
 
     bacteriaMovement(newY, newX, grid, processed) {
         const gridHeight = grid.length;
