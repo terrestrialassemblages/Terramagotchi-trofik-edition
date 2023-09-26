@@ -45,7 +45,7 @@ export default class RootStructure {
         // Pythagoras from starting location
         // let distance = Math.sqrt(Math.pow(Math.abs(this.y - this.startingY), 2) + (Math.pow(Math.abs(this.x - this.startingX), 2)));
         // Growth speed scaled according to difference in length from maxGrowthLength
-        this.growthSpeed += Math.ceil(this.startingSpeed / (1 + this.maxGrowthLength / this.length));
+        this.growthSpeed += Math.ceil(this.startingSpeed / (this.maxGrowthLength / 1 + this.length));
     }
 
     // Checks neighboring cells
@@ -62,34 +62,6 @@ export default class RootStructure {
             return true;
         }
         return false;
-    }
-
-    // Function to produce liquid sugar from root tip
-    // CHANGED TO PRODUCE ONLY 1 LIQUID SUGAR AT A TIME, CURRENTLY DOES NOT RESTORE THE PREVIOUS BLOCK IF LIQUID SUGAR GETS EATEN
-    produceSugar() {
-        if (grid[this.y][this.x] == 'rootTip') {
-
-            // If the block below is soil or fungi, produce liquid sugar
-            if (grid[this.y + 1][this.x] === 'soil' || grid[this.y + 1][this.x] === 'fungi') {
-                grid[this.y + 1][this.x] = 'liquidSugar';
-            }
-        }
-    }
-
-    // Function to check if liquid sugar has been eaten. If yes, allows root to grow larger
-    sugarEaten() {
-        // If developed == true, and a full bacteria that has eaten liquid sugar touches the tip of the root, increase length of the root.
-        // Set developed to false and increase max_growth length for rootTip
-
-
-
-        if (this.developed == true && grid[this.y + 1][this.x] == 'bacteria') {
-            // Increase max length of rootTip
-            this.developed = false;
-            this.maxGrowthLength += 2;
-            // this.growthSpeed = Math.round(this.growthSpeed * (2 / 3));
-            console.log("SUGAR EATEN, INCREASING LENGTH FOR ROOT: ", this.index);
-        }
     }
 
     // Fuction to grow root by one block
@@ -114,6 +86,7 @@ export default class RootStructure {
             // Create a new rootTip object for new branch
             grid[this.y + 1][this.x + 1] = 'rootTip';
             let branchRootTip = new RootTip(this.y + 1, this.x + 1, totalIndex++);
+            branchRootTip.parentFungi = this.parentFungi;
             branchRootTip.length = this.length + 2;
             elementsArray.push(branchRootTip);
 

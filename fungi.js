@@ -42,6 +42,7 @@ export default class Fungi extends RootStructure {
         this.countY = 0;
         // Branching probability
         this.branchProb = 0.85;
+        this.parentRoot = null;
     }
 
     findRootTip() {
@@ -296,6 +297,9 @@ export default class Fungi extends RootStructure {
                 branchFungi.updateSpacing();
                 branchFungi.growthSpeed = this.growthSpeed;
                 branchFungi.updateGrowthSpeed();
+                // Add it to root tip array
+                branchFungi.parentRoot = this.parentRoot;
+                this.parentRoot.parentFungi.push(branchFungi);
                 elements.fungi.fungiElements.push(branchFungi);
                 grid[branchFungi.y][branchFungi.x] = 'fungi';
                 this.branchProb = 0.5;
