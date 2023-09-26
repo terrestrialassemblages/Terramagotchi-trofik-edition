@@ -55,7 +55,7 @@ export const elements = {
         behavior: [],
     },
     soil: {
-        color: "#452c1b",
+        color: "#63442e",
         behavior: [],
     },
     stone: {
@@ -78,12 +78,12 @@ export const elements = {
     },
 
     fungi: {
-        color: "#808080",
+        color: "#a19f9f",
         fungiElements: [],
         behavior: [],
     },
     liquidSugar: {
-        color: "yellow",
+        color: "#FFB700",
         behavior: [],
     },
     bacteria: {
@@ -428,14 +428,9 @@ function drawAutomatically() {
     elements.fungi.fungiElements.push(new Fungi(81, 75, false, totalFungiIndex++));
 
 
-    // 80 90
-    grid[80][90] = 'rootTip';
-    elements.rootTip.rootElements.push(new RootTip(80, 90, totalRootIndex++));
-    // grid[79][90] = 'fungi';
-    // elements.fungi.fungiElements.push(new Fungi(79, 90, false, totalFungiIndex++));
-
-
-    // 81 140
+    // 80 140
+    grid[80][140] = 'rootTip';
+    elements.rootTip.rootElements.push(new RootTip(80, 140, totalRootIndex++));
     grid[81][140] = 'fungi';
     elements.fungi.fungiElements.push(new Fungi(81, 140, false, totalFungiIndex++));
     
