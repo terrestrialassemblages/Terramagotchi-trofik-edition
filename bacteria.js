@@ -163,10 +163,11 @@ export default class Bacteria {
         if (bacNum >= number){
             if(this.hasGenerated == false){
                 this.hasGenerated = true;
+                //this.oldElement = 'aggregate'
+                return true;
             }
             
-            //this.oldElement = 'aggregate'
-            return true;
+            
         }
         return false;
     }
