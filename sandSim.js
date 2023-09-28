@@ -8,7 +8,6 @@ let timeMove = 0;
 let chosenDirection = null;
 let bacteriaIndex = 0;
 let totalBacteriaIndex = 29;
-let aggregateIdCounter = 0;
 
 
 
@@ -143,10 +142,8 @@ function generateSoil(y, x, currentBac) {
     //currentBac.oldElement = 'aggregate';
 
 
-
-
-    let aggregateSizeX = Math.floor(Math.random() * 2) + 3;
-    let aggregateSizeY = Math.floor(Math.random() * 2) + 2;
+    let aggregateSizeX = Math.floor(Math.random() * 2) + 1;
+    let aggregateSizeY = Math.floor(Math.random() * 2) + 1;
     //const aggregateId = `aggregate-${aggregateIdCounter++}`;
     const variation = Math.floor(Math.random() * 20) - 10; // Random value between -10 and 10
     //aggregateColors[aggregateId] = adjustColor(elements.aggregate.color, variation);
@@ -219,6 +216,53 @@ function generateSoil(y, x, currentBac) {
     }*/
 }
 
+function getDistance(x1, y1, x2, y2) {
+    return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+}
+
+function isTouchFungi(x, y) {
+    const directions = [
+        { dx: 0, dy: -1 },  // top
+        { dx: 1, dy: 0 },  // right
+        { dx: 0, dy: 1 },  // bottom
+        { dx: -1, dy: 0 }  // left
+    ];
+    for (let dir of directions) {
+        const newX = x + dir.dx;
+        const newY = y + dir.dy;
+        if (newX >= 0 && newX < gridWidth && newY >= 0 && newY < gridHeight && grid[newY][newX] === 'fungi') {
+            return true;
+        }
+    }
+    return false;
+}
+
+function validAggregateGrow() {
+    let hasGrow = false;
+    const aggregate = [];
+    for (let y = 0; y < gridHeight; y++) {
+        for (let x = 0; x < gridWidth; x++) {
+            if (grid[y][x] === 'aggregate') {
+                aggregate.push({ x: x, y: y });
+            }
+        }
+    }
+
+    for (let i = 0; i < aggregate.length; i++) {
+        for (let j = i + 1; j < aggregate.length; j++) {
+            const distance = getDistance(aggregate[i].x, aggregate[i].y, aggregate[j].x, aggregate[j].y);
+            if (distance <= 3 && isTouchFungi(aggregate[i].x, aggregate[i].y) && isTouchFungi(aggregate[j].x, aggregate[j].y)) {
+                hasGrow = true;
+                break;
+            }
+        }
+        if (hasGrow) {
+            break;
+        }
+    }
+
+    return hasGrow;
+}
 
 
 
@@ -299,6 +343,9 @@ elements.bacteria.behavior.push(function (y, x, grid) {
     }
 });
 
+elements.aggregate.behavior.push(function (y, x, grid) {
+    
+});
 
 elements.sand.behavior.push(function (y, x, grid) {
     // Sand behavior logic goes here, based on the extracted updateGrid function
