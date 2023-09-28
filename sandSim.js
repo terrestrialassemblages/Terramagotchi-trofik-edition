@@ -1,6 +1,7 @@
 import RootStructure from './root.js';
 import Fungi from './fungi.js';
 import Bacteria from './bacteria.js';
+import Agregate from './aggregate.js';
 
 
 //bacteira related variables
@@ -129,6 +130,7 @@ export const elements = {
     },
     aggregate: {
         color: '#593e2b',
+        bacteriaElements: [],
         behavior: [],
     },
 };
