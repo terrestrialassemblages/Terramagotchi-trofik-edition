@@ -139,22 +139,12 @@ export const elements = {
 
 function generateSoil(y, x, macro = false) {
     //currentBac.oldElement = 'aggregate';
-<<<<<<< HEAD
-
-=======
->>>>>>> d38b2eeada0f1dea044bc3db1a68d74434566aad
     let aggregateSizeX = Math.floor(Math.random() * 2) + 1;
     let aggregateSizeY = Math.floor(Math.random() * 2) + 1;
 
-    
     if (macro == true){
-<<<<<<< HEAD
         aggregateSizeX = Math.floor(Math.random() * 2) + 2;
         aggregateSizeY = Math.floor(Math.random() * 2) + 1;
-=======
-        aggregateSizeX = Math.floor(Math.random() * 2) + 3;
-        aggregateSizeY = Math.floor(Math.random() * 2) + 2;
->>>>>>> d38b2eeada0f1dea044bc3db1a68d74434566aad
     }
     
 
@@ -236,53 +226,6 @@ function isTouchFungi(x, y) {
     return false;
 }
 
-<<<<<<< HEAD
-function ifNearOtherAgg(grid, y, x) {
-    const DISTANCE = 3;
-    const gridHeight = grid.length;
-    const gridWidth = grid[0].length;
-
-    let isNear = false;  // Initialize the return value
-
-    for (let dy = -DISTANCE; dy <= DISTANCE; dy++) {
-        for (let dx = -DISTANCE; dx <= DISTANCE; dx++) {
-            // Skip the current cell
-            if (dy === 0 && dx === 0) {
-                continue;
-            }
-
-            if (y+dy >= 0 && y+dy < gridHeight && x+dx >= 0 && x+dx < gridWidth) {
-                let newY = y + dy;
-                let newX = x + dx;
-
-                if (grid[newY][newX] === 'aggregate') {
-                    const distance = Math.sqrt(dy*dy + dx*dx);
-
-                    if (distance <= DISTANCE) {
-                        console.log('near');
-
-                        if (isTouchFungi(x, y) && isTouchFungi(newX, newY)) {
-                            //hasGrow = true;
-                            console.log('valid aggregate grow');
-                            isNear = true;  // Set the return value
-                        }
-                    }
-                }
-=======
-/*
-function validAggregateGrow() {
-    let hasGrow = false;
-    const aggregate = [];
-    for (let y = 0; y < gridHeight; y++) {
-        for (let x = 0; x < gridWidth; x++) {
-            if (grid[y][x] === 'aggregate') {
-                aggregate.push({ x: x, y: y });
->>>>>>> d38b2eeada0f1dea044bc3db1a68d74434566aad
-            }
-        }
-    }
-    return isNear;  // Return the result
-}
 /*
 function addAggregateToList(x, y, hasGrow) {
     elements.aggregate.aggregateElements.push({
@@ -291,7 +234,6 @@ function addAggregateToList(x, y, hasGrow) {
         hasGrow: hasGrow
     });
 }
-*/
 
 function findAggregateByPosition(aggregateElements, x, y, hasGrow) {
     for (let aggregate of aggregateElements) {
@@ -302,22 +244,9 @@ function findAggregateByPosition(aggregateElements, x, y, hasGrow) {
     return null;  // Return null if no matching
 }*/
 
-
-
-elements.aggregate.behavior.push(function(y, x, grid) {
-    if (grid[y][x] === 'aggregate') {
-        let result = ifNearOtherAgg(grid, y, x)
-        //console.log("result", result)
-        if (result){
-            generateSoil(y, x, result)
-        }
-    }
-
-});
-
 function ifNearOtherAgg(grid, y, x) {
     //let currAggr = findAggregateByPosition(elements.aggregate.bacteriaElements, x, y);
-    const DISTANCE = 5;
+    const DISTANCE = 3;
     const gridHeight = grid.length;
     const gridWidth = grid[0].length;
     let isNear = false;  // Initialize the return value
@@ -354,16 +283,15 @@ function ifNearOtherAgg(grid, y, x) {
 }
 
 
-
 elements.aggregate.behavior.push(function(y, x, grid) {
-
     if (grid[y][x] === 'aggregate') {
         let result = ifNearOtherAgg(grid, y, x)
-        console.log("result", result)
+        //console.log("result", result)
         if (result){
             generateSoil(y, x, result)
         }
     }
+
 });
 
 
@@ -376,14 +304,6 @@ export function findBacteriaByPosition(bacteriaElements, x, y) {
     return null;  // Return null if no matching bacteria is found
 }
 
-export function findAggregateByPosition(aggregateElements, x, y) {
-    for (let aggregate of aggregateElements) {
-        if (aggregate.x === x && aggregate.y === y) {
-            return aggregate;
-        }
-    }
-    return null;  // Return null if no matching bacteria is found
-}
 
 
 elements.bacteria.behavior.push(function (y, x, grid) {
@@ -392,20 +312,10 @@ elements.bacteria.behavior.push(function (y, x, grid) {
     let DISDANCE = 40;
     const result = currentBac.IfNearLiquidSugar(DISDANCE, grid);
 
-<<<<<<< HEAD
     let Agregate = currentBac.IfNearBacteria(5, grid, 2)
     //console.log("agr", Agregate)
     if (Agregate){
         generateSoil(y, x);
-=======
-    let Agregate = currentBac.IfNearBacteria(10, grid, 2)
-    //console.log("agr", Agregate)
-
-    
-    if (Agregate){
-        
-        generateSoil(y, x, currentBac);
->>>>>>> d38b2eeada0f1dea044bc3db1a68d74434566aad
     }
     
 
