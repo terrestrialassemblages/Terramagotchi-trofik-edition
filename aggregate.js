@@ -19,15 +19,6 @@ export default class Agregate{
 
         const gridHeight = grid.length;
         const gridWidth = grid[0].length;
-/*
-        directions.forEach((dir) => {
-    
-            if (this.y+dir.dy >= 0 && this.y+dir.dy < gridHeight && this.x+dir.dx >= 0 && this.x+dir.dx < gridWidth) {
-                if (grid[newY][newX] === 'fungi') {
-                    return true;
-                }
-            }
-        });*/
 
         for (let dir of directions) {
             let newX = this.x + dir.dx;
