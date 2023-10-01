@@ -136,19 +136,17 @@ export const elements = {
 
 function generateSoil(y, x, macro = false) {
     //currentBac.oldElement = 'aggregate';
+
     let aggregateSizeX = Math.floor(Math.random() * 2) + 1;
     let aggregateSizeY = Math.floor(Math.random() * 2) + 1;
 
-    
     if (macro == true){
-        aggregateSizeX = Math.floor(Math.random() * 2) + 3;
-        aggregateSizeY = Math.floor(Math.random() * 2) + 2;
+        aggregateSizeX = Math.floor(Math.random() * 2) + 2;
+        aggregateSizeY = Math.floor(Math.random() * 2) + 1;
     }
     
+    const rotationAngle = Math.random() * Math.PI * 2;
 
-    //const aggregateId = `aggregate-${aggregateIdCounter++}`;
-    const variation = Math.floor(Math.random() * 20) - 10; // Random value between -10 and 10
-    //aggregateColors[aggregateId] = adjustColor(elements.aggregate.color, variation);
     for (let i = 0; i < aggregateSizeX; i++) {
         for (let j = 0; j < aggregateSizeY; j++) {
             const aggregateX = x + i;
@@ -453,7 +451,7 @@ function drawGrid() {
 }
 
 
-/*
+
 canvas.addEventListener('mousedown', (event) => {
     const rect = canvas.getBoundingClientRect();
     const x = Math.floor((event.clientX - rect.left) / cellSize);
@@ -464,7 +462,7 @@ canvas.addEventListener('mousedown', (event) => {
     let aggInstance = new Aggregate(y, x, null, null);
     elements.aggregate.aggregateElements.push(aggInstance);
 });
-*/
+
 
 
 /*

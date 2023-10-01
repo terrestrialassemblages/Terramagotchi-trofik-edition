@@ -1,0 +1,19 @@
+{
+  "name": "terramagotchi-trofik-edition",
+  "version": "1.0.0",
+  "description": "terramagotchi trofik edition",
+  "main": "sandSim.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uoa-compsci399-s2-2023/team-36.git"
+  },
+  "author": "Team 36",
+  "license": "",
+  "bugs": {
+    "url": "https://github.com/uoa-compsci399-s2-2023/team-36/issues"
+  },
+  "homepage": "https://github.com/uoa-compsci399-s2-2023/team-36#readme"
+}
