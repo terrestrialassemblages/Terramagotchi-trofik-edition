@@ -242,7 +242,7 @@ elements.bacteria.behavior.push(function (y, x, grid) {
 
     let Agregate = currentBac.IfNearBacteria(5, grid, 2)
     console.log("agr", Agregate)
-    if (Agregate){
+    if (Agregate) {
         generateSoil(y, x, currentBac);
     }
 
@@ -501,7 +501,7 @@ function loop() {
     updateGrid();
     drawGrid();
     requestAnimationFrame(loop);
-    
+
     timeStep++;
     timeMove++;
 
@@ -519,7 +519,7 @@ window.addEventListener('load', function () {
     // Logic to draw sand on the canvas automatically
     // This is a placeholder; the actual logic will depend on the structure of the JS code.
     loop();
-    
+
     drawAutomatically();
     //generateSoil();
     generateBacterial();
@@ -586,7 +586,7 @@ function generateBacterial() {
 
         const randomX = Math.floor(Math.random() * (200 - 0 + 1)) + 0;
         const randomY = Math.floor(Math.random() * (148 - 80 + 1)) + 80;
-        if (grid[randomY][randomX]== 'soil') {
+        if (grid[randomY][randomX] == 'soil') {
             grid[randomY][randomX] = 'bacteria';
         }
 
