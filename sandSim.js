@@ -1,7 +1,7 @@
 import RootStructure from './root.js';
 import Fungi from './fungi.js';
 import Bacteria from './bacteria.js';
-import Agregate from './aggregate.js';
+import Aggregate from './aggregate.js';
 
 
 //bacteira related variables
@@ -91,10 +91,6 @@ export const elements = {
         color: "#452c1b",
         behavior: [],
     },
-    aggregate: {
-        color: '#4f3724',
-        behavior: [],
-    },
     stone: {
         color: "#211811",
         behavior: [],
@@ -130,15 +126,13 @@ export const elements = {
     },
     aggregate: {
         color: '#593e2b',
-        bacteriaElements: [],
+        //color: '#000000',
+        aggregateElements: [],
         behavior: [],
     },
 };
 
-// let elementId = 0;
-// for (const elementName in elements) {
-//     elements[elementName].id = elementId++;
-// }
+
 
 function generateSoil(y, x, macro = false) {
     //currentBac.oldElement = 'aggregate';
@@ -173,158 +167,41 @@ function generateSoil(y, x, macro = false) {
                     const rotatedY = ellipseX * Math.sin(rotationAngle) + ellipseY * Math.cos(rotationAngle);
                     // Use the elliptical equation to determine if a pixel is inside the ellipse
                     if (rotatedX * rotatedX + rotatedY * rotatedY <= 1) {
-                        grid[aggregateY][aggregateX] = 'aggregate';
-                        elements.aggregate.bacteriaElements.push(new Agregate(y,x))
-                    }
-                }
-            }
-        }
-    }
-    //currentBac.oldElement = 'aggregate';
+                        if (rotatedX * rotatedX + rotatedY * rotatedY <= 1 && grid[aggregateY][aggregateX] == 'soil') {
+                            let aggInstance = new Aggregate(aggregateY, aggregateX, null, null);
+                            elements.aggregate.aggregateElements.push(aggInstance);
+                            grid[aggregateY][aggregateX] = 'aggregate';
 
-
-    /*
-    //load soil and aggregate
-    for (let y = 80; y < 150; y++) {
-        for (let x = 0; x < gridWidth; x++) {
-            
-            if (y >= 85 && (grid[y][x] === 'water' || grid[y][x] === 'soil')) {
-                if (Math.random() < 0.005) {
-                    let aggregateSizeX = Math.floor(Math.random() * 2) + 4;
-                    let aggregateSizeY = Math.floor(Math.random() * 2) + 4;
-                    //const aggregateId = `aggregate-${aggregateIdCounter++}`;
-                    const variation = Math.floor(Math.random() * 20) - 10; // Random value between -10 and 10
-                    //aggregateColors[aggregateId] = adjustColor(elements.aggregate.color, variation);
-                    for (let i = 0; i < aggregateSizeX; i++) {
-                        for (let j = 0; j < aggregateSizeY; j++) {
-                            const aggregateX = x + i;
-                            const aggregateY = y - j;
-                            const rotationAngle = Math.random() * Math.PI * 2;
-                            for (let i = 0; i < aggregateSizeX; i++) {
-                                for (let j = 0; j < aggregateSizeY; j++) {
-                                    const aggregateX = x + i;
-                                    const aggregateY = y - j;
-                                    // Calculate elliptical values with increased noise
-                                    const noise = Math.random() * 0.3 - 0.15;
-                                    let ellipseX = (i - aggregateSizeX / 2 + noise) / (aggregateSizeX / 2);
-                                    let ellipseY = (j - aggregateSizeY / 2 + noise) / (aggregateSizeY / 2);
-                                    // Rotate the coordinates
-                                    const rotatedX = ellipseX * Math.cos(rotationAngle) - ellipseY * Math.sin(rotationAngle);
-                                    const rotatedY = ellipseX * Math.sin(rotationAngle) + ellipseY * Math.cos(rotationAngle);
-                                    // Use the elliptical equation to determine if a pixel is inside the ellipse
-                                    if (rotatedX * rotatedX + rotatedY * rotatedY <= 1) {
-                                        grid[aggregateY][aggregateX] = 'aggregate';
-                                    }
-                                }
+                            if (macro == true){
+                                aggInstance.hasGrow = true;
+                                
                             }
+                            
                         }
-                    }
-                }
-            }
-        }
-    }*/
-}
-
-function getDistance(x1, y1, x2, y2) {
-    return Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
-}
-
-function isTouchFungi(x, y) {
-    const directions = [
-        { dx: 0, dy: -1 },  // top
-        { dx: 1, dy: 0 },  // right
-        { dx: 0, dy: 1 },  // bottom
-        { dx: -1, dy: 0 }  // left
-    ];
-    for (let dir of directions) {
-        const newX = x + dir.dx;
-        const newY = y + dir.dy;
-        if (newX >= 0 && newX < gridWidth && newY >= 0 && newY < gridHeight && grid[newY][newX] === 'fungi') {
-            return true;
-        }
-    }
-    return false;
-}
-
-/*
-function validAggregateGrow() {
-    let hasGrow = false;
-    const aggregate = [];
-    for (let y = 0; y < gridHeight; y++) {
-        for (let x = 0; x < gridWidth; x++) {
-            if (grid[y][x] === 'aggregate') {
-                aggregate.push({ x: x, y: y });
-            }
-        }
-    }
-
-    for (let i = 0; i < aggregate.length; i++) {
-        for (let j = i + 1; j < aggregate.length; j++) {
-            const distance = getDistance(aggregate[i].x, aggregate[i].y, aggregate[j].x, aggregate[j].y);
-            if (distance <= 3 && isTouchFungi(aggregate[i].x, aggregate[i].y) && isTouchFungi(aggregate[j].x, aggregate[j].y)) {
-                hasGrow = true;
-                break;
-            }
-        }
-        if (hasGrow) {
-            break;
-        }
-    }
-
-    return hasGrow;
-}
-*/
-
-
-function ifNearOtherAgg(grid, y, x) {
-    //let currAggr = findAggregateByPosition(elements.aggregate.bacteriaElements, x, y);
-    const DISTANCE = 5;
-    const gridHeight = grid.length;
-    const gridWidth = grid[0].length;
-    let isNear = false;  // Initialize the return value
-
-    for (let dy = -DISTANCE; dy <= DISTANCE; dy++) {
-        for (let dx = -DISTANCE; dx <= DISTANCE; dx++) {
-            // Skip the current cell
-            if (dy === 0 && dx === 0) {
-                continue;
-            }
-
-            if (y+dy >= 0 && y+dy < gridHeight && x+dx >= 0 && x+dx < gridWidth) {
-                let newY = y + dy;
-                let newX = x + dx;
-
-                if (grid[newY][newX] === 'aggregate') {
-                    const distance = Math.sqrt(dy*dy + dx*dx);
-
-                    if (distance <= DISTANCE) {
-                        console.log('near');
-
-                        //if (isTouchFungi(x, y) && isTouchFungi(newX, newY)) {
-                        if (isTouchFungi(x, y)) {
-                            //hasGrow = true;
-                            console.log('valid aggregate grow');
-                            isNear = true;  // Set the return value
-                        }
+                    
                     }
                 }
             }
         }
     }
-    return isNear;  // Return the result
 }
 
 
 
 elements.aggregate.behavior.push(function(y, x, grid) {
+    let currAggr = findAggregateByPosition(elements.aggregate.aggregateElements, x, y);
 
     if (grid[y][x] === 'aggregate') {
-        let result = ifNearOtherAgg(grid, y, x)
-        console.log("result", result)
+        const result = currAggr.ifNearOtherAgg(3, grid)
+        //console.log("result", result)
         if (result){
-            generateSoil(y, x, result)
+            if (!currAggr.hasGrow){
+                generateSoil(y, x, result);
+                currAggr.hasGrow = true;
+            }
         }
     }
+
 });
 
 
@@ -337,14 +214,6 @@ export function findBacteriaByPosition(bacteriaElements, x, y) {
     return null;  // Return null if no matching bacteria is found
 }
 
-export function findAggregateByPosition(aggregateElements, x, y) {
-    for (let aggregate of aggregateElements) {
-        if (aggregate.x === x && aggregate.y === y) {
-            return aggregate;
-        }
-    }
-    return null;  // Return null if no matching bacteria is found
-}
 
 
 elements.bacteria.behavior.push(function (y, x, grid) {
@@ -353,13 +222,10 @@ elements.bacteria.behavior.push(function (y, x, grid) {
     let DISDANCE = 40;
     const result = currentBac.IfNearLiquidSugar(DISDANCE, grid);
 
-    let Agregate = currentBac.IfNearBacteria(10, grid, 2)
+    let Agregate = currentBac.IfNearBacteria(5, grid, 2)
     //console.log("agr", Agregate)
-
-    
     if (Agregate){
-        
-        generateSoil(y, x, currentBac);
+        generateSoil(y, x);
     }
     
 
@@ -587,6 +453,21 @@ function drawGrid() {
 }
 
 
+/*
+canvas.addEventListener('mousedown', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = Math.floor((event.clientX - rect.left) / cellSize);
+    const y = Math.floor((event.clientY - rect.top) / cellSize);
+
+    // Add 'aggregate' to the grid at the clicked location
+    grid[y][x] = 'aggregate';
+    let aggInstance = new Aggregate(y, x, null, null);
+    elements.aggregate.aggregateElements.push(aggInstance);
+});
+*/
+
+
+/*
 // User actions
 canvas.addEventListener('mousedown', (event) => {
     const rect = canvas.getBoundingClientRect();
@@ -612,7 +493,7 @@ canvas.addEventListener('mousedown', (event) => {
         }
     }
 });
-
+*/
 
 function loop() {
     updateGrid();
@@ -730,4 +611,13 @@ function testing(){
 
     grid[140][20] = 'aggregate'
     grid[23][21] = 'fungi'
+}
+
+export function findAggregateByPosition(aggregateElements, x, y) {
+    for (let aggregate of aggregateElements) {
+        if (aggregate.x === x && aggregate.y === y) {
+            return aggregate;
+        }
+    }
+    return null;  // Return null if no matching bacteria is found
 }
