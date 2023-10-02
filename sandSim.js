@@ -546,7 +546,7 @@ function fadeBacteria(bacteria, index) {
         //elements.bacteria.bacteriaElements.splice(index, 1);
 
         console.log(elements.bacteria.bacteriaElements);
-        grid[bacteria.y][bacteria.x] = 'soil';
+        grid[bacteria.y][bacteria.x] = bacteria.oldElement;
         
     } else {
         const fadedColor = interpolateColor(bacteria.color, elements.soil.color, 1 - bacteria.fadeAlpha);
@@ -656,10 +656,13 @@ function generateBacterial() {
         const randomY = Math.floor(Math.random() * (120 - 80 + 1)) + 80;
         if (grid[randomY][randomX]== 'soil') {
             grid[randomY][randomX] = 'bacteria';
+            grid[randomY+1][randomX+1] = 'bacteria';
         }
 
-        //console.log(new Bacteria("#800080", 15, null, 0, []));
-        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 50))
+
+        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 80))
+        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX+1, randomY+1, 4000))
+
         //currBacteria.updatePosition(newY, newX);
 
 
