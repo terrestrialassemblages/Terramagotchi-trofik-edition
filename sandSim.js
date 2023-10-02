@@ -518,7 +518,16 @@ function loop() {
         if (bacteria.lifespan <= 0) {
             // Bacteria dies out
             fadeBacteria(bacteria, index);
+            
         }
+    });
+
+    elements.bacteria.bacteriaElements.forEach((bacteria, index) => {
+        if(grid[bacteria.y][bacteria.x]!= "bacteria"){
+            elements.bacteria.bacteriaElements.splice(index, 1);
+        }
+        //console.log(elements.bacteria.bacteriaElements);
+        
     });
 }
 
@@ -534,12 +543,20 @@ function fadeBacteria(bacteria, index) {
     ctx.fillRect(bacteria.x * cellSize, bacteria.y * cellSize, cellSize, cellSize);
 
     if (bacteria.fadeAlpha <= 0) {
+        //elements.bacteria.bacteriaElements.splice(index, 1);
+
+        console.log(elements.bacteria.bacteriaElements);
         grid[bacteria.y][bacteria.x] = 'soil';
-        elements.bacteria.bacteriaElements.splice(index, 1);
+        
     } else {
         const fadedColor = interpolateColor(bacteria.color, elements.soil.color, 1 - bacteria.fadeAlpha);
+        console.log("color:", fadedColor);
         ctx.fillStyle = fadedColor;
         ctx.fillRect(bacteria.x * cellSize, bacteria.y * cellSize, cellSize, cellSize);// Draw the bacteria with the adjusted alpha value
+        
+        if (1 - bacteria.fadeAlpha == 0){
+            grid[bacteria.y][bacteria.x] = 'soil';
+        }
     }
 }
 
@@ -561,7 +578,9 @@ function interpolateColor(color1, color2, alpha) {
     const g = Math.round(g1 + (g2 - g1) * alpha);
     const b = Math.round(b1 + (b2 - b1) * alpha);
 
-    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+    let resultColor = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+    //console.log("color:", resultColor);
+    return resultColor;
 }
 
 window.addEventListener('load', function () {
@@ -640,7 +659,7 @@ function generateBacterial() {
         }
 
         //console.log(new Bacteria("#800080", 15, null, 0, []));
-        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 10000))
+        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 50))
         //currBacteria.updatePosition(newY, newX);
 
 
