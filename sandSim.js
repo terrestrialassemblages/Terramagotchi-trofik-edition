@@ -217,6 +217,11 @@ export function findBacteriaByPosition(bacteriaElements, x, y) {
 elements.bacteria.behavior.push(function (y, x, grid) {
     let currentBac = findBacteriaByPosition(elements.bacteria.bacteriaElements, x, y)
 
+    // if bacteria is fading, dont move
+    if (currentBac.fading) {      
+        return;
+    }
+
     let DISDANCE = 40;
     const result = currentBac.IfNearLiquidSugar(DISDANCE, grid);
 
@@ -442,15 +447,21 @@ function drawGrid() {
     for (let y = 0; y < gridHeight; y++) {
         for (let x = 0; x < gridWidth; x++) {
             if (grid[y][x] in elements) {
-                ctx.fillStyle = elements[grid[y][x]].color;
+                if (grid[y][x] === 'bacteria') {
+                    // Draw bacteria with the adjusted alpha value
+                    ctx.fillStyle = elements.bacteria.color;
+                    ctx.globalAlpha = elements.bacteria.bacteriaElements.find(bacteria => bacteria.x === x && bacteria.y === y)?.fadeAlpha || 1.0;
+                } else {
+                    ctx.fillStyle = elements[grid[y][x]].color; // Set color based on element type
+                    ctx.globalAlpha = 1.0; // Reset alpha for other elements
+                }
                 ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
             }
         }
     }
 
+    ctx.globalAlpha = 1.0;
 }
-
-
 
 canvas.addEventListener('mousedown', (event) => {
     const rect = canvas.getBoundingClientRect();
@@ -506,10 +517,51 @@ function loop() {
         bacteria.decreaseLifespan();
         if (bacteria.lifespan <= 0) {
             // Bacteria dies out
-            grid[bacteria.y][bacteria.x] = 'soil';
-            elements.bacteria.bacteriaElements.splice(index, 1);
+            fadeBacteria(bacteria, index);
         }
     });
+}
+
+function fadeBacteria(bacteria, index) {
+    if (!bacteria.fading) {
+        bacteria.fading = true;
+        bacteria.fadeAlpha = 1.0; 
+    }
+
+    bacteria.fadeAlpha -= 0.01; // Adjust fading speed
+
+    ctx.fillStyle = elements.soil.color;
+    ctx.fillRect(bacteria.x * cellSize, bacteria.y * cellSize, cellSize, cellSize);
+
+    if (bacteria.fadeAlpha <= 0) {
+        grid[bacteria.y][bacteria.x] = 'soil';
+        elements.bacteria.bacteriaElements.splice(index, 1);
+    } else {
+        const fadedColor = interpolateColor(bacteria.color, elements.soil.color, 1 - bacteria.fadeAlpha);
+        ctx.fillStyle = fadedColor;
+        ctx.fillRect(bacteria.x * cellSize, bacteria.y * cellSize, cellSize, cellSize);// Draw the bacteria with the adjusted alpha value
+    }
+}
+
+function interpolateColor(color1, color2, alpha) {
+
+    if (!color1 || !color2) {
+        return "#452c1b";
+    }
+
+    const r1 = parseInt(color1.slice(1, 3), 16);
+    const g1 = parseInt(color1.slice(3, 5), 16);
+    const b1 = parseInt(color1.slice(5, 7), 16);
+
+    const r2 = parseInt(color2.slice(1, 3), 16);
+    const g2 = parseInt(color2.slice(3, 5), 16);
+    const b2 = parseInt(color2.slice(5, 7), 16);
+
+    const r = Math.round(r1 + (r2 - r1) * alpha);
+    const g = Math.round(g1 + (g2 - g1) * alpha);
+    const b = Math.round(b1 + (b2 - b1) * alpha);
+
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
 }
 
 window.addEventListener('load', function () {
@@ -582,13 +634,13 @@ function generateBacterial() {
         console.log(randomNumber);*/
 
         const randomX = Math.floor(Math.random() * (200 - 0 + 1)) + 0;
-        const randomY = Math.floor(Math.random() * (90 - 80 + 1)) + 80;
+        const randomY = Math.floor(Math.random() * (120 - 80 + 1)) + 80;
         if (grid[randomY][randomX]== 'soil') {
             grid[randomY][randomX] = 'bacteria';
         }
 
         //console.log(new Bacteria("#800080", 15, null, 0, []));
-        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 40000))
+        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 10000))
         //currBacteria.updatePosition(newY, newX);
 
 

@@ -6,6 +6,7 @@ export default class Bacteria {
         this.x = x;
         this.y = y;
         this.color = color;
+        this.originalColor = color;
         this.frameTimer = frameTimer;
         this.currentDirection = currentDirection;
         this.directionTimer = directionTimer;
@@ -14,6 +15,7 @@ export default class Bacteria {
         this.index = 0;
         this.lifespan = lifespan;
         this.hasGenerated = false;
+        this.isDying = false;
     }
     
     updatePosition(newX, newY) {
@@ -25,6 +27,9 @@ export default class Bacteria {
         this.lifespan--;
     }
 
+    die() {
+        this.isDying = true;
+    }
     
     createBacteriaHistoryTracker() {
         //let oldElement = "soil";  // Default value
