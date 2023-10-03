@@ -218,7 +218,54 @@ export default class Bacteria {
         }
     }
 
+    fade(ctx, elements, cellSize, grid, index) {
+        if (!this.fading) {
+            this.fading = true;
+            this.fadeAlpha = 1.0;
+        }
+
+        this.fadeAlpha -= 0.01; // Adjust fading speed
+
+        ctx.fillStyle = elements.soil.color;
+        ctx.fillRect(this.x * cellSize, this.y * cellSize, cellSize, cellSize);
+
+        if (this.fadeAlpha <= 0) {
+            grid[this.y][this.x] = this.oldElement;
+            elements.bacteria.bacteriaElements.splice(index, 1);
+        } else {
+            const fadedColor = this.interpolateColor(this.color, elements.soil.color, 1 - this.fadeAlpha);
+            ctx.fillStyle = fadedColor;
+            ctx.fillRect(this.x * cellSize, this.y * cellSize, cellSize, cellSize);
+
+            if (1 - this.fadeAlpha === 0) {
+                grid[this.y][this.x] = 'soil';
+            }
+        }
+    }
     
     
+    interpolateColor(color1, color2, alpha) {
+
+        if (!color1 || !color2) {
+            return "#452c1b";
+        }
+
+        const r1 = parseInt(color1.slice(1, 3), 16);
+        const g1 = parseInt(color1.slice(3, 5), 16);
+        const b1 = parseInt(color1.slice(5, 7), 16);
+
+        const r2 = parseInt(color2.slice(1, 3), 16);
+        const g2 = parseInt(color2.slice(3, 5), 16);
+        const b2 = parseInt(color2.slice(5, 7), 16);
+
+        const r = Math.round(r1 + (r2 - r1) * alpha);
+        const g = Math.round(g1 + (g2 - g1) * alpha);
+        const b = Math.round(b1 + (b2 - b1) * alpha);
+
+        let resultColor = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+        //console.log("color:", resultColor);
+        return resultColor;
+    }
+
     
 }

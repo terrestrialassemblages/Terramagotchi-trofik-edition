@@ -517,8 +517,7 @@ function loop() {
         bacteria.decreaseLifespan();
         if (bacteria.lifespan <= 0) {
             // Bacteria dies out
-            fadeBacteria(bacteria, index);
-            
+            bacteria.fade(ctx, elements, cellSize, grid, index);            
         }
     });
 
@@ -529,58 +528,6 @@ function loop() {
         //console.log(elements.bacteria.bacteriaElements);
         
     });
-}
-
-function fadeBacteria(bacteria, index) {
-    if (!bacteria.fading) {
-        bacteria.fading = true;
-        bacteria.fadeAlpha = 1.0; 
-    }
-
-    bacteria.fadeAlpha -= 0.01; // Adjust fading speed
-
-    ctx.fillStyle = elements.soil.color;
-    ctx.fillRect(bacteria.x * cellSize, bacteria.y * cellSize, cellSize, cellSize);
-
-    if (bacteria.fadeAlpha <= 0) {
-        //elements.bacteria.bacteriaElements.splice(index, 1);
-
-        console.log(elements.bacteria.bacteriaElements);
-        grid[bacteria.y][bacteria.x] = bacteria.oldElement;
-        
-    } else {
-        const fadedColor = interpolateColor(bacteria.color, elements.soil.color, 1 - bacteria.fadeAlpha);
-        console.log("color:", fadedColor);
-        ctx.fillStyle = fadedColor;
-        ctx.fillRect(bacteria.x * cellSize, bacteria.y * cellSize, cellSize, cellSize);// Draw the bacteria with the adjusted alpha value
-        
-        if (1 - bacteria.fadeAlpha == 0){
-            grid[bacteria.y][bacteria.x] = 'soil';
-        }
-    }
-}
-
-function interpolateColor(color1, color2, alpha) {
-
-    if (!color1 || !color2) {
-        return "#452c1b";
-    }
-
-    const r1 = parseInt(color1.slice(1, 3), 16);
-    const g1 = parseInt(color1.slice(3, 5), 16);
-    const b1 = parseInt(color1.slice(5, 7), 16);
-
-    const r2 = parseInt(color2.slice(1, 3), 16);
-    const g2 = parseInt(color2.slice(3, 5), 16);
-    const b2 = parseInt(color2.slice(5, 7), 16);
-
-    const r = Math.round(r1 + (r2 - r1) * alpha);
-    const g = Math.round(g1 + (g2 - g1) * alpha);
-    const b = Math.round(b1 + (b2 - b1) * alpha);
-
-    let resultColor = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-    //console.log("color:", resultColor);
-    return resultColor;
 }
 
 window.addEventListener('load', function () {
