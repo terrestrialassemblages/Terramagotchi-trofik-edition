@@ -16,6 +16,7 @@ export default class Bacteria {
         this.lifespan = lifespan;
         this.hasGenerated = false;
         this.isDying = false;
+        this.aggregateCooldown = 0;
     }
     
     updatePosition(newX, newY) {
@@ -145,6 +146,10 @@ export default class Bacteria {
         const gridHeight = grid.length;
         const gridWidth = grid[0].length;
 
+        if (this.aggregateCooldown > 0) {
+            this.aggregateCooldown--;
+        }
+
         for (let dy = -DISTANCE; dy <= DISTANCE; dy++) {
             for (let dx = -DISTANCE; dx <= DISTANCE; dx++) {
                 if (this.y+dy >= 0 && this.y+dy < gridHeight && this.x+dx >= 0 && this.x+dx < gridWidth) {
@@ -166,9 +171,8 @@ export default class Bacteria {
         }
 
         if (bacNum >= number){
-            if(this.hasGenerated == false){
-                this.hasGenerated = true;
-                //this.oldElement = 'aggregate'
+            if(this.aggregateCooldown <= 0){
+                this.aggregateCooldown = 1000; //adjust value to change how often bacteria can form aggregates
                 return true;
             }
             
@@ -176,9 +180,6 @@ export default class Bacteria {
         }
         return false;
     }
-
-
-
 
 
     bacteriaMovement(newY, newX, grid, processed) {
