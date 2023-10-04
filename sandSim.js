@@ -3,15 +3,54 @@ import Fungi from './fungi.js';
 import Bacteria from './bacteria.js';
 import Aggregate from './aggregate.js';
 
+// CANT GET NPM PACKAGES WORKING
+// import cryptoRandomString from 'crypto-random-string';
+// import toCanvas from 'qrcode';
 
-//bacteira related variables
-let timeMove = 0;
-let chosenDirection = null;
-let bacteriaIndex = 0;
-let totalBacteriaIndex = 29;
+// Firebase imports
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+// Firebase related variables
+const FIREBASE_CONFIG = {
+
+//// NOT SURE HOW TO LINK DATABASE WITH PROCESS ENVIROMENT VARIABLES
+    // apiKey: process.env.API_KEY,
+    // authDomain: process.env.AUTH_DOMAIN,
+    // projectId: process.env.PROJECT_ID,
+    // storageBucket: process.env.STORAGE_BUCKET,
+    // messagingSenderId: process.env.MESSAGING_SENDER_ID,
+    // appId: process.env.APP_ID
+
+    databaseURL: "https://terramagotchi-trofik-edition-default-rtdb.asia-southeast1.firebasedatabase.app/"
+};
+
+// Generate random instance ID every time the page is loaded
+const INSTANCE_ID = Math.floor(Math.random() * 1000000000);
+
+function connectToDB() {
+    initializeApp(FIREBASE_CONFIG);
+    const database = getDatabase();
+
+    console.log("CREATED DB: ", INSTANCE_ID);
+}
+
+function createQR() {
+    //const qr_code_canvas = document.getElementById("qr-code");
+    const remote_url = document.location.origin + "/remote/?id=" + INSTANCE_ID;
+
+    // CURRENT VERSION GENERATES TEXT LINK INSTEAD OF QR CODE
+    const remote_url_link = document.createElement("a");
+    remote_url_link.href = remote_url;
+    remote_url_link.textContent = remote_url;
+    document.getElementById("remote-url").appendChild(remote_url_link);
+
+}
 
 
 
+
+
+// Canvas setup
 const canvas = document.getElementById('sandCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -23,18 +62,28 @@ export let grid = Array(gridHeight).fill().map(() => Array(gridWidth).fill(null)
 let processed = Array(gridHeight).fill().map(() => Array(gridWidth).fill(false));
 
 export let currentParticleType = 'rootTip';
+
+
+// Bacteira related variables
+let timeMove = 0;
+let chosenDirection = null;
+let bacteriaIndex = 0;
+let totalBacteriaIndex = 29;
+
+// Fungi and Root related variables
 export let timeStep = 0;
 export let rootIndex = 0;
 export let totalRootIndex = 0;
 export let fungiIndex = 0;
 export let totalFungiIndex = 0;
 
+
 export default class RootTip extends RootStructure {
     constructor(startingY, startingX, fungiParent, index) {
         super(startingY, startingX, 10, 500, 'rootTip', 900, index);
         this.parentFungi = new Array();
         this.parentFungi.push(fungiParent);
-        console.log(this.parentFungi);
+        //console.log(this.parentFungi);
     }
 
     // Function to produce liquid sugar from root tip
@@ -64,7 +113,7 @@ export default class RootTip extends RootStructure {
                 this.parentFungi[i].expandRoot(elements.fungi.fungiElements, fungiIndex, totalFungiIndex);
             }
             // this.growthSpeed = Math.round(this.growthSpeed * (2 / 3));
-            console.log("SUGAR EATEN, INCREASING LENGTH FOR ROOT: ", this.index);
+            //console.log("SUGAR EATEN, INCREASING LENGTH FOR ROOT: ", this.index);
         }
     }
 }
@@ -530,6 +579,7 @@ function loop() {
     });
 }
 
+
 window.addEventListener('load', function () {
     // Logic to draw sand on the canvas automatically
     // This is a placeholder; the actual logic will depend on the structure of the JS code.
@@ -538,7 +588,13 @@ window.addEventListener('load', function () {
     drawAutomatically();
     //generateSoil();
     generateBacterial();
+
+    connectToDB();
+    createQR();
+
 });
+
+
 
 function drawAutomatically() {
     // Logic to preload elements onto the grid

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "terramagotchi trofik edition",
   "main": "sandSim.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/uoa-compsci399-s2-2023/team-36/issues"
   },
-  "homepage": "https://github.com/uoa-compsci399-s2-2023/team-36#readme"
+  "homepage": "https://github.com/uoa-compsci399-s2-2023/team-36#readme",
+  "dependencies": {
+    "crypto-random-string": "^5.0.0",
+    "express": "^4.18.2",
+    "qrcode": "^1.5.3"
+  }
 }

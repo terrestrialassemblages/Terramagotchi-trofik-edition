@@ -282,7 +282,7 @@ export default class Fungi extends RootStructure {
             }*/
             //console.log("CHECKING BRANCH", newXDir);
             if (this.canGrow(newY, newX, newYDir, newXDir, forbElements)) {
-                console.log("Before:", typeof(totalFungiIndex));
+                //console.log("Before:", typeof(totalFungiIndex));
                 incrementTotalFungiIndex(totalFungiIndex + 1);
                 //console.log("BRANCHING", newY, newX, this.y + finalGrowY, this.x + finalGrowX);
                 let branchFungi = new Fungi(newY, newX, false, totalFungiIndex);

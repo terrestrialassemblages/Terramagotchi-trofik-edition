@@ -67,7 +67,7 @@ export default class RootStructure {
     // Fuction to grow root by one block
     expandRoot(elementsArray, index, totalIndex) {
 
-        console.log("EXPANDING ROOT NOW NO: ", this.index);
+        //console.log("EXPANDING ROOT NOW NO: ", this.index);
 
         // Randomly choose -1, 0, or 1 for x growth direction (either grow left-down, down, right-down)
         let x_direction = Math.floor(Math.random() * 3) - 1;
