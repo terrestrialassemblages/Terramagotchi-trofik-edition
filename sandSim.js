@@ -9,29 +9,74 @@ import Aggregate from './aggregate.js';
 
 // Firebase imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import { getDatabase, ref, set, onChildAdded, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import { getAuth, signInAnonymously, onAuthStateChanged  } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+
 // Firebase related variables
 const FIREBASE_CONFIG = {
-
-//// NOT SURE HOW TO LINK DATABASE WITH PROCESS ENVIROMENT VARIABLES
-    // apiKey: process.env.API_KEY,
-    // authDomain: process.env.AUTH_DOMAIN,
-    // projectId: process.env.PROJECT_ID,
-    // storageBucket: process.env.STORAGE_BUCKET,
-    // messagingSenderId: process.env.MESSAGING_SENDER_ID,
-    // appId: process.env.APP_ID
-
-    databaseURL: "https://terramagotchi-trofik-edition-default-rtdb.asia-southeast1.firebasedatabase.app/"
+    apiKey: "AIzaSyCWXtadqvzfXVN95olGEmOVrozV8SVqONs",
+    authDomain: "terramagotchi-trofik-edition.firebaseapp.com",
+    databaseURL: "https://terramagotchi-trofik-edition-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "terramagotchi-trofik-edition",
+    storageBucket: "terramagotchi-trofik-edition.appspot.com",
+    messagingSenderId: "155568148343",
+    appId: "1:155568148343:web:ee221579eb985628441b72",
+    measurementId: "G-NHB6KJDMR8"
 };
 
 // Generate random instance ID every time the page is loaded
 const INSTANCE_ID = Math.floor(Math.random() * 1000000000);
 
+
 function connectToDB() {
+    // Initialize firebase
     initializeApp(FIREBASE_CONFIG);
     const database = getDatabase();
+    const auth = getAuth();
+    
+    // Authenticate user anonymously
+    signInAnonymously(auth)
+    .then((userCredential) => {
+        // Anonymous user signed in
+        const user = userCredential.user;
+        console.log("Anonymous user ID:", user.uid);
 
-    console.log("CREATED DB: ", INSTANCE_ID);
+        // Create table for current instance
+        const instanceDB = ref(database, 'instances/' + INSTANCE_ID);
+        const initialData = {
+            startup : {
+                element : null, 
+                instanceID : INSTANCE_ID, 
+                currtime : Date.now()
+            }
+        }
+        set(instanceDB, initialData)
+        .then(() => {
+            console.log("CREATED DB: ", INSTANCE_ID);
+        })
+
+        // DB listener, runs when new entry is added to current instance table
+        onChildAdded(instanceDB, (snapshot) => {
+            const newData = snapshot.val();
+            if (newData.element != null) {
+                console.log("New element added:", newData.element);
+    
+                // RUN CODE TO ADD ELEMENT TO GRID HERE
+
+                // THEN REMOVE THE ENTRY FROM THE DB
+                console.log("REMOVING ENTRY key:", snapshot.key);
+
+            }
+        });
+    })
+    .catch((error) => {
+        // Handle errors
+        console.error("Error signing in anonymously:", error);
+    });
+    
+
+    
+    
 }
 
 function createQR() {
@@ -45,6 +90,8 @@ function createQR() {
     document.getElementById("remote-url").appendChild(remote_url_link);
 
 }
+
+
 
 
 
