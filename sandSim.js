@@ -120,7 +120,7 @@ export const elements = {
         behavior: [],
     },
     bacteria: {
-        color: "#800080", frameTimer: 15,
+        color: "#800080", frameTimer: 15, directionTimer: 20,
         bacteriaElements: [],
         behavior: [],
     },
@@ -225,7 +225,7 @@ elements.aggregate.behavior.push(function(y, x, grid) {
 
         //const num = currAggr.getAggregateCount(y, x, grid);
 
-        console.log("aggregate number: ", aggrCount)
+        //console.log("aggregate number: ", aggrCount)
         //console.log("result", result)
         if (isNear){
             if (!currAggr.hasGrow){
@@ -276,10 +276,15 @@ elements.bacteria.behavior.push(function (y, x, grid) {
         if (timeMove % elements.bacteria.frameTimer == 0) {
 
             chosenDirection = priorityDirection;
+
             //console.log(chosenDirection);
-            if (elements.bacteria.directionTimer % 3 == 0) {
+            let random = Math.floor(Math.random() * 4);
+            if (random == 0){
                 chosenDirection = currentBac.choseDirection();
             }
+            
+
+            
 
             // Apply the movement
             let newY = y + chosenDirection.dy;
@@ -291,7 +296,9 @@ elements.bacteria.behavior.push(function (y, x, grid) {
             } else {
                 currentBac.bacteriaMovement(newY, newX, grid, processed);
             }
+            
         }
+        
     }
     else {
         //console.log(timeMove % elements.bacteria.frameTimer);
@@ -391,32 +398,40 @@ elements.root.behavior.push(function (y, x, grid) {
 
 // This is the ends of the roots
 elements.rootTip.behavior.push(function (y, x, grid) {
+    try{
 
-    // Update for every RootTip instance in the grid array
-    if (totalRootIndex > 0) {
+        
 
-        // Get the current rootTip object
-        let curr = elements[grid[y][x]].rootElements[rootIndex];
+        // Update for every RootTip instance in the grid array
+        if (totalRootIndex > 0) {
 
-        // Check if sugar produced has been eaten
-        curr.sugarEaten()
+            // Get the current rootTip object
+            let curr = elements[grid[y][x]].rootElements[rootIndex];
 
-        // Ckeck if root can grow
-        let result = curr.growBool(totalRootIndex);
+            // Check if sugar produced has been eaten
+            curr.sugarEaten()
 
-        // Update totalRootIndex
-        totalRootIndex = result[1];
+            // Ckeck if root can grow
+            let result = curr.growBool(totalRootIndex);
 
-        // If it can grow, expand root
-        if (result[0]) {
-            totalRootIndex = curr.expandRoot(elements.rootTip.rootElements, rootIndex, totalRootIndex);
+            // Update totalRootIndex
+            totalRootIndex = result[1];
+
+            // If it can grow, expand root
+            if (result[0]) {
+                totalRootIndex = curr.expandRoot(elements.rootTip.rootElements, rootIndex, totalRootIndex);
+            }
+            rootIndex++;
+
+            // Reset index once we finish iterating through all the rootTips
+            if (rootIndex >= totalRootIndex) {
+                rootIndex = 0;
+            }
         }
-        rootIndex++;
-
-        // Reset index once we finish iterating through all the rootTips
-        if (rootIndex >= totalRootIndex) {
-            rootIndex = 0;
-        }
+    }catch (error) {
+        // If an error occurs, log it and return from the function
+        console.error('An error occurred:', error.message);
+        return;
     }
 
 });
@@ -424,7 +439,8 @@ elements.rootTip.behavior.push(function (y, x, grid) {
 
 elements.fungi.behavior.push(function (y, x, grid) {
     if (totalFungiIndex > 0) {
-        let curr = elements[grid[y][x]].fungiElements[fungiIndex];
+        try{
+            let curr = elements[grid[y][x]].fungiElements[fungiIndex];
         // If root is not at max size, expand root
         let result = curr.growBool(totalFungiIndex);
         totalFungiIndex = result[1];
@@ -450,8 +466,16 @@ elements.fungi.behavior.push(function (y, x, grid) {
 
         if (fungiIndex >= totalFungiIndex) {
             fungiIndex = 0;
+        }   
+        }catch (error) {
+            // If an error occurs, log it and return from the function
+            console.error('An error occurred:', error.message);
+            return;
         }
+        
     }
+
+    
 
 });
 
@@ -512,9 +536,14 @@ canvas.addEventListener('mousedown', (event) => {
     const y = Math.floor((event.clientY - rect.top) / cellSize);
 
     // Add 'aggregate' to the grid at the clicked location
+    /*
     grid[y][x] = 'aggregate';
     let aggInstance = new Aggregate(y, x, null, null);
     elements.aggregate.aggregateElements.push(aggInstance);
+    */
+
+    //add liquidSugar
+    grid[y][x] = 'liquidSugar';
 });
 
 
