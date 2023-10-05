@@ -26,18 +26,26 @@ export default class RootStructure {
 
     // Determines if root should grow or not
     growBool(totalIndex) {
-        // If root is at max size, stop growing
-        if (this.length >= this.maxGrowthLength) {
-            // Mark the root as Developed
-            this.developed = true;
+        try{
+                        // If root is at max size, stop growing
+            if (this.length >= this.maxGrowthLength) {
+                // Mark the root as Developed
+                this.developed = true;
+            }
+            if ((timeStep % this.growthSpeed == 0) && this.developed == true && this.elementName == 'rootTip') {
+                // If root is developed, produce sugar
+                this.produceSugar();
+                //console.log("FULLY GROWN, PRODUCING SUGAR");
+                return ([false, totalIndex]);
+            }
+            return ([(timeStep % this.growthSpeed == 0) && (this.length < this.maxGrowthLength), (totalIndex)]);
+        } catch (error) {
+            // If an error occurs, log it and return from the function
+            console.error('An error occurred:', error.message);
+            return;
         }
-        if ((timeStep % this.growthSpeed == 0) && this.developed == true && this.elementName == 'rootTip') {
-            // If root is developed, produce sugar
-            this.produceSugar();
-            //console.log("FULLY GROWN, PRODUCING SUGAR");
-            return ([false, totalIndex]);
-        }
-        return ([(timeStep % this.growthSpeed == 0) && (this.length < this.maxGrowthLength), (totalIndex)]);
+
+        
     }
 
     // Adjusts the growth speed depending on the current length

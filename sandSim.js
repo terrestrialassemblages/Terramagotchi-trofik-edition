@@ -135,53 +135,77 @@ export const elements = {
 
 
 function generateSoil(y, x, macro = false) {
-    //currentBac.oldElement = 'aggregate';
+    let caseNum = Math.floor(Math.random() * 4);
 
-    let aggregateSizeX = Math.floor(Math.random() * 2) + 1;
-    let aggregateSizeY = Math.floor(Math.random() * 2) + 1;
+    if (macro == false){
+        if (caseNum == 0){
+
+            let aggInstance1 = new Aggregate(y, x+1, null, null);
+            let aggInstance2 = new Aggregate(y-1, x+1, null, null);
+            let aggInstance3 = new Aggregate(y-1, x, null, null);
+
+            elements.aggregate.aggregateElements.push(aggInstance1);
+            elements.aggregate.aggregateElements.push(aggInstance2);
+            elements.aggregate.aggregateElements.push(aggInstance3);
+
+            grid[y][x+1] = 'aggregate';  
+            grid[y-1][x+1] = 'aggregate';  
+            grid[y-1][x] = 'aggregate';  
+            return;  
+              
+        }
+        
+        else{
+            let aggInstance1 = new Aggregate(y, x+1, null, null);
+            elements.aggregate.aggregateElements.push(aggInstance1);
+            grid[y][x+1] = 'aggregate';  
+            return;  
+        }
+    }
+
+    
 
     if (macro == true){
-        aggregateSizeX = Math.floor(Math.random() * 2) + 2;
-        aggregateSizeY = Math.floor(Math.random() * 2) + 1;
-    }
-    
-    const rotationAngle = Math.random() * Math.PI * 2;
+        let aggregateSizeX = Math.floor(Math.random() * 2) + 3;
+        let aggregateSizeY = Math.floor(Math.random() * 2) + 2;
 
-    for (let i = 0; i < aggregateSizeX; i++) {
-        for (let j = 0; j < aggregateSizeY; j++) {
-            const aggregateX = x + i;
-            const aggregateY = y - j;
-            const rotationAngle = Math.random() * Math.PI * 2;
-            for (let i = 0; i < aggregateSizeX; i++) {
-                for (let j = 0; j < aggregateSizeY; j++) {
-                    const aggregateX = x + i;
-                    const aggregateY = y - j;
-                    // Calculate elliptical values with increased noise
-                    const noise = Math.random() * 0.3 - 0.15;
-                    let ellipseX = (i - aggregateSizeX / 2 + noise) / (aggregateSizeX / 2);
-                    let ellipseY = (j - aggregateSizeY / 2 + noise) / (aggregateSizeY / 2);
-                    // Rotate the coordinates
-                    const rotatedX = ellipseX * Math.cos(rotationAngle) - ellipseY * Math.sin(rotationAngle);
-                    const rotatedY = ellipseX * Math.sin(rotationAngle) + ellipseY * Math.cos(rotationAngle);
-                    // Use the elliptical equation to determine if a pixel is inside the ellipse
-                    if (rotatedX * rotatedX + rotatedY * rotatedY <= 1) {
-                        if (rotatedX * rotatedX + rotatedY * rotatedY <= 1 && grid[aggregateY][aggregateX] == 'soil') {
-                            let aggInstance = new Aggregate(aggregateY, aggregateX, null, null);
-                            elements.aggregate.aggregateElements.push(aggInstance);
-                            grid[aggregateY][aggregateX] = 'aggregate';
+        const rotationAngle = Math.random() * Math.PI * 2;
 
-                            if (macro == true){
-                                aggInstance.hasGrow = true;
+        for (let i = 0; i < aggregateSizeX; i++) {
+            for (let j = 0; j < aggregateSizeY; j++) {
+                const aggregateX = x + i;
+                const aggregateY = y - j;
+                const rotationAngle = Math.random() * Math.PI * 2;
+                for (let i = 0; i < aggregateSizeX; i++) {
+                    for (let j = 0; j < aggregateSizeY; j++) {
+                        const aggregateX = x + i;
+                        const aggregateY = y - j;
+                        // Calculate elliptical values with increased noise
+                        const noise = Math.random() * 0.3 - 0.15;
+                        let ellipseX = (i - aggregateSizeX / 2 + noise) / (aggregateSizeX / 2);
+                        let ellipseY = (j - aggregateSizeY / 2 + noise) / (aggregateSizeY / 2);
+                        // Rotate the coordinates
+                        const rotatedX = ellipseX * Math.cos(rotationAngle) - ellipseY * Math.sin(rotationAngle);
+                        const rotatedY = ellipseX * Math.sin(rotationAngle) + ellipseY * Math.cos(rotationAngle);
+                        // Use the elliptical equation to determine if a pixel is inside the ellipse
+                        if (rotatedX * rotatedX + rotatedY * rotatedY <= 1) {
+                            if (rotatedX * rotatedX + rotatedY * rotatedY <= 1 && grid[aggregateY][aggregateX] == 'soil') {
+                                let aggInstance = new Aggregate(aggregateY, aggregateX, null, null);
+                                elements.aggregate.aggregateElements.push(aggInstance);
+                                grid[aggregateY][aggregateX] = 'aggregate';          
                                 
+                                aggInstance.hasGrow = true;
+
                             }
-                            
+                        
                         }
-                    
                     }
                 }
             }
         }
     }
+    
+    
 }
 
 
@@ -190,11 +214,15 @@ elements.aggregate.behavior.push(function(y, x, grid) {
     let currAggr = findAggregateByPosition(elements.aggregate.aggregateElements, x, y);
 
     if (grid[y][x] === 'aggregate') {
-        const result = currAggr.ifNearOtherAgg(3, grid)
+        const [isNear, aggrCount] = currAggr.ifNearOtherAgg(3, grid);
+
+        //const num = currAggr.getAggregateCount(y, x, grid);
+
+        console.log("aggregate number: ", aggrCount)
         //console.log("result", result)
-        if (result){
+        if (isNear){
             if (!currAggr.hasGrow){
-                generateSoil(y, x, result);
+                generateSoil(y, x, isNear);
                 currAggr.hasGrow = true;
             }
         }
@@ -603,12 +631,12 @@ function generateBacterial() {
         const randomY = Math.floor(Math.random() * (120 - 80 + 1)) + 80;
         if (grid[randomY][randomX]== 'soil') {
             grid[randomY][randomX] = 'bacteria';
-            grid[randomY+1][randomX+1] = 'bacteria';
+            //grid[randomY+1][randomX+1] = 'bacteria';
         }
 
 
-        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 80))
-        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX+1, randomY+1, 4000))
+        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 4000))
+        //elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX+1, randomY+1, 4000))
 
         //currBacteria.updatePosition(newY, newX);
 
@@ -618,6 +646,7 @@ function generateBacterial() {
     }
 }
 
+/*
 function testing(){
     //elements.aggregate.bacteriaElements.push(new Agregate(0, 0))
     grid[20][20] = 'aggregate'
@@ -631,6 +660,7 @@ function testing(){
     grid[140][20] = 'aggregate'
     grid[23][21] = 'fungi'
 }
+*/
 
 export function findAggregateByPosition(aggregateElements, x, y) {
     for (let aggregate of aggregateElements) {

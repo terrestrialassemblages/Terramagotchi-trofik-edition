@@ -44,6 +44,7 @@ export default class Aggregate{
     ifNearOtherAgg(DISTANCE, grid) {
         //let currAggr = findAggregateByPosition(elements.aggregate.bacteriaElements, x, y);
         //const DISTANCE = 3;
+        let aggrCount = 0
         const gridHeight = grid.length;
         const gridWidth = grid[0].length;
         let isNear = false;  // Initialize the return value
@@ -58,6 +59,7 @@ export default class Aggregate{
                     if (grid[this.y + dy][this.x + dx] === 'aggregate') {
                         const distance = Math.sqrt(dy*dy + dx*dx);
                         if (distance <= DISTANCE) {
+                            aggrCount ++;
                             //console.log('near');
                             //if (isTouchFungi(x, y) && isTouchFungi(newX, newY)) {
                             if (this.isTouchFungi(grid)) {
@@ -69,7 +71,8 @@ export default class Aggregate{
                 }
             }
         }
-        return isNear;  // Return the result
+
+        return [isNear, aggrCount];  // Return the result
     }
 
 }

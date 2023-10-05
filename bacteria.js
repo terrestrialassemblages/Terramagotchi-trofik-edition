@@ -232,7 +232,7 @@ export default class Bacteria {
 
         if (this.fadeAlpha <= 0) {
             grid[this.y][this.x] = this.oldElement;
-            elements.bacteria.bacteriaElements.splice(index, 1);
+            //elements.bacteria.bacteriaElements.splice(index, 1);
         } else {
             const fadedColor = this.interpolateColor(this.color, elements.soil.color, 1 - this.fadeAlpha);
             ctx.fillStyle = fadedColor;
