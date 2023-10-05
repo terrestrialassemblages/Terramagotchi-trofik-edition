@@ -247,7 +247,12 @@ elements.bacteria.behavior.push(function (y, x, grid) {
             let newY = y + chosenDirection.dy;
             let newX = x + chosenDirection.dx;
 
-            currentBac.bacteriaMovement(newY, newX, grid, processed);
+            if (grid[newY][newX] === 'liquidSugar') {
+                grid[newY][newX] = 'bacteria';
+                elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], newX, newY, 4000))
+            } else {
+                currentBac.bacteriaMovement(newY, newX, grid, processed);
+            }
         }
     }
     else {
