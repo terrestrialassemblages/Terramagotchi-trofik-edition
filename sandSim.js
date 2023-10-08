@@ -9,8 +9,8 @@ import Aggregate from './aggregate.js';
 
 // Firebase imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-import { getDatabase, ref, set, onChildAdded, remove } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
-import { getAuth, signInAnonymously, onAuthStateChanged  } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+import { getDatabase, ref, set, onChildAdded, remove, get } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
 
 // Firebase related variables
 const FIREBASE_CONFIG = {
@@ -27,7 +27,7 @@ const FIREBASE_CONFIG = {
 // Generate random instance ID every time the page is loaded
 const INSTANCE_ID = Math.floor(Math.random() * 1000000000);
 
-
+// Function to connect to the database
 function connectToDB() {
     // Initialize firebase
     initializeApp(FIREBASE_CONFIG);
@@ -37,7 +37,7 @@ function connectToDB() {
     // Authenticate user anonymously
     signInAnonymously(auth)
     .then((userCredential) => {
-        // Anonymous user signed in
+        // Anonymous user sign in
         const user = userCredential.user;
         console.log("Anonymous user ID:", user.uid);
 
@@ -55,16 +55,23 @@ function connectToDB() {
             console.log("CREATED DB: ", INSTANCE_ID);
         })
 
-        // DB listener, runs when new entry is added to current instance table
+        // Create QR code for remote app
+        createQR();
+
+        // Remove older instances in the DB, if there are more than specified
+        removeOldInstances(database, 5);
+
+        // DB listener, runs when a new user action is detected
         onChildAdded(instanceDB, (snapshot) => {
             const newData = snapshot.val();
             if (newData.element != null) {
                 console.log("New element added:", newData.element);
     
                 // RUN CODE TO ADD ELEMENT TO GRID HERE
+                addToCanvas(newData.element);
 
                 // THEN REMOVE THE ENTRY FROM THE DB
-                console.log("REMOVING ENTRY key:", snapshot.key);
+                //console.log("REMOVING ENTRY key:", snapshot.key);
 
             }
         });
@@ -73,10 +80,41 @@ function connectToDB() {
         // Handle errors
         console.error("Error signing in anonymously:", error);
     });
-    
+}
 
-    
-    
+// Function to remove instances from the database if the total number of instances exceeds the limit
+function removeOldInstances(database, limit = 50) {
+    const instancesRef = ref(database, 'instances');
+    get(instancesRef)
+    .then((snapshot) => {
+        if (snapshot.exists()) {
+            const instances = snapshot.val();
+            const instanceKeys = Object.keys(instances);
+            if (instanceKeys.length > limit) {
+                // Sort instance keys by timestamp in ascending order
+                instanceKeys.sort((a, b) => instances[a].startup.currtime - instances[b].startup.currtime);
+
+                // Determine the number of instances to remove
+                const instancesToRemove = instanceKeys.length - limit;
+
+                // Remove the oldest instances
+                for (let i = 0; i < instancesToRemove; i++) {
+                    const oldestInstanceKey = instanceKeys[i];
+                    const oldestInstanceDB = ref(database, 'instances/' + oldestInstanceKey);
+                    remove(oldestInstanceDB)
+                    .then(() => {
+                        console.log("Removed oldest instance:", oldestInstanceKey);
+                    })
+                    .catch((error) => {
+                        console.error("Error removing instance:", oldestInstanceKey, error);
+                    });
+                }
+            }
+        }
+    })
+    .catch((error) => {
+        console.error("Error removing instances, could not get snapshot of the table", error);
+    });
 }
 
 function createQR() {
@@ -87,8 +125,10 @@ function createQR() {
     const remote_url_link = document.createElement("a");
     remote_url_link.href = remote_url;
     remote_url_link.textContent = remote_url;
-    document.getElementById("remote-url").appendChild(remote_url_link);
 
+
+    document.getElementById("remote-url").textContent = '';
+    document.getElementById("remote-url").appendChild(remote_url_link);
 }
 
 
@@ -228,6 +268,22 @@ export const elements = {
     },
 };
 
+// Function for adding user actions to the canvas
+function addToCanvas(element) {
+    // element is dropped from the top of the canvas at a random x position
+    const x = Math.floor(Math.random() * (gridWidth - 0 + 1)) + 0;
+    const y = 10;
+
+    if (element == 'water') {
+        grid[y][x] = 'water';
+
+    } else if (element == 'chemical') {
+        grid[y][x] = 'chemical';
+
+    } else {
+        // CODE FOR ADD SUN
+    }
+}
 
 
 function generateSoil(y, x, macro = false) {
@@ -637,7 +693,7 @@ window.addEventListener('load', function () {
     generateBacterial();
 
     connectToDB();
-    createQR();
+    
 
 });
 

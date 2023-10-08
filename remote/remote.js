@@ -18,18 +18,33 @@ const FIREBASE_CONFIG = {
 initializeApp(FIREBASE_CONFIG);
 const database = getDatabase();
 const auth = getAuth();
-let user = null;
+let user = "INSTANCE NOT FOUND";
+
+// Functions for showing and hiding loading spin
+const status_text = document.getElementById("status-text");
+const loading_spin = document.getElementById("loading-spin");
+
+function updateStatus(text, show_loading_spin = false) {
+    // if (show_loading_spin) {
+    //     loading_spin.classList.remove("visually-hidden")
+    // } else {
+    //     loading_spin.classList.add("visually-hidden")
+    // }
+    status_text.innerText = text;
+}
 
 // Authenticate user anonymously
+updateStatus("Authenticating...", true);
 signInAnonymously(auth)
 .then((userCredential) => {
     // Anonymous user signed in
     user = userCredential.user;
-    console.log("Anonymous user ID:", user.uid);
+    updateStatus("Logged in as Anonymous User");
+    console.log("Logged in, Anonymous user ID:", user.uid);
 
     // Get current instance ID
     const INSTANCE_ID = (new URL(document.location)).searchParams.get("id");
-    document.getElementById('instanceID').innerHTML = "Instance: " + INSTANCE_ID;
+    document.getElementById('instanceID').innerHTML = "" + INSTANCE_ID;
 
     // Get DB for current instance
     const instanceDB = ref(database, 'instances/' + INSTANCE_ID);
@@ -70,6 +85,6 @@ signInAnonymously(auth)
 .catch((error) => {
     // Handle errors
     console.error("Error signing in anonymously:", error);
+    updateStatus("Error signing in anonymously");
 });
-
 
