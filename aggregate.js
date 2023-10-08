@@ -7,6 +7,7 @@ export default class Aggregate{
         this.behavior = behavior;
         this.color = color
         this.hasGrow = false;
+        this.aggrCount = 0;
     }
 
     isTouchFungi(grid) {
@@ -42,6 +43,8 @@ export default class Aggregate{
     }
 
     ifNearOtherAgg(DISTANCE, grid) {
+        let hasMoreAggre = false;
+        let rootTipCount = 0;
         //let currAggr = findAggregateByPosition(elements.aggregate.bacteriaElements, x, y);
         //const DISTANCE = 3;
         let aggrCount = 0
@@ -58,8 +61,8 @@ export default class Aggregate{
                 if (this.y+dy >= 0 && this.y+dy < gridHeight && this.x+dx >= 0 && this.x+dx < gridWidth) {
                     if (grid[this.y + dy][this.x + dx] === 'aggregate') {
                         const distance = Math.sqrt(dy*dy + dx*dx);
-                        if (distance <= DISTANCE) {
-                            aggrCount ++;
+                        if (distance <= 3) {
+                            //aggrCount ++;
                             //console.log('near');
                             //if (isTouchFungi(x, y) && isTouchFungi(newX, newY)) {
                             if (this.isTouchFungi(grid)) {
@@ -67,12 +70,25 @@ export default class Aggregate{
                                 isNear = true;  // Set the return value
                             }
                         }
-                    }
+                        if (distance <= DISTANCE) {
+                            aggrCount ++;
+                        }
+                        if (distance <= DISTANCE && grid[this.y + dy][this.x + dx] === 'rootTip') {
+                            rootTipCount ++;
+                        }
+                    } 
                 }
             }
         }
 
-        return [isNear, aggrCount];  // Return the result
+        if(aggrCount != this.aggrCount){
+            hasMoreAggre = true;
+            this.aggrCount = aggrCount;
+        }
+        if (rootTipCount!=0){
+            isNear = false;
+        }
+        return [isNear, aggrCount, hasMoreAggre];  // Return the result
     }
 
 }

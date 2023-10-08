@@ -141,8 +141,8 @@ export default class Bacteria {
     //implement for aggregate
     // Check for nearby liquidSugar
     IfNearBacteria(DISTANCE, grid, number) {
-
-        let bacNum = 0
+        let rootTipNum = 0;
+        let bacNum = 0;
         const gridHeight = grid.length;
         const gridWidth = grid[0].length;
 
@@ -166,18 +166,25 @@ export default class Bacteria {
                             
                         }
                     }
+                    if (grid[this.y+dy][this.x+dx] === 'rootTip') {
+                        rootTipNum++;
+                    }
                 }
             }
+        }
+        if(rootTipNum != 0){
+            return false
         }
 
         if (bacNum >= number){
             if(this.aggregateCooldown <= 0){
-                this.aggregateCooldown = 1000; //adjust value to change how often bacteria can form aggregates
+                this.aggregateCooldown = 4000; //adjust value to change how often bacteria can form aggregates
                 return true;
             }
             
             
         }
+        
         return false;
     }
 
