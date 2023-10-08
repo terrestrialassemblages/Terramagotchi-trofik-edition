@@ -4,14 +4,143 @@ import Bacteria from './bacteria.js';
 import Aggregate from './aggregate.js';
 
 
-//bacteira related variables
-let timeMove = 0;
-let chosenDirection = null;
-let bacteriaIndex = 0;
-let totalBacteriaIndex = 29;
+// CANT GET NPM PACKAGES WORKING
+// import cryptoRandomString from 'crypto-random-string';
+// import toCanvas from 'qrcode';
+
+// Firebase imports
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+import { getDatabase, ref, set, onChildAdded, remove, get } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+
+// Firebase related variables
+const FIREBASE_CONFIG = {
+    apiKey: "AIzaSyCWXtadqvzfXVN95olGEmOVrozV8SVqONs",
+    authDomain: "terramagotchi-trofik-edition.firebaseapp.com",
+    databaseURL: "https://terramagotchi-trofik-edition-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "terramagotchi-trofik-edition",
+    storageBucket: "terramagotchi-trofik-edition.appspot.com",
+    messagingSenderId: "155568148343",
+    appId: "1:155568148343:web:ee221579eb985628441b72",
+    measurementId: "G-NHB6KJDMR8"
+};
+
+// Generate random instance ID every time the page is loaded
+const INSTANCE_ID = Math.floor(Math.random() * 1000000000);
+
+// Function to connect to the database
+function connectToDB() {
+    // Initialize firebase
+    initializeApp(FIREBASE_CONFIG);
+    const database = getDatabase();
+    const auth = getAuth();
+    
+    // Authenticate user anonymously
+    signInAnonymously(auth)
+    .then((userCredential) => {
+        // Anonymous user sign in
+        const user = userCredential.user;
+        console.log("Anonymous user ID:", user.uid);
+
+        // Create table for current instance
+        const instanceDB = ref(database, 'instances/' + INSTANCE_ID);
+        const initialData = {
+            startup : {
+                element : null, 
+                instanceID : INSTANCE_ID, 
+                currtime : Date.now()
+            }
+        }
+        set(instanceDB, initialData)
+        .then(() => {
+            console.log("CREATED DB: ", INSTANCE_ID);
+        })
+
+        // Create QR code for remote app
+        createQR();
+
+        // Remove older instances in the DB, if there are more than specified
+        removeOldInstances(database, 5);
+
+        // DB listener, runs when a new user action is detected
+        onChildAdded(instanceDB, (snapshot) => {
+            const newData = snapshot.val();
+            if (newData.element != null) {
+                console.log("New element added:", newData.element);
+    
+                // RUN CODE TO ADD ELEMENT TO GRID HERE
+                addToCanvas(newData.element);
+
+                // THEN REMOVE THE ENTRY FROM THE DB (MAYBE WE DONT NEED?)
+                //console.log("REMOVING ENTRY key:", snapshot.key);
+
+            }
+        });
+    })
+    .catch((error) => {
+        // Handle errors
+        console.error("Error signing in anonymously:", error);
+    });
+}
+
+// Function to remove instances from the database if the total number of instances exceeds the limit
+function removeOldInstances(database, limit = 50) {
+    const instancesRef = ref(database, 'instances');
+    get(instancesRef)
+    .then((snapshot) => {
+        if (snapshot.exists()) {
+            const instances = snapshot.val();
+            const instanceKeys = Object.keys(instances);
+            if (instanceKeys.length > limit) {
+                // Sort instance keys by timestamp in ascending order
+                instanceKeys.sort((a, b) => instances[a].startup.currtime - instances[b].startup.currtime);
+
+                // Determine the number of instances to remove
+                const instancesToRemove = instanceKeys.length - limit;
+
+                // Remove the oldest instances
+                for (let i = 0; i < instancesToRemove; i++) {
+                    const oldestInstanceKey = instanceKeys[i];
+                    const oldestInstanceDB = ref(database, 'instances/' + oldestInstanceKey);
+                    remove(oldestInstanceDB)
+                    .then(() => {
+                        console.log("Removed oldest instance:", oldestInstanceKey);
+                    })
+                    .catch((error) => {
+                        console.error("Error removing instance:", oldestInstanceKey, error);
+                    });
+                }
+            }
+        }
+    })
+    .catch((error) => {
+        console.error("Error removing instances, could not get snapshot of the table", error);
+    });
+}
+
+function createQR() {
+    //const qr_code_canvas = document.getElementById("qr-code");
+    const remote_url = document.location.origin + "/remote/?id=" + INSTANCE_ID;
+
+    // CURRENT VERSION GENERATES TEXT LINK INSTEAD OF QR CODE
+    const remote_url_link = document.createElement("a");
+    remote_url_link.href = remote_url;
+    remote_url_link.textContent = remote_url;
+
+
+    document.getElementById("remote-url").textContent = '';
+    document.getElementById("remote-url").appendChild(remote_url_link);
+}
 
 
 
+
+
+
+
+
+
+// Initialize canvas
 const canvas = document.getElementById('sandCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -22,12 +151,19 @@ const cellSize = canvas.width / gridWidth;
 export let grid = Array(gridHeight).fill().map(() => Array(gridWidth).fill(null));
 let processed = Array(gridHeight).fill().map(() => Array(gridWidth).fill(false));
 
+// Fungi and Root related variables
 export let currentParticleType = 'rootTip';
 export let timeStep = 0;
 export let rootIndex = 0;
 export let totalRootIndex = 0;
 export let fungiIndex = 0;
 export let totalFungiIndex = 0;
+
+// Bacteira related variables
+let timeMove = 0;
+let chosenDirection = null;
+let bacteriaIndex = 0;
+let totalBacteriaIndex = 29;
 
 export default class RootTip extends RootStructure {
     constructor(startingY, startingX, fungiParent, index) {
@@ -37,8 +173,7 @@ export default class RootTip extends RootStructure {
         console.log(this.parentFungi);
     }
 
-    // Function to produce liquid sugar from root tip
-    // CHANGED TO PRODUCE ONLY 1 LIQUID SUGAR AT A TIME, CURRENTLY DOES NOT RESTORE THE PREVIOUS BLOCK IF LIQUID SUGAR GETS EATEN
+    // Function to produce 1 block of liquid sugar from root tip
     produceSugar() {
         if (grid[this.y][this.x] == 'rootTip') {
 
@@ -51,10 +186,6 @@ export default class RootTip extends RootStructure {
 
     // Function to check if liquid sugar has been eaten. If yes, allows root to grow larger
     sugarEaten() {
-        // If developed == true, and a full bacteria that has eaten liquid sugar touches the tip of the root, increase length of the root.
-        // Set developed to false and increase max_growth length for rootTip
-
-
 
         if (this.developed == true && grid[this.y + 1][this.x] == 'bacteria') {
             // Increase max length of rootTip
@@ -132,6 +263,23 @@ export const elements = {
     },
 };
 
+
+// Function for adding user actions to the canvas
+function addToCanvas(element) {
+    // element is dropped from the top of the canvas at a random x position
+    const x = Math.floor(Math.random() * (gridWidth - 0 + 1)) + 0;
+    const y = 10;
+
+    if (element == 'water') {
+        grid[y][x] = 'water';
+
+    } else if (element == 'chemical') {
+        grid[y][x] = 'chemical';
+
+    } else {
+        // CODE FOR ADD SUN HERE
+    }
+}
 
 
 function generateSoil(y, x, macro = false) {
@@ -610,6 +758,8 @@ window.addEventListener('load', function () {
     drawAutomatically();
     //generateSoil();
     generateBacterial();
+
+    connectToDB();
 });
 
 function drawAutomatically() {

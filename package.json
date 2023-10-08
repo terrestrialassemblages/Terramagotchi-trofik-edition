@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/uoa-compsci399-s2-2023/team-36/issues"
   },
-  "homepage": "https://github.com/uoa-compsci399-s2-2023/team-36#readme"
+  "homepage": "https://github.com/uoa-compsci399-s2-2023/team-36#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.3.3"
+  }
 }
