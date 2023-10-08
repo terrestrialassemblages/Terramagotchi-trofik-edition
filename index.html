@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-
 <html lang="en">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Falling Sand Simulation</title>
-<style>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Falling Sand Simulation</title>
+    <style>
         /* Styles to make the canvas visible */
         #sandCanvas {
             border: 1px solid black;
@@ -27,9 +27,16 @@
         }
     </style>
 </head>
-<body>
-<canvas height="600" id="sandCanvas" width="800"></canvas>
 
-<script type="module" src="sandSim.js"></script>
+<body>
+    <canvas height="600" id="sandCanvas" width="800"></canvas>
+
+    <div id="qr-container" class="qr-overlay">
+        <!-- <canvas id="qr-code"></canvas> -->
+        <p id="remote-url"> Loading ...</p>
+    </div>
+
+    <script type="module" src="sandSim.js"></script>
 </body>
+
 </html>

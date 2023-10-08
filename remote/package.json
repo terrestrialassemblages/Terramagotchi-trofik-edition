@@ -1,0 +1,12 @@
+{
+  "name": "terramagotchi-trofik-edition-remote",
+  "version": "1.0.0",
+  "description": "",
+  "main": "remote.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tailwindcss -i ./input.css -o ./remote.css --watch"
+  },
+  "author": "",
+  "license": "ISC"
+}
