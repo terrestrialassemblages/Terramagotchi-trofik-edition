@@ -1,6 +1,22 @@
 import RootStructure from './root.js';
 import Fungi from './fungi.js';
 import Bacteria from './bacteria.js';
+import Aggregate from './aggregate.js';
+
+////  Firebase ////
+
+// How to store data
+// What sort of data to store: Just user actions, canvas
+// Have different instances
+/*import firebase from "firebase/app";
+import getDataBase from "firebase/database";
+
+const firebaseConfig = {
+    databaseURL: "https://terramagotchi-trofik-edition-default-rtdb.asia-southeast1.firebasedatabase.app/"
+};
+
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();*/
 
 
 //bacteira related variables
@@ -8,15 +24,13 @@ let timeMove = 0;
 let chosenDirection = null;
 let bacteriaIndex = 0;
 let totalBacteriaIndex = 29;
-let aggregateIdCounter = 0;
-
 
 
 const canvas = document.getElementById('sandCanvas');
 const ctx = canvas.getContext('2d');
 
-const gridWidth = 200;  // Change for finer granularity
-const gridHeight = 150; // Change for finer granularity
+export const gridWidth = 200;  // Change for finer granularity
+export const gridHeight = 150; // Change for finer granularity
 const cellSize = canvas.width / gridWidth;
 
 export let grid = Array(gridHeight).fill().map(() => Array(gridWidth).fill(null));
@@ -32,9 +46,7 @@ export let totalFungiIndex = 0;
 export default class RootTip extends RootStructure {
     constructor(startingY, startingX, fungiParent, index) {
         super(startingY, startingX, 10, 500, 'rootTip', 900, index);
-        this.parentFungi = new Array();
-        this.parentFungi.push(fungiParent);
-        console.log(this.parentFungi);
+        this.parentFungi = fungiParent;
     }
 
     // Function to produce liquid sugar from root tip
@@ -60,10 +72,25 @@ export default class RootTip extends RootStructure {
             // Increase max length of rootTip
             this.developed = false;
             this.maxGrowthLength += 2;
-            for (let i = 0; i < this.parentFungi.length; i++) {
-                this.parentFungi[i].expandRoot(elements.fungi.fungiElements, fungiIndex, totalFungiIndex);
+            for (let fungi of this.parentFungi) {
+                //this.parentFungi[i].expandRoot(elements.fungi.fungiElements, fungiIndex, totalFungiIndex);
+                //console.log("EXPANDING NORMALLY WITH SUGAR", fungi.growthSpeed);
+                if (fungi.length < fungi.maxGrowthLength && fungi.growthSpeed / timeStep > 1.2) {
+                    fungi.expandRoot(elements.fungi.fungiElements, fungiIndex, totalFungiIndex);
+                }
+                //console.log("AFTER", fungi.growthSpeed);
+/*                if (fungi.length <= 25) {
+                    console.log("EXPANDING NORMALLY WITH SUGAR");
+                    fungi.expandRoot(elements.fungi.fungiElements, fungiIndex, totalFungiIndex);
+                }
+                else {
+                    // Speeding up the growth speed of fungi
+                    console.log("SPEED BEFORE", fungi.growthSpeed, timeStep, (fungi.growthSpeed - timeStep % fungi.growthSpeed));
+                    fungi.growthSpeed = Math.round(fungi.growthSpeed - (fungi.growthSpeed - timeStep % fungi.growthSpeed) / 2);
+                    console.log("SPEED AFTER", fungi.growthSpeed);
+                }
+*/
             }
-            // this.growthSpeed = Math.round(this.growthSpeed * (2 / 3));
             console.log("SUGAR EATEN, INCREASING LENGTH FOR ROOT: ", this.index);
         }
     }
@@ -72,6 +99,7 @@ export default class RootTip extends RootStructure {
 
 export function incrementTotalFungiIndex(incrementedIndex) {
     totalFungiIndex = incrementedIndex;
+    console.log("THIS IS NEW TOTAL", totalFungiIndex);
 }
 
 export function decrementTotalFungiIndex(decrementedIndex) {
@@ -89,10 +117,6 @@ export const elements = {
     },
     soil: {
         color: "#452c1b",
-        behavior: [],
-    },
-    aggregate: {
-        color: '#4f3724',
         behavior: [],
     },
     stone: {
@@ -130,26 +154,27 @@ export const elements = {
     },
     aggregate: {
         color: '#593e2b',
+        //color: '#000000',
+        aggregateElements: [],
         behavior: [],
     },
 };
 
-// let elementId = 0;
-// for (const elementName in elements) {
-//     elements[elementName].id = elementId++;
-// }
 
-function generateSoil(y, x, currentBac) {
+
+function generateSoil(y, x, macro = false) {
     //currentBac.oldElement = 'aggregate';
 
+    let aggregateSizeX = Math.floor(Math.random() * 2) + 1;
+    let aggregateSizeY = Math.floor(Math.random() * 2) + 1;
 
+    if (macro == true){
+        aggregateSizeX = Math.floor(Math.random() * 2) + 2;
+        aggregateSizeY = Math.floor(Math.random() * 2) + 1;
+    }
+    
+    const rotationAngle = Math.random() * Math.PI * 2;
 
-
-    let aggregateSizeX = Math.floor(Math.random() * 2) + 3;
-    let aggregateSizeY = Math.floor(Math.random() * 2) + 2;
-    //const aggregateId = `aggregate-${aggregateIdCounter++}`;
-    const variation = Math.floor(Math.random() * 20) - 10; // Random value between -10 and 10
-    //aggregateColors[aggregateId] = adjustColor(elements.aggregate.color, variation);
     for (let i = 0; i < aggregateSizeX; i++) {
         for (let j = 0; j < aggregateSizeY; j++) {
             const aggregateX = x + i;
@@ -168,58 +193,42 @@ function generateSoil(y, x, currentBac) {
                     const rotatedY = ellipseX * Math.sin(rotationAngle) + ellipseY * Math.cos(rotationAngle);
                     // Use the elliptical equation to determine if a pixel is inside the ellipse
                     if (rotatedX * rotatedX + rotatedY * rotatedY <= 1) {
-                        grid[aggregateY][aggregateX] = 'aggregate';
+                        if (rotatedX * rotatedX + rotatedY * rotatedY <= 1 && grid[aggregateY][aggregateX] == 'soil') {
+                            let aggInstance = new Aggregate(aggregateY, aggregateX, null, null);
+                            elements.aggregate.aggregateElements.push(aggInstance);
+                            grid[aggregateY][aggregateX] = 'aggregate';
+
+                            if (macro == true){
+                                aggInstance.hasGrow = true;
+                                
+                            }
+                            
+                        }
+                    
                     }
                 }
             }
         }
     }
-    //currentBac.oldElement = 'aggregate';
-
-
-    /*
-    //load soil and aggregate
-    for (let y = 80; y < 150; y++) {
-        for (let x = 0; x < gridWidth; x++) {
-            
-            if (y >= 85 && (grid[y][x] === 'water' || grid[y][x] === 'soil')) {
-                if (Math.random() < 0.005) {
-                    let aggregateSizeX = Math.floor(Math.random() * 2) + 4;
-                    let aggregateSizeY = Math.floor(Math.random() * 2) + 4;
-                    //const aggregateId = `aggregate-${aggregateIdCounter++}`;
-                    const variation = Math.floor(Math.random() * 20) - 10; // Random value between -10 and 10
-                    //aggregateColors[aggregateId] = adjustColor(elements.aggregate.color, variation);
-                    for (let i = 0; i < aggregateSizeX; i++) {
-                        for (let j = 0; j < aggregateSizeY; j++) {
-                            const aggregateX = x + i;
-                            const aggregateY = y - j;
-                            const rotationAngle = Math.random() * Math.PI * 2;
-                            for (let i = 0; i < aggregateSizeX; i++) {
-                                for (let j = 0; j < aggregateSizeY; j++) {
-                                    const aggregateX = x + i;
-                                    const aggregateY = y - j;
-                                    // Calculate elliptical values with increased noise
-                                    const noise = Math.random() * 0.3 - 0.15;
-                                    let ellipseX = (i - aggregateSizeX / 2 + noise) / (aggregateSizeX / 2);
-                                    let ellipseY = (j - aggregateSizeY / 2 + noise) / (aggregateSizeY / 2);
-                                    // Rotate the coordinates
-                                    const rotatedX = ellipseX * Math.cos(rotationAngle) - ellipseY * Math.sin(rotationAngle);
-                                    const rotatedY = ellipseX * Math.sin(rotationAngle) + ellipseY * Math.cos(rotationAngle);
-                                    // Use the elliptical equation to determine if a pixel is inside the ellipse
-                                    if (rotatedX * rotatedX + rotatedY * rotatedY <= 1) {
-                                        grid[aggregateY][aggregateX] = 'aggregate';
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }*/
 }
 
 
+
+elements.aggregate.behavior.push(function(y, x, grid) {
+    let currAggr = findAggregateByPosition(elements.aggregate.aggregateElements, x, y);
+
+    if (grid[y][x] === 'aggregate') {
+        const result = currAggr.ifNearOtherAgg(3, grid)
+        //console.log("result", result)
+        if (result){
+            if (!currAggr.hasGrow){
+                generateSoil(y, x, result);
+                currAggr.hasGrow = true;
+            }
+        }
+    }
+
+});
 
 
 export function findBacteriaByPosition(bacteriaElements, x, y) {
@@ -233,18 +242,18 @@ export function findBacteriaByPosition(bacteriaElements, x, y) {
 
 
 
-
 elements.bacteria.behavior.push(function (y, x, grid) {
     let currentBac = findBacteriaByPosition(elements.bacteria.bacteriaElements, x, y)
 
-    let DISDANCE = 8;
+    let DISDANCE = 40;
     const result = currentBac.IfNearLiquidSugar(DISDANCE, grid);
 
     let Agregate = currentBac.IfNearBacteria(5, grid, 2)
-    console.log("agr", Agregate)
+    // console.log("agr", Agregate)
     if (Agregate) {
         generateSoil(y, x, currentBac);
     }
+    
 
     let ifNear = result.ifNear;
     let priorityDirection = result.priorityDirection;
@@ -381,6 +390,7 @@ elements.rootTip.behavior.push(function (y, x, grid) {
         // If it can grow, expand root
         if (result[0]) {
             totalRootIndex = curr.expandRoot(elements.rootTip.rootElements, rootIndex, totalRootIndex);
+            console.log(elements.rootTip.rootElements, "root tip array");
         }
         rootIndex++;
 
@@ -396,31 +406,37 @@ elements.rootTip.behavior.push(function (y, x, grid) {
 elements.fungi.behavior.push(function (y, x, grid) {
     if (totalFungiIndex > 0) {
         let curr = elements[grid[y][x]].fungiElements[fungiIndex];
-        // If root is not at max size, expand root
-        let result = curr.growBool(totalFungiIndex);
-        totalFungiIndex = result[1];
-        if (result[0]) {
-            //console.log("TIME TO GROW");
-            // Branch out to the root tip and attach to it
-            if (curr.branchingToRoot == true && curr.attached == false) {
-                if (curr.nearestRootFound == false) {
-                    // Find the closest root tip at that moment
-                    curr.findRootTip();
+        try {
+            // If root is not at max size, expand root
+            let result = curr.growBool(totalFungiIndex);
+            totalFungiIndex = result[1];
+            if (result[0]) {
+                //console.log("TIME TO GROW");
+                // Branch out to the root tip and attach to it
+                if (curr.branchingToRoot == true && curr.attached == false) {
+                    if (curr.nearestRootFound == false) {
+                        // Find the closest root tip at that moment
+                        curr.findRootTip();
+                    }
+                    else {
+                        // Expand to root tip
+                        curr.expandFungiToRoot();
+                    }
                 }
                 else {
-                    // Expand to root tip
-                    curr.expandFungiToRoot();
+                    // Every other fungi root that will normally grow
+                    if (curr.expandRoot(elements.fungi.fungiElements, fungiIndex, totalFungiIndex) == false) {
+                        fungiIndex--;
+                    }
                 }
             }
-            else {
-                // Every other fungi root that will normally grow
-                curr.expandRoot(elements.fungi.fungiElements, fungiIndex, totalFungiIndex);
+            fungiIndex++;
+            if (fungiIndex >= totalFungiIndex) {
+                fungiIndex = 0;
             }
-        }
-        fungiIndex++;
-
-        if (fungiIndex >= totalFungiIndex) {
-            fungiIndex = 0;
+        } catch (error) {
+            console.log(fungiIndex, totalFungiIndex, "FOUND TRY EXCEPT", this, elements.fungi.fungiElements);
+            return;
         }
     }
 
@@ -470,6 +486,21 @@ function drawGrid() {
 }
 
 
+
+canvas.addEventListener('mousedown', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = Math.floor((event.clientX - rect.left) / cellSize);
+    const y = Math.floor((event.clientY - rect.top) / cellSize);
+
+    // Add 'aggregate' to the grid at the clicked location
+    grid[y][x] = 'aggregate';
+    let aggInstance = new Aggregate(y, x, null, null);
+    elements.aggregate.aggregateElements.push(aggInstance);
+});
+
+
+
+/*
 // User actions
 canvas.addEventListener('mousedown', (event) => {
     const rect = canvas.getBoundingClientRect();
@@ -495,13 +526,14 @@ canvas.addEventListener('mousedown', (event) => {
         }
     }
 });
-
+*/
 
 function loop() {
     updateGrid();
     drawGrid();
     requestAnimationFrame(loop);
 
+    //testing()
     timeStep++;
     timeMove++;
 
@@ -542,32 +574,32 @@ function drawAutomatically() {
     let fungiObj = new Fungi(81, 25, false, totalFungiIndex++);
     grid[81][25] = 'fungi';
     elements.fungi.fungiElements.push(fungiObj);
-    let rootObj = new RootTip(80, 25, fungiObj, totalRootIndex++);
+    let rootObj = new RootTip(80, 25, [fungiObj], totalRootIndex++);
     grid[80][25] = 'rootTip';
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
 
 
     // 80 75
-    grid[81][75] = 'fungi';
+/*    grid[81][75] = 'fungi';
     fungiObj = new Fungi(81, 75, false, totalFungiIndex++);
     elements.fungi.fungiElements.push(fungiObj);
     rootObj = new RootTip(80, 75, fungiObj, totalRootIndex++);
     grid[80][75] = 'rootTip';
     elements.rootTip.rootElements.push(rootObj);
-    fungiObj.parentRoot = rootObj;
+    fungiObj.parentRoot = rootObj;*/
 
 
 
 
     // 81 140
-    grid[81][140] = 'fungi';
+/*    grid[81][140] = 'fungi';
     fungiObj = new Fungi(81, 140, false, totalFungiIndex++)
     elements.fungi.fungiElements.push(fungiObj);
     rootObj = new RootTip(80, 140, fungiObj, totalRootIndex++);
     grid[80][140] = 'rootTip';
     elements.rootTip.rootElements.push(rootObj);
-    fungiObj.parentRoot = rootObj;
+    fungiObj.parentRoot = rootObj;*/
 
 
     // Call any other functions required to render the grid on the canvas.
@@ -585,8 +617,8 @@ function generateBacterial() {
         console.log(randomNumber);*/
 
         const randomX = Math.floor(Math.random() * (200 - 0 + 1)) + 0;
-        const randomY = Math.floor(Math.random() * (148 - 80 + 1)) + 80;
-        if (grid[randomY][randomX] == 'soil') {
+        const randomY = Math.floor(Math.random() * (90 - 80 + 1)) + 80;
+        if (grid[randomY][randomX]== 'soil') {
             grid[randomY][randomX] = 'bacteria';
         }
 
@@ -598,4 +630,41 @@ function generateBacterial() {
         //bacteriaIndex++;
 
     }
+    for (let i = 0; i < 50; i++) {
+        const randomX = Math.floor(Math.random() * (200 - 0 + 1)) + 0;
+        const randomY = Math.floor(Math.random() * (130 - 80 + 1)) + 90;
+        if (grid[randomY][randomX] == 'soil') {
+            grid[randomY][randomX] = 'bacteria';
+        }
+
+        //console.log(new Bacteria("#800080", 15, null, 0, []));
+        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 40000))
+        //currBacteria.updatePosition(newY, newX);
+
+
+        //bacteriaIndex++;
+    }
+}
+
+function testing(){
+    //elements.aggregate.bacteriaElements.push(new Agregate(0, 0))
+    grid[20][20] = 'aggregate'
+    grid[21][20] = 'fungi'
+    
+    generateSoil(20, 20, ifNearOtherAgg(grid, 20, 20))
+    
+
+    grid[23][20] = 'aggregate'
+
+    grid[140][20] = 'aggregate'
+    grid[23][21] = 'fungi'
+}
+
+export function findAggregateByPosition(aggregateElements, x, y) {
+    for (let aggregate of aggregateElements) {
+        if (aggregate.x === x && aggregate.y === y) {
+            return aggregate;
+        }
+    }
+    return null;  // Return null if no matching bacteria is found
 }

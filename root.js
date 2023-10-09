@@ -31,21 +31,43 @@ export default class RootStructure {
             // Mark the root as Developed
             this.developed = true;
         }
-        if ((timeStep % this.growthSpeed == 0) && this.developed == true && this.elementName == 'rootTip') {
+        if ((timeStep >= this.growthSpeed) && this.developed == true && this.elementName == 'rootTip') {
             // If root is developed, produce sugar
             this.produceSugar();
             //console.log("FULLY GROWN, PRODUCING SUGAR");
             return ([false, totalIndex]);
         }
-        return ([(timeStep % this.growthSpeed == 0) && (this.length < this.maxGrowthLength), (totalIndex)]);
+        if (timeStep > this.growthSpeed) {
+            console.log("FOUDN ERROR", this.growthSpeed, timeStep, this);
+        }
+        return ([(timeStep >= this.growthSpeed) && (this.length < this.maxGrowthLength), (totalIndex)]);
     }
 
     // Adjusts the growth speed depending on the current length
     updateGrowthSpeed() {
-        // Pythagoras from starting location
-        // let distance = Math.sqrt(Math.pow(Math.abs(this.y - this.startingY), 2) + (Math.pow(Math.abs(this.x - this.startingX), 2)));
         // Growth speed scaled according to difference in length from maxGrowthLength
-        this.growthSpeed += Math.ceil(this.startingSpeed / (this.maxGrowthLength / 1 + this.length));
+        // this.growthSpeed += Math.ceil(this.startingSpeed / (this.maxGrowthLength / 1 + this.length));
+        // Have tos cale it to1
+        let baseIncrement = 1 + ((this.maxGrowthLength - this.length) / this.maxGrowthLength);
+        baseIncrement = Math.max(1.05, baseIncrement);
+        let speedCap = 0;
+        if (timeStep < 5000) {
+            speedCap = 500;
+        }
+        else if (timeStep >= 5000 && timeStep < 15000) {
+            speedCap = 900;
+        }
+        else {
+            speedCap = 1250;
+        }
+        this.growthSpeed = Math.min((Math.round(baseIncrement * this.growthSpeed)), this.growthSpeed + speedCap);
+
+        if (timeStep > this.growthSpeed) {
+            this.growthSpeed = this.growthSpeed + speedCap;
+        }
+        else {
+            this.growthSpeed = Math.min((Math.round(baseIncrement * this.growthSpeed)), this.growthSpeed + speedCap);
+        }
     }
 
     // Checks neighboring cells
@@ -66,9 +88,6 @@ export default class RootStructure {
 
     // Fuction to grow root by one block
     expandRoot(elementsArray, index, totalIndex) {
-
-        console.log("EXPANDING ROOT NOW NO: ", this.index);
-
         // Randomly choose -1, 0, or 1 for x growth direction (either grow left-down, down, right-down)
         let x_direction = Math.floor(Math.random() * 3) - 1;
 
@@ -85,9 +104,10 @@ export default class RootStructure {
 
             // Create a new rootTip object for new branch
             grid[this.y + 1][this.x + 1] = 'rootTip';
-            let branchRootTip = new RootTip(this.y + 1, this.x + 1, totalIndex++);
+            let branchRootTip = new RootTip(this.y + 1, this.x + 1, this.parentFungi, totalIndex++);
             branchRootTip.parentFungi = this.parentFungi;
             branchRootTip.length = this.length + 2;
+            branchRootTip.maxGrowthLength = this.maxGrowthLength;
             elementsArray.push(branchRootTip);
 
             // Produce sugar at branching point
