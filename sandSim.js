@@ -427,10 +427,7 @@ function generateSoil(y, x, macro = false) {
                     }
                 }
             }
-        
-    
-    
-    
+
 }
 
 
@@ -806,6 +803,7 @@ function updateGrid() {
 
 function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawSun(7);
 
     for (let y = 0; y < gridHeight; y++) {
         for (let x = 0; x < gridWidth; x++) {
@@ -831,6 +829,7 @@ function drawGrid() {
     ctx.globalAlpha = 1.0;
 }
 
+
 canvas.addEventListener('mousedown', (event) => {
     const rect = canvas.getBoundingClientRect();
     const x = Math.floor((event.clientX - rect.left) / cellSize);
@@ -845,7 +844,6 @@ canvas.addEventListener('mousedown', (event) => {
     */
    testing(y, x)
     
-
     //add liquidSugar
     //grid[y][x] = 'liquidSugar';
 });
@@ -884,6 +882,8 @@ function loop() {
     updateGrid();
     drawGrid();
     requestAnimationFrame(loop);
+
+    generateWater();
     //testing()
     
     timeStep++;
@@ -992,7 +992,6 @@ function generateBacterial() {
 
         //currBacteria.updatePosition(newY, newX);
 
-
         //bacteriaIndex++;
 
     }
@@ -1024,7 +1023,6 @@ export function findAggregateByPosition(aggregateElements, x, y) {
 }
 
 
-
 function calculateSoilColor(color1, color2, alpha) {
 
     if (!color1 || !color2) {
@@ -1047,8 +1045,6 @@ function calculateSoilColor(color1, color2, alpha) {
     //console.log("color:", resultColor);
     return resultColor;
 }
-
-
 
 
 function updateSoilcolor(y, x, aggrCount, init = false) {
@@ -1103,7 +1099,6 @@ function updateSoilcolor(y, x, aggrCount, init = false) {
     }
 }
 
-
 function initSoilGradient(){
     for (let i = 80; i < 120; i+=10) {
         for (let j = 0; j < 200; j+=5) {
@@ -1116,3 +1111,71 @@ function initSoilGradient(){
 
 
 
+let sunShow = true;
+function drawSun(pixelSize) {
+    if (sunShow) {
+        let sunPixels = [
+            "      X       ",
+            "   X XX XXX   ",
+            "   XXXXXXX    ",
+            " X XX....XXXX ",
+            " XXX......XX  ",
+            " XX........XX ",
+            "  X........XXX",
+            "XXX........X  ",
+            " XX........XX ",
+            "  XX......XXX ",
+            " XXXX....XX X ",
+            "    XXXXXXX   ",
+            "   XXX XX X   ",
+            "       X      ",
+        ];
+
+        let startX = (canvas.width - (sunPixels[0].length * pixelSize)) + 30;
+        let startY = 0;
+
+        for (let y = 0; y < sunPixels.length; y++) {
+            for (let x = 0; x < sunPixels[y].length; x++) {
+                switch (sunPixels[y][x]) {
+                    case 'X':
+                        ctx.fillStyle = 'orange';
+                        break;
+                    case '.':
+                        ctx.fillStyle = 'yellow';
+                        break;
+                    default:
+                        ctx.fillStyle = 'transparent';
+                        break;
+                }
+                ctx.fillRect(startX + x * pixelSize, startY + y * pixelSize, pixelSize, pixelSize);
+            }
+        }
+    }
+}
+
+
+elements.water.behavior.push(function (y, x, grid) {
+    // Check for an empty space below and move water down
+    if (y + 1 < gridHeight && grid[y + 1][x] === null) {
+        grid[y + 1][x] = 'water';
+        grid[y][x] = null;
+    }
+    else {
+        grid[y][x] = null;
+    }
+});
+
+function generateWater() {
+    if (!sunShow) {
+        if (Math.random() < 0.5) {
+            let x = Math.floor(Math.random() * gridWidth);
+            if (grid[0][x] === null) {
+                grid[0][x] = 'water';
+            }
+        }
+    }
+}
+
+setInterval(() => {
+    sunShow = !sunShow;
+}, 5 * 1000);
