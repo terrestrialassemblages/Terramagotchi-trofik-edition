@@ -3,8 +3,9 @@ import Fungi from './fungi.js';
 import Bacteria from './bacteria.js';
 import Aggregate from './aggregate.js';
 //import {calculateSoilColor} from './aggregate_behavior.js';
-import {generateSoil} from './aggregate_behavior.js';
-import { updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor} from './aggregate_behavior.js';
+import { generateSoil, updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor} from './aggregate_behavior.js';
+import {waterBehavior} from './water_behavior.js';
+import {sunShow, drawSun, generateRain} from './weather.js';
 
 
 
@@ -339,6 +340,7 @@ export const elements = {
     },
 };
 
+elements.water.behavior.push((y, x, grid) => waterBehavior(y, x, grid, gridHeight));
 
 // Function for adding user actions to the canvas
 function addToCanvas(element) {
@@ -641,7 +643,7 @@ function updateGrid() {
 
 function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawSun(7);
+    drawSun(ctx, canvas, 7);
 
     for (let y = 0; y < gridHeight; y++) {
         for (let x = 0; x < gridWidth; x++) {
@@ -721,7 +723,7 @@ function loop() {
     drawGrid();
     requestAnimationFrame(loop);
 
-    generateWater();
+    generateRain(grid, gridWidth);
     //testing()
     
     timeStep++;
@@ -828,74 +830,3 @@ function generateBacterial() {
 
 
 
-
-
-
-let sunShow = true;
-function drawSun(pixelSize) {
-    if (sunShow) {
-        let sunPixels = [
-            "      X       ",
-            "   X XX XXX   ",
-            "   XXXXXXX    ",
-            " X XX....XXXX ",
-            " XXX......XX  ",
-            " XX........XX ",
-            "  X........XXX",
-            "XXX........X  ",
-            " XX........XX ",
-            "  XX......XXX ",
-            " XXXX....XX X ",
-            "    XXXXXXX   ",
-            "   XXX XX X   ",
-            "       X      ",
-        ];
-
-        let startX = (canvas.width - (sunPixels[0].length * pixelSize)) + 30;
-        let startY = 0;
-
-        for (let y = 0; y < sunPixels.length; y++) {
-            for (let x = 0; x < sunPixels[y].length; x++) {
-                switch (sunPixels[y][x]) {
-                    case 'X':
-                        ctx.fillStyle = 'orange';
-                        break;
-                    case '.':
-                        ctx.fillStyle = 'yellow';
-                        break;
-                    default:
-                        ctx.fillStyle = 'transparent';
-                        break;
-                }
-                ctx.fillRect(startX + x * pixelSize, startY + y * pixelSize, pixelSize, pixelSize);
-            }
-        }
-    }
-}
-
-
-elements.water.behavior.push(function (y, x, grid) {
-    // Check for an empty space below and move water down
-    if (y + 1 < gridHeight && grid[y + 1][x] === null) {
-        grid[y + 1][x] = 'water';
-        grid[y][x] = null;
-    }
-    else {
-        grid[y][x] = null;
-    }
-});
-
-function generateWater() {
-    if (!sunShow) {
-        if (Math.random() < 0.5) {
-            let x = Math.floor(Math.random() * gridWidth);
-            if (grid[0][x] === null) {
-                grid[0][x] = 'water';
-            }
-        }
-    }
-}
-
-setInterval(() => {
-    sunShow = !sunShow;
-}, 5 * 1000);
