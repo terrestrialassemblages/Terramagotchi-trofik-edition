@@ -1,4 +1,4 @@
-import { elements } from './sandSim.js';
+
 
 export let sunShow = true;
 

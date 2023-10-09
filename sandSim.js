@@ -1,11 +1,14 @@
-import RootStructure from './root.js';
-import Fungi from './fungi.js';
-import Bacteria from './bacteria.js';
-import Aggregate from './aggregate.js';
+import RootStructure from './root/root.js';
+import Fungi from './fungi/fungi.js';
 //import {calculateSoilColor} from './aggregate_behavior.js';
-import { generateSoil, updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor} from './aggregate_behavior.js';
+import { updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor} from './aggregate/aggregate_behavior.js';
 import {waterBehavior} from './water_behavior.js';
+import {soilBehavior} from './soil_behavior.js';
+import {rootBehavior} from './root/root_behavior.js';
+import {rootTipBehavior} from './root/roottip_behavior.js';
 import {sunShow, drawSun, generateRain} from './weather.js';
+import { findBacteriaByPosition, generateBacterial, bacteriaBehavior} from './bacteria/bacteria_behavior.js';
+import {fungiBehavior} from './fungi/fungi_behavior.js';
 
 
 
@@ -221,7 +224,7 @@ const gridHeight = 150; // Change for finer granularity
 const cellSize = canvas.width / gridWidth;
 
 export let grid = Array(gridHeight).fill().map(() => Array(gridWidth).fill(null));
-let processed = Array(gridHeight).fill().map(() => Array(gridWidth).fill(false));
+export let processed = Array(gridHeight).fill().map(() => Array(gridWidth).fill(false));
 
 // Fungi and Root related variables
 export let currentParticleType = 'rootTip';
@@ -232,10 +235,8 @@ export let fungiIndex = 0;
 export let totalFungiIndex = 0;
 
 // Bacteira related variables
-let timeMove = 0;
-let chosenDirection = null;
-let bacteriaIndex = 0;
-let totalBacteriaIndex = 29;
+export let timeMove = 0;
+export let chosenDirection = null;
 
 export default class RootTip extends RootStructure {
     constructor(startingY, startingX, fungiParent, index) {
@@ -281,23 +282,37 @@ export function decrementTotalFungiIndex(decrementedIndex) {
     totalFungiIndex = decrementedIndex;
 }
 
+export function changeChosenDirection(newDirection) {
+    chosenDirection = newDirection;
+}
 
+export function IncementFungiIndex(newIndex) {
+    fungiIndex = newIndex;
+}
+
+export function resetFungiIndex() {
+    fungiIndex = 0;
+}
+
+export function incrementTotalRootIndex(incrementedIndex) {
+    totalRootIndex = incrementedIndex;
+}
+
+export function IncementRootIndex(newIndex) {
+    rootIndex = newIndex;
+}
+
+export function resetRootIndex() {
+    rootIndex = 0;
+}
 
 
 
 export const elements = {
-    sand: {
-        color: "#FFD700",
-        behavior: [],
-    },
     soil: {
         color: "#452c1b",
         behavior: [],
         soilAlpha: {},
-    },
-    stone: {
-        color: "#211811",
-        behavior: [],
     },
     water: {
         color: "#5756c2",
@@ -334,13 +349,13 @@ export const elements = {
         aggregateElements: {},
         behavior: [],
     },
-    darkSoil: {
-        color: "#000000",
-        behavior: [],
-    },
 };
 
 elements.water.behavior.push((y, x, grid) => waterBehavior(y, x, grid, gridHeight));
+elements.fungi.behavior.push((y, x, grid) => fungiBehavior(y, x, grid));
+elements.root.behavior.push((y, x, grid) => rootBehavior(y, x, grid));
+elements.soil.behavior.push((y, x, grid) => soilBehavior(y, x, grid));
+elements.rootTip.behavior.push((y, x, grid) => rootTipBehavior(y, x, grid, gridHeight));
 
 // Function for adding user actions to the canvas
 function addToCanvas(element) {
@@ -361,256 +376,12 @@ function addToCanvas(element) {
 
 
 
+elements.bacteria.behavior.push((y, x, grid) => bacteriaBehavior(y, x, grid));
 
 
 
 
 
-
-
-
-export function findBacteriaByPosition(bacteriaElements, x, y) {
-    for (let bacteria of bacteriaElements) {
-        if (bacteria.x === x && bacteria.y === y) {
-            return bacteria;
-        }
-    }
-    return null;  // Return null if no matching bacteria is found
-}
-
-
-
-elements.bacteria.behavior.push(function (y, x, grid) {
-    let currentBac = findBacteriaByPosition(elements.bacteria.bacteriaElements, x, y)
-
-    // if bacteria is fading, dont move
-    if (currentBac.fading) {      
-        return;
-    }
-
-    let DISDANCE = 40;
-    const result = currentBac.IfNearLiquidSugar(DISDANCE, grid);
-
-    let Agregate = currentBac.IfNearBacteria(5, grid, 2)
-    //console.log("agr", Agregate)
-    
-    if (Agregate){
-        generateSoil(y, x);
-    }
-    
-    
-
-    let ifNear = result.ifNear;
-    let priorityDirection = result.priorityDirection;
-    //console.log(priorityDirection);
-
-    if (ifNear) {
-        //console.log(timeMove % elements.bacteria.frameTimer);
-        if (timeMove % elements.bacteria.frameTimer == 0) {
-
-            chosenDirection = priorityDirection;
-
-            //console.log(chosenDirection);
-            let random = Math.floor(Math.random() * 4);
-            if (random == 0){
-                chosenDirection = currentBac.choseDirection();
-            }
-            
-
-            
-
-            // Apply the movement
-            let newY = y + chosenDirection.dy;
-            let newX = x + chosenDirection.dx;
-
-            if (grid[newY][newX] === 'liquidSugar') {
-                grid[newY][newX] = 'bacteria';
-                elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], newX, newY, 400000))
-            } else {
-                currentBac.bacteriaMovement(newY, newX, grid, processed);
-            }
-            
-        }
-        
-    }
-    else {
-        //console.log(timeMove % elements.bacteria.frameTimer);
-        if (timeMove % elements.bacteria.frameTimer == 0) {
-
-            //directionTimer smaller change direction more frequentlly
-            if (elements.bacteria.directionTimer % 5 !== 0) {
-                chosenDirection = currentBac.choseDirection();
-            }
-            else {
-                if (currentBac.currentDirection !== null) {
-                    chosenDirection = currentBac.currentDirection;
-                    // If the bacteria is touching any boundary, choose a new direction
-                    if (y == 0 || y == gridHeight - 1 || x == 0 || x == gridWidth - 1) {
-                        chosenDirection = currentBac.choseDirection();
-                    }
-                }
-                else {
-                    chosenDirection = currentBac.choseDirection();
-                }
-            }
-            elements.bacteria.directionTimer++;
-            //console.log(chosenDirection);
-
-
-
-            // Apply the movement
-            let newY = y + chosenDirection.dy;
-            let newX = x + chosenDirection.dx;
-
-            currentBac.bacteriaMovement(newY, newX, grid, processed);
-
-        }
-    }
-});
-
-
-elements.sand.behavior.push(function (y, x, grid) {
-    // Sand behavior logic goes here, based on the extracted updateGrid function
-    if (grid[y + 1][x] === null) {
-        // Move sand down
-        grid[y + 1][x] = 'sand';
-        grid[y][x] = null;
-    } else if (grid[y + 1][x] === 'water') {
-        // If there's water below the sand, swap the two
-        grid[y + 1][x] = 'sand';
-        grid[y][x] = 'water';
-    }
-    // ... rest of the sand behavior ...
-});
-
-
-elements.soil.behavior.push(function (y, x, grid) {
-    if (grid[y + 1][x] === null) {
-        // If the bottom is empty, let the dirt move downward
-        grid[y + 1][x] = 'soil';
-        grid[y][x] = null;
-    } else {
-        // If the bottom is not empty, try to let the dirt slide to the sides
-        let leftX = x - 1;
-        let rightX = x + 1;
-        if (leftX >= 0 && rightX < gridWidth) {
-            let leftHeight = 0;
-            let rightHeight = 0;
-            // Calculate the height of the left and right sides
-            while (leftX >= 0 && grid[y + 1][leftX] === null) {
-                leftHeight++;
-                leftX--;
-            }
-            while (rightX < gridWidth && grid[y + 1][rightX] === null) {
-                rightHeight++;
-                rightX++;
-            }
-            // If the height of the left side is greater than or equal to 3 or the height of the right side is greater than or equal to 3, let the clods slide in both directions
-            if (leftHeight >= 3 || rightHeight >= 3) {
-                if (leftHeight >= rightHeight) {
-                    grid[y + 1][x - leftHeight] = 'soil';
-                    grid[y][x] = null;
-                } else {
-                    grid[y + 1][x + rightHeight] = 'soil';
-                    grid[y][x] = null;
-                }
-            }
-        }
-    }
-});
-
-
-// The body of the root
-elements.root.behavior.push(function (y, x, grid) {
-    // If no block below, remove root
-    if (grid[y + 1][x] === null) {
-        grid[y][x] = null;
-    }
-});
-
-
-// This is the ends of the roots
-elements.rootTip.behavior.push(function (y, x, grid) {
-    try{
-
-        
-
-        // Update for every RootTip instance in the grid array
-        if (totalRootIndex > 0) {
-
-            // Get the current rootTip object
-            let curr = elements[grid[y][x]].rootElements[rootIndex];
-
-            // Check if sugar produced has been eaten
-            curr.sugarEaten()
-
-            // Ckeck if root can grow
-            let result = curr.growBool(totalRootIndex);
-
-            // Update totalRootIndex
-            totalRootIndex = result[1];
-
-            // If it can grow, expand root
-            if (result[0]) {
-                totalRootIndex = curr.expandRoot(elements.rootTip.rootElements, rootIndex, totalRootIndex);
-            }
-            rootIndex++;
-
-            // Reset index once we finish iterating through all the rootTips
-            if (rootIndex >= totalRootIndex) {
-                rootIndex = 0;
-            }
-        }
-    }catch (error) {
-        // If an error occurs, log it and return from the function
-        console.error('An error occurred:', error.message);
-        return;
-    }
-
-});
-
-
-elements.fungi.behavior.push(function (y, x, grid) {
-    if (totalFungiIndex > 0) {
-        try{
-            let curr = elements[grid[y][x]].fungiElements[fungiIndex];
-        // If root is not at max size, expand root
-        let result = curr.growBool(totalFungiIndex);
-        totalFungiIndex = result[1];
-        if (result[0]) {
-            //console.log("TIME TO GROW");
-            // Branch out to the root tip and attach to it
-            if (curr.branchingToRoot == true && curr.attached == false) {
-                if (curr.nearestRootFound == false) {
-                    // Find the closest root tip at that moment
-                    curr.findRootTip();
-                }
-                else {
-                    // Expand to root tip
-                    curr.expandFungiToRoot();
-                }
-            }
-            else {
-                // Every other fungi root that will normally grow
-                curr.expandRoot(elements.fungi.fungiElements, fungiIndex, totalFungiIndex);
-            }
-        }
-        fungiIndex++;
-
-        if (fungiIndex >= totalFungiIndex) {
-            fungiIndex = 0;
-        }   
-        }catch (error) {
-            // If an error occurs, log it and return from the function
-            console.error('An error occurred:', error.message);
-            return;
-        }
-        
-    }
-
-    
-
-});
 
 
 elements.liquidSugar.behavior.push(function (y, x, grid) {
@@ -808,25 +579,6 @@ function drawAutomatically() {
     // Call any other functions required to render the grid on the canvas.
 }
 
-function generateBacterial() {
-    //grid[129][20] = 'bacteria';
-
-    for (let i = 0; i < 50; i++) {
-
-
-        const randomX = Math.floor(Math.random() * (200 - 0 + 1)) + 0;
-        const randomY = Math.floor(Math.random() * (120 - 80 + 1)) + 80;
-        if (grid[randomY][randomX]== 'soil') {
-            grid[randomY][randomX] = 'bacteria';
-            //grid[randomY+1][randomX+1] = 'bacteria';
-        }
-
-
-        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 400000))
-
-
-    }
-}
 
 
 

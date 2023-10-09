@@ -1,12 +1,8 @@
-import RootTip from './sandSim.js';
-import { grid } from './sandSim.js';
+import RootTip from '../sandSim.js';
+import { grid } from '../sandSim.js';
 
-import { currentParticleType } from './sandSim.js';
-import { timeStep } from './sandSim.js';
-import { rootIndex } from './sandSim.js';
-import { totalRootIndex } from './sandSim.js';
-import { fungiIndex } from './sandSim.js';
-import { totalFungiIndex } from './sandSim.js';
+import { timeStep } from '../sandSim.js';
+
 
 export default class RootStructure {
     constructor(startingY, startingX, growthLimit, growthSpeed, elementName, startingSpeed, index) {

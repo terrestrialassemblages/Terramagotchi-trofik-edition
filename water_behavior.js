@@ -1,4 +1,4 @@
-import { elements } from './sandSim.js';
+
 
 export function waterBehavior(y, x, grid, gridHeight) {
     // Check for an empty space below and move water down

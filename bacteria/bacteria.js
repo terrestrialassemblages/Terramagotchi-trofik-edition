@@ -1,5 +1,6 @@
-import { elements } from './sandSim.js';
-import { findBacteriaByPosition } from './sandSim.js';
+
+import { elements } from '../sandSim.js';
+import { findBacteriaByPosition } from './bacteria_behavior.js';
 
 export default class Bacteria {
     constructor(color, frameTimer, currentDirection, directionTimer, behavior, x, y, lifespan) {

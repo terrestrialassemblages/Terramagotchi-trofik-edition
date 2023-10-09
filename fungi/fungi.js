@@ -1,14 +1,9 @@
-import RootStructure from './root.js';
-import { grid } from './sandSim.js';
-
-import { currentParticleType } from './sandSim.js';
-import { timeStep } from './sandSim.js';
-import { rootIndex } from './sandSim.js';
-import { totalRootIndex } from './sandSim.js';
-import { fungiIndex } from './sandSim.js';
-import { totalFungiIndex } from './sandSim.js';
-import { incrementTotalFungiIndex,  decrementTotalFungiIndex} from './sandSim.js';
-import { elements } from './sandSim.js';
+import RootStructure from '../root/root.js';
+import { grid } from '../sandSim.js';
+import { totalRootIndex } from '../sandSim.js';
+import { totalFungiIndex } from '../sandSim.js';
+import { incrementTotalFungiIndex,  decrementTotalFungiIndex} from '../sandSim.js';
+import { elements } from '../sandSim.js';
 
 export default class Fungi extends RootStructure {
     // Fungi will first start at a location and branch out normally like rootTip

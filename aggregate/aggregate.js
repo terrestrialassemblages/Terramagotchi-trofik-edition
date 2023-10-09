@@ -1,4 +1,4 @@
-import { elements } from './sandSim.js';
+
 
 export default class Aggregate{
     constructor(y, x, behavior, color) {

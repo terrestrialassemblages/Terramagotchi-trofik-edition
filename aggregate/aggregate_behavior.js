@@ -1,9 +1,9 @@
-import { elements } from './sandSim.js';
+import { elements } from '../sandSim.js';
 import Aggregate from './aggregate.js';
-import { grid } from './sandSim.js';
+import { grid } from '../sandSim.js';
 
 // In aggregate_behavior.js
-import('./sandSim.js').then((module) => {
+import('../sandSim.js').then((module) => {
     const { elements } = module;
     // Your code here
     elements.aggregate.behavior.push(function(y, x, grid) {
