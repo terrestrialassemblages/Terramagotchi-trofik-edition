@@ -22,19 +22,21 @@ let user = null;
 
 // Functions for showing and hiding loading spin
 const status_text = document.getElementById("status-text");
-const loading_spin = document.getElementById("loading-spin");
+const spinner = document.getElementById("spinner");
 
+
+
+// Function for updating status text and spinner
 function updateStatus(text, show_loading_spin = false) {
-    // if (show_loading_spin) {
-    //     loading_spin.classList.remove("visually-hidden")
-    // } else {
-    //     loading_spin.classList.add("visually-hidden")
-    // }
+    if (show_loading_spin) {
+        spinner.style.display = "block";
+    } else {
+        spinner.style.display = "none";
+    }
     status_text.innerText = text;
 }
 
 // Authenticate user anonymously
-updateStatus("Authenticating...", true);
 signInAnonymously(auth)
 .then((userCredential) => {
     // Anonymous user signed in
@@ -49,15 +51,16 @@ signInAnonymously(auth)
     // Get DB for current instance
     const instanceDB = ref(database, 'instances/' + INSTANCE_ID);
 
-    // Check if instance exists
+    // Check if the instance exists, connect
     get(instanceDB)
     .then((snapshot) => {
         if (snapshot.exists()) {
             console.log("Connected to instance: " + INSTANCE_ID);
 
-            // Add user action to current intance table in DB for each of the corresponding element buttons
+            // Listener for each of the buttons to add the corresponding action to DB
             // Each entry will have: element, userID, currtime
             const particle_button_click = (type) => {
+                updateStatus("Sending...", true);
                 const value = { 
                     element : type, 
                     userID : user.uid, 
@@ -73,22 +76,18 @@ signInAnonymously(auth)
                         updateStatus("Error adding " + type + " please retry");
                     });
             }
-        
             const water_button = document.getElementById('addWater')
             water_button.addEventListener('click', () => {
                 particle_button_click('water')
             })
-        
             const sun_button = document.getElementById('addSun')
             sun_button.addEventListener('click', () => {
                 particle_button_click('sunlight')
             })
-        
             const chemical_button = document.getElementById('addChemicals')
             chemical_button.addEventListener('click', () => {
                 particle_button_click('chemical')
             })
-
         } else {
             console.log("Instance does not exist");
             updateStatus("Game does not exist, please rescan the QR code");
