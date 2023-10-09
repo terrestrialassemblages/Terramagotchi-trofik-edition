@@ -1,5 +1,10 @@
+
+
 //version with QR code onplay
-/*
+// Generate random instance ID every time the page is loaded
+const INSTANCE_ID = Math.floor(Math.random() * 1000000000);
+
+
 function createQR() {
     //const qr_code_canvas = document.getElementById("qr-code");
     const remote_url = document.location.origin + "/remote/?id=" + INSTANCE_ID;
@@ -22,13 +27,14 @@ function createQR() {
 
 function createQRCode(remote_url) {
     // Create an HTML element to hold the QR code
-    const qrCodeElement = document.createElement('div');
+    const qrCodeElement = document.getElementById('qrCodeElement');
     
+    const qrSize = window.innerHeight * 0.12;
     // Initialize the QR code generator
     new QRCode(qrCodeElement, {
         text: remote_url,
-        width: 128,
-        height: 128
+        width: qrSize,
+        height: qrSize
     });
 
     // Clear existing content in the container and append the new QR code element
@@ -36,12 +42,10 @@ function createQRCode(remote_url) {
     container.textContent = '';
     container.appendChild(qrCodeElement);
 }
-*/
 
 
-// Generate random instance ID every time the page is loaded
-const INSTANCE_ID = Math.floor(Math.random() * 1000000000);
 
+/*
 function createQR() {
     const remote_url = document.location.origin + "/remote/?id=" + INSTANCE_ID;
 
@@ -77,3 +81,4 @@ function createQRCode(remote_url) {
     const container = document.getElementById('remote-url');
     container.appendChild(qrCodeElement);
 }
+*/

@@ -1,11 +1,15 @@
 import RootStructure from '../root/root.js';
-import { grid } from '../sandSim.js';
+import { grid, canvas } from '../sandSim.js';
 import { totalRootIndex } from '../sandSim.js';
 import { totalFungiIndex } from '../sandSim.js';
 import { incrementTotalFungiIndex,  decrementTotalFungiIndex} from '../sandSim.js';
 import { elements } from '../sandSim.js';
 
 export default class Fungi extends RootStructure {
+    
+
+    
+
     // Fungi will first start at a location and branch out normally like rootTip
     // It will then find the nearest rootTip and do 1 singular branch to it while still branching out normally
     constructor(startingY, startingX, branchingToRoot, index) {
@@ -38,6 +42,11 @@ export default class Fungi extends RootStructure {
         // Branching probability
         this.branchProb = 0.85;
         this.parentRoot = null;
+
+        this.currY = 80;
+        if (canvas.width >= canvas.height){
+            this.currY = (Math.ceil(80/(canvas.width/canvas.height)));
+        }
     }
 
     findRootTip() {
@@ -99,7 +108,7 @@ export default class Fungi extends RootStructure {
         const gridWidth = grid[0].length;
 
         // If exceeds boundaries
-        if (y > gridHeight || y < 80 || x < 0 || x > gridWidth) {
+        if (y > gridHeight || y < this.currY || x < 0 || x > gridWidth) {
             return false;
         }
         // Loops through one above, one below, to spacing

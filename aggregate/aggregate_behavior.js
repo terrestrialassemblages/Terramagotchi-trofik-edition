@@ -218,7 +218,8 @@ export function updateInitialAlpha(y, x, height) {
     if (canvas.width >= canvas.height){
         currY = (Math.ceil(80/(canvas.width/canvas.height)));
         endY = 80;
-        console.log(currY, endY)
+        //console.log(currY, endY)
+        
     }
     
         // Normalize height to a 0-70 scale (150-80)
@@ -245,6 +246,9 @@ export function initSoilGradient(){
         currY = (Math.ceil(80/(canvas.width/canvas.height)));
         endY = 80;
         console.log(currY, endY)
+        if ((canvas.width/canvas.height) < 1.3){
+            endY = 120;
+        }
     }
 
     for (let i = currY; i < endY; i+=10) {

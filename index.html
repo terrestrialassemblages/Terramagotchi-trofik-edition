@@ -6,13 +6,44 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Falling Sand Simulation</title>
     <style>
+        /* Add this to your existing CSS styles */
+        #qrCodeElement {
+            margin-left: 0px;
+        }
+
+        #remote-url {
+            margin-left: 30px;
+        }
+        body {
+            margin: 0;  /* No margin */
+            padding: 0;  /* No padding */
+            overflow: hidden;
+        }
+
+        #image-container {
+            position: absolute;  /* Absolute positioning */
+            margin: 0;  /* No margin */
+            bottom: 0;  /* Align to the bottom */
+            left: 0;  /* Align to the left */
+            z-index: 1;  /* Lower z-index to ensure it's behind the qr-container */
+        }
+
         /* Styles to make the canvas visible */
         #sandCanvas {
             border: 1px solid black;
-            display: block;
-            margin: 20px auto;
+            margin: 0;  /* No margin */
             background-color: rgb(124, 172, 201);
-            
+            position: relative;  /* Relative positioning to act as a base for absolute positioning */
+            z-index: 1;  /* Lower z-index to ensure it's below the qr-container */
+        }
+
+        /* Styles for overlaying the qr-container */
+        #qr-container {
+            margin: 0;  /* No margin */
+            position: absolute;  /* Absolute positioning */
+            bottom: 0;
+            left: 0;  /* Align to the left */
+            z-index: 2;  /* Higher z-index to ensure it's above the canvas */
         }
 
         /* Prevent dragging of the canvas */
@@ -33,17 +64,45 @@
 <body>
     <canvas height="600" id="sandCanvas" width="800"></canvas>
 
+    <div id="image-container">
+        <img src="qrCodeFrame.png" alt="Background" style="width:100%; height:100%;">
+    </div>
+
     <div id="qr-container" class="qr-overlay">
         <!-- <canvas id="qr-code"></canvas> -->
+        <div id="qrCodeElement"></div>
         <p id="remote-url"> Loading ...</p>
         <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     </div>
 
     <script type="module" src="sandSim.js"></script>
     <script>
+        // Adjust the canvas size
         document.getElementById('sandCanvas').width = window.innerWidth;
         document.getElementById('sandCanvas').height = window.innerHeight;
+
+        // Your remote_url value
+        const remote_url = "your_remote_url_here";
+
+        // Calculate the size of the QR code based on screen height
+        const qrSize = window.innerHeight * 0.2;
+
+        // Update the size and position for image-container and qr-container
+        const imageContainer = document.getElementById('image-container');
+        const qrContainer = document.getElementById('qr-container');
+        const qrFrame = document.getElementById('qrFrame');
+        
+        imageContainer.style.width = `${qrSize}px`;
+        imageContainer.style.height = `${qrSize}px`;
+        qrContainer.style.width = `${qrSize}px`;
+        qrContainer.style.height = `${qrSize}px`;
+        qrFrame.src = "qrCodeFrame.png";
+        qrFrame.style.width = `${qrSize}px`;
+        qrFrame.style.height = `${qrSize}px`;
+
+
     </script>
 </body>
 
 </html>
+
