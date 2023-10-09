@@ -1111,7 +1111,6 @@ function initSoilGradient(){
 
 
 
-
 let sunShow = true;
 function drawSun(pixelSize) {
     if (sunShow) {
