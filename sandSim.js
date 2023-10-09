@@ -122,6 +122,9 @@ function removeOldInstances(database, limit = 50) {
     });
 }
 
+
+//version with QR code onplay
+/*
 function createQR() {
     //const qr_code_canvas = document.getElementById("qr-code");
     const remote_url = document.location.origin + "/remote/?id=" + INSTANCE_ID;
@@ -134,9 +137,70 @@ function createQR() {
 
     document.getElementById("remote-url").textContent = '';
     document.getElementById("remote-url").appendChild(remote_url_link);
+
+
+    createQRCode(remote_url);
 }
 
 
+
+
+function createQRCode(remote_url) {
+    // Create an HTML element to hold the QR code
+    const qrCodeElement = document.createElement('div');
+    
+    // Initialize the QR code generator
+    new QRCode(qrCodeElement, {
+        text: remote_url,
+        width: 128,
+        height: 128
+    });
+
+    // Clear existing content in the container and append the new QR code element
+    const container = document.getElementById('remote-url');
+    container.textContent = '';
+    container.appendChild(qrCodeElement);
+}
+*/
+
+
+
+
+function createQR() {
+    const remote_url = document.location.origin + "/remote/?id=" + INSTANCE_ID;
+
+    // Create a text link
+    const remote_url_link = document.createElement("a");
+    remote_url_link.href = remote_url;
+    remote_url_link.textContent = remote_url;
+
+    const container = document.getElementById("remote-url");
+
+    // Clear existing content
+    container.textContent = '';
+
+    // Append the link
+    container.appendChild(remote_url_link);
+
+    // Create and append the QR code
+    createQRCode(remote_url);
+}
+
+function createQRCode(remote_url) {
+    // Create an HTML element to hold the QR code
+    const qrCodeElement = document.createElement('div');
+    
+    // Initialize the QR code generator
+    new QRCode(qrCodeElement, {
+        text: remote_url,
+        width: 128,
+        height: 128
+    });
+
+    // Append the new QR code element to the existing container
+    const container = document.getElementById('remote-url');
+    container.appendChild(qrCodeElement);
+}
 
 
 
@@ -986,48 +1050,6 @@ function calculateSoilColor(color1, color2, alpha) {
 
 
 
-/*
-function updateSoilcolor(y, x, aggrCount) {
-    let aggregateSizeX = Math.floor(Math.random() * 2) + 10;
-    let aggregateSizeY = Math.floor(Math.random() * 2) + 10;
-
-    const rotationAngle = Math.random() * Math.PI * 2;
-
-    // Calculate the start and end points to make (y, x) the center
-    const startX = x - Math.floor(aggregateSizeX / 2);
-    const startY = y - Math.floor(aggregateSizeY / 2);
-    const endX = startX + aggregateSizeX;
-    const endY = startY + aggregateSizeY;
-
-    for (let aggregateX = startX; aggregateX < endX; aggregateX++) {
-        for (let aggregateY = startY; aggregateY < endY; aggregateY++) {
-            const i = aggregateX - x;
-            const j = aggregateY - y;
-            
-            // Calculate elliptical values with increased noise
-            const noise = Math.random() * 0.3 - 0.15;
-            let ellipseX = (i + noise) / (aggregateSizeX / 2);
-            let ellipseY = (j + noise) / (aggregateSizeY / 2);
-            
-            // Rotate the coordinates
-            const rotatedX = ellipseX * Math.cos(rotationAngle) - ellipseY * Math.sin(rotationAngle);
-            const rotatedY = ellipseX * Math.sin(rotationAngle) + ellipseY * Math.cos(rotationAngle);
-
-            const inEllipse = rotatedX * rotatedX + rotatedY * rotatedY <= 1;
-
-            // Introduce a probability function for drawing, decreasing as we move outwards
-            const probability = Math.random();
-
-            if (inEllipse && probability > (rotatedX * rotatedX + rotatedY * rotatedY)) {
-                if (grid[aggregateY][aggregateX] === 'soil') {
-                    //grid[aggregateY][aggregateX] = 'darkSoil';
-                    updateSoilAlpha(aggregateY, aggregateX, aggrCount)
-                }
-            }
-        }
-    }
-}
-*/
 
 function updateSoilcolor(y, x, aggrCount, init = false) {
     let adjustSize = Math.floor(Math.random() * 10);
