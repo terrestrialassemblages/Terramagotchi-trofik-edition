@@ -12,6 +12,7 @@
             display: block;
             margin: 20px auto;
             background-color: rgb(124, 172, 201);
+            
         }
 
         /* Prevent dragging of the canvas */
@@ -39,6 +40,10 @@
     </div>
 
     <script type="module" src="sandSim.js"></script>
+    <script>
+        document.getElementById('sandCanvas').width = window.innerWidth;
+        document.getElementById('sandCanvas').height = window.innerHeight;
+    </script>
 </body>
 
 </html>

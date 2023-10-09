@@ -1,4 +1,4 @@
-import { elements } from '../sandSim.js';
+import { elements, canvas } from '../sandSim.js';
 import Aggregate from './aggregate.js';
 import { grid } from '../sandSim.js';
 
@@ -211,9 +211,18 @@ export function updateSoilAlpha(y, x, aggrCount) {
 
 
 export function updateInitialAlpha(y, x, height) {
+    console.log("height: ", height);
+    let currY = 80
+    let endY = 120
+
+    if (canvas.width >= canvas.height){
+        currY = (Math.ceil(80/(canvas.width/canvas.height)));
+        endY = 80;
+        console.log(currY, endY)
+    }
     
         // Normalize height to a 0-70 scale (150-80)
-        height = height - 80;
+        height = height - currY;
 
         // Scale alpha so it's smaller when height is smaller
         let targetAlpha = 0.7 + height * (1 - 0.7) / 40;
@@ -229,7 +238,16 @@ export function updateInitialAlpha(y, x, height) {
 
 
 export function initSoilGradient(){
-    for (let i = 80; i < 120; i+=10) {
+    let currY = 80
+    let endY = 120
+
+    if (canvas.width >= canvas.height){
+        currY = (Math.ceil(80/(canvas.width/canvas.height)));
+        endY = 80;
+        console.log(currY, endY)
+    }
+
+    for (let i = currY; i < endY; i+=10) {
         for (let j = 0; j < 200; j+=5) {
             updateSoilcolor(i,j,0,true);
         }

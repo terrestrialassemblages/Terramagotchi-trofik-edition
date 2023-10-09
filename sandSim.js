@@ -128,15 +128,30 @@ function removeOldInstances(database, limit = 50) {
 }
 
 
-
+// Get viewport dimensions
+const viewportWidth = window.innerWidth;
+const viewportHeight = window.innerHeight;
 
 // Initialize canvas
-const canvas = document.getElementById('sandCanvas');
+export const canvas = document.getElementById('sandCanvas');
 const ctx = canvas.getContext('2d');
+
+// Set the canvas dimensions to the viewport dimensions
+//canvas.style.width = `${viewportWidth}px`;
+//canvas.height = window.innerHeight || document.documentElement.clientHeight;
+
+console.log(window.innerWidth, window.innerHeight);
+
+
 
 const gridWidth = 200;  // Change for finer granularity
 const gridHeight = 150; // Change for finer granularity
-const cellSize = canvas.width / gridWidth;
+let cellSize = Math.ceil(4 * (canvas.width / 800));
+//console.log(cellSize);
+
+if(canvas.height > canvas.width){
+    cellSize = Math.ceil(4 * (canvas.height / 600));
+}
 
 export let grid = Array(gridHeight).fill().map(() => Array(gridWidth).fill(null));
 export let processed = Array(gridHeight).fill().map(() => Array(gridWidth).fill(false));
@@ -225,7 +240,7 @@ export function resetRootIndex() {
 
 export const elements = {
     soil: {
-        color: "#452c1b",
+        color: "#8f614a",
         behavior: [],
         soilAlpha: {},
     },
@@ -254,12 +269,12 @@ export const elements = {
         behavior: [],
     },
     bacteria: {
-        color: "#800080", frameTimer: 15, directionTimer: 20,
+        color: "#c151e0", frameTimer: 15, directionTimer: 20,
         bacteriaElements: [],
         behavior: [],
     },
     aggregate: {
-        color: '#593e2b',
+        color: '#66442d',
         //color: '#000000',
         aggregateElements: {},
         behavior: [],
@@ -450,7 +465,12 @@ function drawAutomatically() {
     // Logic to preload elements onto the grid
 
     // fill background up with soil
-    for (let i = 80; i < 150; i++) {
+    let currY = 80
+
+    if (canvas.width > canvas.height){
+        currY = (Math.ceil(80/(canvas.width/canvas.height)));
+    }
+    for (let i = currY; i < 150; i++) {
         for (let j = 0; j < 200; j++) {
             grid[i][j] = 'soil';
             elements.soil.soilAlpha[i + "," + j] = 1;
@@ -458,24 +478,25 @@ function drawAutomatically() {
 
     }
 
+
     // Grow some roots and fungi
 
     // 80 25
-    let fungiObj = new Fungi(81, 25, false, totalFungiIndex++);
-    grid[81][25] = 'fungi';
+    let fungiObj = new Fungi(currY+1, 25, false, totalFungiIndex++);
+    grid[currY+1][25] = 'fungi';
     elements.fungi.fungiElements.push(fungiObj);
-    let rootObj = new RootTip(80, 25, fungiObj, totalRootIndex++);
-    grid[80][25] = 'rootTip';
+    let rootObj = new RootTip(currY, 25, fungiObj, totalRootIndex++);
+    grid[currY][25] = 'rootTip';
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
 
 
     // 80 75
-    grid[81][75] = 'fungi';
-    fungiObj = new Fungi(81, 75, false, totalFungiIndex++);
+    grid[currY+1][75] = 'fungi';
+    fungiObj = new Fungi(currY+1, 75, false, totalFungiIndex++);
     elements.fungi.fungiElements.push(fungiObj);
-    rootObj = new RootTip(80, 75, fungiObj, totalRootIndex++);
-    grid[80][75] = 'rootTip';
+    rootObj = new RootTip(currY, 75, fungiObj, totalRootIndex++);
+    grid[currY][75] = 'rootTip';
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
 
@@ -483,11 +504,11 @@ function drawAutomatically() {
 
 
     // 81 140
-    grid[81][140] = 'fungi';
-    fungiObj = new Fungi(81, 140, false, totalFungiIndex++)
+    grid[currY+1][140] = 'fungi';
+    fungiObj = new Fungi(currY+1, 140, false, totalFungiIndex++)
     elements.fungi.fungiElements.push(fungiObj);
-    rootObj = new RootTip(80, 140, fungiObj, totalRootIndex++);
-    grid[80][140] = 'rootTip';
+    rootObj = new RootTip(currY, 140, fungiObj, totalRootIndex++);
+    grid[currY][140] = 'rootTip';
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
 
