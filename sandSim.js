@@ -110,7 +110,7 @@ function removeOldInstances(database, limit = 50) {
                     const oldestInstanceDB = ref(database, 'instances/' + oldestInstanceKey);
                     remove(oldestInstanceDB)
                     .then(() => {
-                        console.log("Removed oldest instance:", oldestInstanceKey);
+                        //console.log("Removed oldest instance:", oldestInstanceKey);
                     })
                     .catch((error) => {
                         console.error("Error removing instance:", oldestInstanceKey, error);
@@ -240,7 +240,7 @@ export default class RootTip extends RootStructure {
         super(startingY, startingX, 10, 500, 'rootTip', 900, index);
         this.parentFungi = new Array();
         this.parentFungi.push(fungiParent);
-        console.log(this.parentFungi);
+        //console.log(this.parentFungi);
     }
 
     // Function to produce 1 block of liquid sugar from root tip
@@ -265,7 +265,7 @@ export default class RootTip extends RootStructure {
                 this.parentFungi[i].expandRoot(elements.fungi.fungiElements, fungiIndex, totalFungiIndex);
             }
             // this.growthSpeed = Math.round(this.growthSpeed * (2 / 3));
-            console.log("SUGAR EATEN, INCREASING LENGTH FOR ROOT: ", this.index);
+            //console.log("SUGAR EATEN, INCREASING LENGTH FOR ROOT: ", this.index);
         }
     }
 }
