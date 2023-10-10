@@ -1,4 +1,4 @@
-import {canvas} from "./sandSim.js";
+
 
 export let sunShow = true;
 export let rainShow = false;
@@ -12,10 +12,6 @@ export function changeSunShow(boolean) {
 
 export function drawSun(ctx, canvas, pixelSize) {
     if (sunShow) {
-        var div = document.querySelector('.gradient-layer2');
-        // Set the new opacity
-        div.style.opacity = 0;
-
         let sunPixels = [
             "      X       ",
             "   X XX XXX   ",
@@ -79,7 +75,6 @@ export function generateRain(grid, gridWidth) {
 
 setInterval(() => {
     rainShow = true;  // Start rain
-    //console.log("grey")
     sunShow = false;
 
     setTimeout(() => {
@@ -91,9 +86,4 @@ setInterval(() => {
     }, 13 * 1000);
 
 }, 27 * 1000);
-
-
-
-
-
 
