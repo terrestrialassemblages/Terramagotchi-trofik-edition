@@ -59,6 +59,7 @@ export function generateRain(grid, gridWidth) {
     }
 }
 
+
 setInterval(() => {
     rainShow = true;  // Start rain
     sunShow = false;
