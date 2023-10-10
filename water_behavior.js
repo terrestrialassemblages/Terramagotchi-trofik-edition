@@ -1,4 +1,7 @@
 import { elements } from "./sandSim.js";
+import {sunShow} from './weather.js';
+
+let life_span = 20;
 
 export function waterBehavior(y, x, grid, gridHeight) {
     // Check for an empty space below and move water down
@@ -14,6 +17,15 @@ export function waterBehavior(y, x, grid, gridHeight) {
         }
         else{
             grid[y][x] = 'water';
+            if (sunShow) {
+                life_span--;
+        
+                // If life_span is 0, evaporate the water
+                if (life_span <= 0) {
+                    grid[y][x] = null;
+                    life_span = 20;
+                }
+            }
         }
         
     }
