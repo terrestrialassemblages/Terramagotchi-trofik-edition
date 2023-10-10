@@ -1,6 +1,6 @@
 import RootStructure from './root/root.js';
 import Fungi from './fungi/fungi.js';
-import Plant from './plant.js';
+import { plantAt, updatePlantGrowth } from './plant/plant_behavior.js';
 //import {calculateSoilColor} from './aggregate_behavior.js';
 import { updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor } from './aggregate/aggregate_behavior.js';
 import { waterBehavior } from './water_behavior.js';
@@ -408,20 +408,3 @@ function drawAutomatically() {
     // Call any other functions required to render the grid on the canvas.
 }
 
-function plantAt(y, x, root) {
-
-    let plantObj = new Plant(y, x, root);
-    
-    grid[y][x] = 'plant';
-
-    let plantHeight = Math.floor(root.length); 
-    plantObj.setHeight(plantHeight);
-
-    elements.plant.plantElements.push(plantObj);
-}
-
-function updatePlantGrowth() {
-    for (const plantObj of elements.plant.plantElements) {
-        plantObj.grow();
-    }
-}

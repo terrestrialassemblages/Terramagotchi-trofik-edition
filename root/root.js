@@ -1,6 +1,6 @@
 import RootTip from '../sandSim.js';
 import { grid } from '../sandSim.js';
-import Plant from '../plant.js';
+import Plant from '../plant/plant.js';
 
 import { timeStep } from '../sandSim.js';
 
