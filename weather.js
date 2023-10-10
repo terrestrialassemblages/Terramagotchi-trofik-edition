@@ -46,15 +46,13 @@ export function drawSun(ctx, canvas, pixelSize) {
 
 export function generateRain(grid, gridWidth) {
     if (rainShow) {
-        if (Math.random() < 0.5) {
+        if (Math.random() < 0.8) {
             let x = Math.floor(Math.random() * gridWidth);
-            if (grid[0][x] === null) {
-                grid[0][x] = 'water';
-                if (grid[1][x] === null) {
-                    grid[1][x] = 'water';
-                }
-                if (grid[2][x] === null) {
-                    grid[2][x] = 'water';
+            let raindropLength = Math.floor(Math.random() * 3) + 1; // Random number between 1 and 3
+
+            for (let i = 0; i < raindropLength; i++) {
+                if (grid[i][x] === null) {
+                    grid[i][x] = 'water';
                 }
             }
         }
