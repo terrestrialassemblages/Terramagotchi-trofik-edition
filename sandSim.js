@@ -111,7 +111,7 @@ export function resetRootIndex() {
 
 export const elements = {
     soil: {
-        color: "#452c1b",
+        color: "#8f614a",
         behavior: [],
         soilAlpha: {},
     },
