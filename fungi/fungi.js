@@ -172,7 +172,6 @@ export default class Fungi extends RootStructure {
         }
         // Don't grow diagonally
         else if (this.countDiag >= 4) {
-            console.log("CANT GROW DIAG");
             growOptions.splice(0, 1);
             console.log(growOptions);
         }
@@ -243,7 +242,6 @@ export default class Fungi extends RootStructure {
 
         let finalGrowY = finalGrowDir[0];
         let finalGrowX = finalGrowDir[1];
-        console.log(finalGrowY, finalGrowX, "THIS IS GROW DIR", this.index, this.length, this.y, this.x);
 
 
         // Resetting maxed out counters, can't go in same direction again and would have been removed if no valid options
@@ -258,17 +256,14 @@ export default class Fungi extends RootStructure {
         }
         // Growing vertical
         if (finalGrowX == 0 && finalGrowY == this.expandYDir) {
-            console.log(finalGrowY, finalGrowX, this.countY, this.index, this.expandYDir, this.expandXDir, "INCREMENTING CAUSE GROWING VERT");
             this.countY++;
         }
         // Growing horizontal
         else if (finalGrowY == 0 && finalGrowX == this.expandXDir) {
-            console.log(finalGrowY, finalGrowX, this.countX, this.index, this.expandYDir, this.expandXDir, "INCREMENTING CAUSE GROWING HORZ");
             this.countX++;
         }
         // Growing diagonally
         else if (finalGrowY != 0 && finalGrowX != 0) {
-            console.log(finalGrowY, finalGrowX, this.countDiag, this.index, this.expandYDir, this.expandXDir, "INCREMENTING CAUSE GROWING DIAG");
             this.countDiag++;
         }
 
@@ -316,7 +311,7 @@ export default class Fungi extends RootStructure {
                 branchFungi.updateSpacing();
                 branchFungi.growthSpeed = this.growthSpeed;
                 branchFungi.updateGrowthSpeed();
-                console.log(branchFungi.growthSpeed, branchFungi, "branch fungi");
+                //console.log(branchFungi.growthSpeed, branchFungi, "branch fungi");
                 // Add it to root tip array
                 branchFungi.parentRoot = this.parentRoot;
                 this.parentRoot.parentFungi.push(branchFungi);
@@ -345,7 +340,7 @@ export default class Fungi extends RootStructure {
         }
         this.length++;
         // If root or root tip, just go under it by not changing grid to fungi
-        console.log(this.growthSpeed, timeStep, "FUNGI BEFORE SPEED", Math.round(1.3 * this.growthSpeed));
+        //console.log(this.growthSpeed, timeStep, "FUNGI BEFORE SPEED", Math.round(1.3 * this.growthSpeed));
         this.updateGrowthSpeed();
         /* If below 5000 timeSteps, grow every 500 timeSteps max
         /* If 5000 - 15000 timeSteps, grow every 800 timeSteps max
@@ -380,10 +375,6 @@ export default class Fungi extends RootStructure {
         else if (timeStep < 5000 && this.growthSpeed > 1.5 * timeStep) {
             this.growthSpeed = Math.round(1.5 * timeStep);
         }*/
-        console.log(this.growthSpeed, this.y, this.x, this.index, "FUNGI AFTER");
-        if (this.x > 20 && this.x < 30) {
-            console.log(this.growthSpeed, timeStep, this.x, "TEST MIDDLE");
-        }
         this.updateSpacing();
         //console.log("UPDATED VALUES", this.growthSpeed, this.spacing, this.length, totalFungiIndex);
 
