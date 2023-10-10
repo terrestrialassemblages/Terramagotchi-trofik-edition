@@ -12,6 +12,10 @@ export function changeSunShow(boolean) {
 
 export function drawSun(ctx, canvas, pixelSize) {
     if (sunShow) {
+        var div = document.querySelector('.gradient-layer2');
+        // Set the new opacity
+        div.style.opacity = 0;
+
         let sunPixels = [
             "      X       ",
             "   X XX XXX   ",
