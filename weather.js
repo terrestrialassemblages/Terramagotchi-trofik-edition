@@ -2,10 +2,7 @@
 
 export let sunShow = true;
 export let rainShow = false;
-export let sunValue = 60; 
-
-const minDiameter = 5; 
-const maxDiameter = 30; 
+export let sunValue = 8; 
 
 export function changeRainShow(boolean) {
     rainShow = boolean;
@@ -37,13 +34,13 @@ export function drawSun(ctx, canvas, pixelSize) {
             "       X      ",
         ];
         
-        const diameter = minDiameter + (maxDiameter - minDiameter) * (sunValue / 100);
-        
         let startX = (canvas.width - (sunPixels[0].length * pixelSize)) + 30;
         let startY = 0;
 
         for (let y = 0; y < sunPixels.length; y++) {
             for (let x = 0; x < sunPixels[y].length; x++) {
+                let i = startX + x * sunValue;
+                let j = startY + y * sunValue;
                 switch (sunPixels[y][x]) {
                     case 'X':
                         ctx.fillStyle = 'orange';
@@ -55,10 +52,7 @@ export function drawSun(ctx, canvas, pixelSize) {
                         ctx.fillStyle = 'transparent';
                         break;
                 }
-                const scaledX = startX + x * pixelSize * diameter / maxDiameter;
-                const scaledY = startY + y * pixelSize * diameter / maxDiameter;
-                ctx.fillRect(scaledX, scaledY, pixelSize * diameter / maxDiameter, pixelSize * diameter / maxDiameter);
-                //ctx.fillRect(startX + x * pixelSize, startY + y * pixelSize, pixelSize, pixelSize);
+                ctx.fillRect(i, j, sunValue, sunValue);
             }
         }
     }
