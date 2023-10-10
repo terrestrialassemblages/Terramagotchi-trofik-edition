@@ -3,6 +3,13 @@ import {canvas} from "./sandSim.js";
 export let sunShow = true;
 export let rainShow = false;
 
+export function changeRainShow(boolean) {
+    rainShow = boolean;
+}
+export function changeSunShow(boolean) {
+    sunShow = boolean;
+}
+
 export function drawSun(ctx, canvas, pixelSize) {
     if (sunShow) {
         var div = document.querySelector('.gradient-layer2');
@@ -50,17 +57,13 @@ export function drawSun(ctx, canvas, pixelSize) {
 
 export function generateRain(grid, gridWidth) {
     if (rainShow) {
-<<<<<<< HEAD
         var div = document.querySelector('.gradient-layer2');
         // Set the new opacity
         div.style.opacity = 1;
 
 
-        //console.log(gradientLayer);
-        if (Math.random() < 0.5) {
-=======
+        
         if (Math.random() < 0.8) {
->>>>>>> ff11532766241fd2f9572fb13fd206cdfa609aab
             let x = Math.floor(Math.random() * gridWidth);
             let raindropLength = Math.floor(Math.random() * 3) + 1; // Random number between 1 and 3
 
