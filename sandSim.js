@@ -1,6 +1,6 @@
 import RootStructure from './root/root.js';
 import Fungi from './fungi/fungi.js';
-import Plant from './plant.js';
+import { plantAt, updatePlantGrowth } from './plant/plant_behavior.js';
 //import {calculateSoilColor} from './aggregate_behavior.js';
 import { updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor } from './aggregate/aggregate_behavior.js';
 import { waterBehavior } from './water_behavior.js';
@@ -42,6 +42,9 @@ export let totalFungiIndex = 0;
 // Bacteira related variables
 export let timeMove = 0;
 export let chosenDirection = null;
+
+// water related variables
+export let timeWaterSink = 0;
 
 export default class RootTip extends RootStructure {
     constructor(startingY, startingX, fungiParent, index) {
@@ -166,6 +169,7 @@ export const elements = {
     waterInSoil: {
         color: "#5756c2",
         behavior: [],
+        waterElements: [],
     }
 };
 
@@ -367,6 +371,7 @@ function loop() {
 
     timeStep++;
     timeMove++;
+    timeWaterSink++;
 
     updatePlantGrowth();
 
@@ -384,6 +389,13 @@ function loop() {
         }
         //console.log(elements.bacteria.bacteriaElements);
 
+    });
+
+    elements.waterInSoil.waterElements.forEach((water, index) => {
+        if (topGrid[water.y][water.x] != "waterInSoil") {
+            elements.waterInSoil.waterElements.splice(index, 1);
+        }
+        //(console.log(elements.waterInSoil.waterElements));
     });
 }
 
@@ -424,7 +436,7 @@ function drawAutomatically() {
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
 
-    plantAt(79, 25, rootObj);
+    plantAt(79, 25, fungiObj);
 
     // 80 75
     grid[81][75] = 'fungi';
@@ -435,7 +447,7 @@ function drawAutomatically() {
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
 
-    plantAt(79, 75, rootObj);
+    plantAt(79, 75, fungiObj);
 
 
     // 81 140
@@ -447,25 +459,8 @@ function drawAutomatically() {
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
 
-    plantAt(79, 140, rootObj);
+    plantAt(79, 140, fungiObj);
 
     // Call any other functions required to render the grid on the canvas.
 }
 
-function plantAt(y, x, root) {
-
-    let plantObj = new Plant(y, x, root);
-    
-    grid[y][x] = 'plant';
-
-    let plantHeight = Math.floor(root.length); 
-    plantObj.setHeight(plantHeight);
-
-    elements.plant.plantElements.push(plantObj);
-}
-
-function updatePlantGrowth() {
-    for (const plantObj of elements.plant.plantElements) {
-        plantObj.grow();
-    }
-}

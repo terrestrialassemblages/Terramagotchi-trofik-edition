@@ -8,11 +8,12 @@ export default class Plant {
     }
 
     grow() {
-        this.height = this.root.length * 2; 
+        this.height = this.root.length; 
     }
 
     setHeight(height) {
         this.height = height;
     }
+
 }
 
