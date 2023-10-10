@@ -228,10 +228,10 @@ export function updateInitialAlpha(y, x, height) {
         height = height - 80;
 
         // Scale alpha so it's smaller when height is smaller
-        let targetAlpha = 0.7 + height * (1 - 0.7) / 40;
+        let targetAlpha = 0.5 + height * (1 - 0.5) / 40;
 
         // Set boundaries between 0.8 and 1
-        targetAlpha = Math.min(Math.max(targetAlpha, 0.7), 1); 
+        targetAlpha = Math.min(Math.max(targetAlpha, 0.5), 1); 
 
         if (elements.soil.soilAlpha[y + "," + x] > targetAlpha) {
             elements.soil.soilAlpha[y + "," + x] = targetAlpha;
