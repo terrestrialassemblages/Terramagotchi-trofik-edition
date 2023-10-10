@@ -380,7 +380,7 @@ function drawAutomatically() {
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
 
-    plantAt(79, 25, rootObj);
+    plantAt(79, 25, fungiObj);
 
     // 80 75
     grid[81][75] = 'fungi';
@@ -391,7 +391,7 @@ function drawAutomatically() {
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
 
-    plantAt(79, 75, rootObj);
+    plantAt(79, 75, fungiObj);
 
 
     // 81 140
@@ -403,7 +403,7 @@ function drawAutomatically() {
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
 
-    plantAt(79, 140, rootObj);
+    plantAt(79, 140, fungiObj);
 
     // Call any other functions required to render the grid on the canvas.
 }
