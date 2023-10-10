@@ -1,5 +1,6 @@
 import RootStructure from './root/root.js';
 import Fungi from './fungi/fungi.js';
+import Plant from './plant.js';
 //import {calculateSoilColor} from './aggregate_behavior.js';
 import { updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor } from './aggregate/aggregate_behavior.js';
 import { waterBehavior } from './water_behavior.js';
@@ -150,6 +151,11 @@ export const elements = {
         aggregateElements: {},
         behavior: [],
     },
+    plant: {
+        color: "#00FF00", 
+        behavior: [],
+        plantElements: [], 
+    },
 };
 
 elements.water.behavior.push((y, x, grid) => waterBehavior(y, x, grid, gridHeight));
@@ -220,6 +226,13 @@ function drawGrid() {
                 if (grid[y][x] === 'soil') {
                     let soilColor = calculateSoilColor('#26170d', elements.soil.color, elements.soil.soilAlpha[y + "," + x]);
                     ctx.fillStyle = soilColor;
+                }
+                if (grid[y][x] === 'plant') {
+                    const plantObj = elements.plant.plantElements.find(plant => plant.startingY === y && plant.startingX === x);
+                    if (plantObj) {
+                        ctx.fillStyle = elements.plant.color; 
+                        ctx.fillRect(x * cellSize, (y - plantObj.height) * cellSize, cellSize, cellSize * plantObj.height);
+                    }
                 }
 
                 ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
@@ -301,6 +314,8 @@ function loop() {
     timeStep++;
     timeMove++;
 
+    updatePlantGrowth();
+
     elements.bacteria.bacteriaElements.forEach((bacteria, index) => {
         bacteria.decreaseLifespan();
         if (bacteria.lifespan <= 0) {
@@ -355,6 +370,7 @@ function drawAutomatically() {
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
 
+    plantAt(79, 25, rootObj);
 
     // 80 75
     grid[81][75] = 'fungi';
@@ -364,6 +380,8 @@ function drawAutomatically() {
     grid[80][75] = 'rootTip';
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
+
+    plantAt(79, 75, rootObj);
 
 
     // 81 140
@@ -375,5 +393,25 @@ function drawAutomatically() {
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
 
+    plantAt(79, 140, rootObj);
+
     // Call any other functions required to render the grid on the canvas.
+}
+
+function plantAt(y, x, root) {
+
+    let plantObj = new Plant(y, x, root);
+    
+    grid[y][x] = 'plant';
+
+    let plantHeight = Math.floor(root.length); 
+    plantObj.setHeight(plantHeight);
+
+    elements.plant.plantElements.push(plantObj);
+}
+
+function updatePlantGrowth() {
+    for (const plantObj of elements.plant.plantElements) {
+        plantObj.grow();
+    }
 }
