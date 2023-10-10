@@ -6,7 +6,7 @@ export function waterBehavior(y, x, grid, gridHeight) {
         grid[y + 1][x] = 'water';
         grid[y][x] = null;
     } else if( y + 1 < gridHeight && grid[y + 1][x] === 'soil') {
-        if (elements.soil.soilAlpha[(y+1) + "," + x] <= 0.7){
+        if (elements.soil.soilAlpha[(y+1) + "," + x] <= 0.3){
             if (grid[y + 1][x] = 'soil'){
                 grid[y + 1][x] = "waterInSoil";
                 
