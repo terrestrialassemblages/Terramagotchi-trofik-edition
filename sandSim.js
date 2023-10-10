@@ -64,7 +64,7 @@ function connectToDB() {
         .then(() => {
             console.log("CREATED DB: ", INSTANCE_ID);
         })
-
+        
         // Create QR code for remote app
         createQR();
 

@@ -27,7 +27,7 @@ function createQR() {
 
 function createQRCode(remote_url) {
     // Create an HTML element to hold the QR code
-    const qrCodeElement = document.getElementById('qrCodeElement');
+    //const qrCodeElement = document.getElementById('qrCodeElement');
     
     const qrSize = window.innerHeight * 0.12;
     // Initialize the QR code generator
