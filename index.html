@@ -41,10 +41,24 @@
         }
 
         /* Styles for the canvas */
-        #sandCanvas {
+        #sandCanvas, #topCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
             border: 1px solid black;
+        }
+
+        #sandCanvas {
             z-index: 1;
         }
+
+        #topCanvas {
+            z-index: 2; /* Higher z-index to make it appear on top */
+            background: linear-gradient(to bottom, rgb(58, 66, 70), rgb(198, 220, 230));
+            opacity: 0;
+        }
+
+
 
         /* Prevent dragging of the canvas */
         canvas {
@@ -66,6 +80,7 @@
         <div class="gradient-layer1"></div>
         <div class="gradient-layer2"></div>
         <canvas height="600" id="sandCanvas" width="800"></canvas>
+        <canvas height="600" id="topCanvas" width="800"></canvas>
     </div>
 
     <div id="qr-container" class="qr-overlay">
