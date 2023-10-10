@@ -108,7 +108,6 @@ export function resetRootIndex() {
 }
 
 
-
 export const elements = {
     soil: {
         color: "#452c1b",
@@ -184,8 +183,6 @@ elements.liquidSugar.behavior.push(function (y, x, grid) {
 });
 
 
-
-
 function updateGrid() {
     processed = Array(gridHeight).fill().map(() => Array(gridWidth).fill(false));
 
@@ -250,7 +247,6 @@ canvas.addEventListener('mousedown', (event) => {
     //add liquidSugar
     //grid[y][x] = 'liquidSugar';
 });
-
 
 
 /*
@@ -356,8 +352,6 @@ function drawAutomatically() {
     fungiObj.parentRoot = rootObj;
 
 
-
-
     // 81 140
     grid[81][140] = 'fungi';
     fungiObj = new Fungi(81, 140, false, totalFungiIndex++)
@@ -366,7 +360,6 @@ function drawAutomatically() {
     grid[80][140] = 'rootTip';
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
-
 
     // Call any other functions required to render the grid on the canvas.
 }
