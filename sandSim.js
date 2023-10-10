@@ -13,7 +13,7 @@ import { connectToDB } from './firebase.js';
 
 
 // Initialize canvas
-const canvas = document.getElementById('sandCanvas');
+export const canvas = document.getElementById('sandCanvas');
 const ctx = canvas.getContext('2d');
 
 export const gridWidth = 200;  // Change for finer granularity
@@ -248,6 +248,8 @@ canvas.addEventListener('mousedown', (event) => {
     //add liquidSugar
     //grid[y][x] = 'liquidSugar';
 });
+
+
 
 
 /*
