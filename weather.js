@@ -2,7 +2,7 @@
 
 export let sunShow = true;
 export let rainShow = false;
-export let sunValue = 30; 
+export let sunValue = 60; 
 
 const minDiameter = 5; 
 const maxDiameter = 30; 
@@ -19,7 +19,6 @@ export function drawSun(ctx, canvas, pixelSize) {
         var div = document.querySelector('.gradient-layer2');
         // Set the new opacity
         div.style.opacity = 0;
-
         
         let sunPixels = [
             "      X       ",
@@ -37,26 +36,9 @@ export function drawSun(ctx, canvas, pixelSize) {
             "   XXX XX X   ",
             "       X      ",
         ];
-        /*
+        
         const diameter = minDiameter + (maxDiameter - minDiameter) * (sunValue / 100);
-        const radius = diameter / 2;
-        const sunPixels = [];
-
-        for (let y = 0; y < diameter; y++) {
-            let row = '';
-            for (let x = 0; x < diameter; x++) {
-                const distanceToCenter = Math.sqrt((x - radius) ** 2 + (y - radius) ** 2);
-                if (
-                    (distanceToCenter >= radius - 1 && distanceToCenter <= radius + 1) //A circle outside the centre circle
-                ) {
-                    row += 'X'; 
-                } else {
-                    row += (distanceToCenter < radius) ? '.' : ' '; //The centre part of the sun is '.', and ' ' in the rest of the sun
-                }
-            }
-            sunPixels.push(row);
-        }
-        */
+        
         let startX = (canvas.width - (sunPixels[0].length * pixelSize)) + 30;
         let startY = 0;
 
@@ -73,7 +55,10 @@ export function drawSun(ctx, canvas, pixelSize) {
                         ctx.fillStyle = 'transparent';
                         break;
                 }
-                ctx.fillRect(startX + x * pixelSize, startY + y * pixelSize, pixelSize, pixelSize);
+                const scaledX = startX + x * pixelSize * diameter / maxDiameter;
+                const scaledY = startY + y * pixelSize * diameter / maxDiameter;
+                ctx.fillRect(scaledX, scaledY, pixelSize * diameter / maxDiameter, pixelSize * diameter / maxDiameter);
+                //ctx.fillRect(startX + x * pixelSize, startY + y * pixelSize, pixelSize, pixelSize);
             }
         }
     }
