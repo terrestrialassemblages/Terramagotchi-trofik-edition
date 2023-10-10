@@ -278,12 +278,24 @@ canvas.addEventListener('mousedown', (event) => {
 });
 */
 
+
+
+
+
+
+
 function loop() {
     updateGrid();
     drawGrid();
     requestAnimationFrame(loop);
+    
 
     generateRain(grid, gridWidth);
+
+    //changeBackgroundToGreyGradient();
+
+    // Call the function to start the effect
+
     //testing()
 
     timeStep++;
