@@ -85,9 +85,12 @@ export default class Aggregate {
             hasMoreAggre = true;
             this.aggrCount = aggrCount;
         }
+        /*
         if (rootTipCount != 0) {
-            isNear = false;
+            //isNear = false;
+            isNear = true;   //disable check for root tips
         }
+        */
         return [isNear, aggrCount, hasMoreAggre];  // Return the result
     }
 

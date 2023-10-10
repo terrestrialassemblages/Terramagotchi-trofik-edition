@@ -108,12 +108,12 @@ export function resetRootIndex() {
 }
 
 
-
 export const elements = {
     soil: {
         color: "#8f614a",
         behavior: [],
         soilAlpha: {},
+        initAlpha: {},
     },
     water: {
         color: "#5756c2",
@@ -140,12 +140,12 @@ export const elements = {
         behavior: [],
     },
     bacteria: {
-        color: "#800080", frameTimer: 15, directionTimer: 20,
+        color: "#c151e0", frameTimer: 15, directionTimer: 20,
         bacteriaElements: [],
         behavior: [],
     },
     aggregate: {
-        color: '#593e2b',
+        color: '#5e3920',
         //color: '#000000',
         aggregateElements: {},
         behavior: [],
@@ -182,8 +182,6 @@ elements.liquidSugar.behavior.push(function (y, x, grid) {
         grid[y][x] = null;
     }
 });
-
-
 
 
 function updateGrid() {
@@ -252,7 +250,6 @@ canvas.addEventListener('mousedown', (event) => {
 });
 
 
-
 /*
 // User actions
 canvas.addEventListener('mousedown', (event) => {
@@ -281,12 +278,24 @@ canvas.addEventListener('mousedown', (event) => {
 });
 */
 
+
+
+
+
+
+
 function loop() {
     updateGrid();
     drawGrid();
     requestAnimationFrame(loop);
+    
 
     generateRain(grid, gridWidth);
+
+    //changeBackgroundToGreyGradient();
+
+    // Call the function to start the effect
+
     //testing()
 
     timeStep++;
@@ -330,6 +339,7 @@ function drawAutomatically() {
         for (let j = 0; j < 200; j++) {
             grid[i][j] = 'soil';
             elements.soil.soilAlpha[i + "," + j] = 1;
+            elements.soil.initAlpha[i + "," + j] = 1;
         }
 
     }
@@ -356,8 +366,6 @@ function drawAutomatically() {
     fungiObj.parentRoot = rootObj;
 
 
-
-
     // 81 140
     grid[81][140] = 'fungi';
     fungiObj = new Fungi(81, 140, false, totalFungiIndex++)
@@ -366,7 +374,6 @@ function drawAutomatically() {
     grid[80][140] = 'rootTip';
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
-
 
     // Call any other functions required to render the grid on the canvas.
 }

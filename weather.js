@@ -1,6 +1,7 @@
 
 
 export let sunShow = true;
+export let rainShow = false;
 
 export function drawSun(ctx, canvas, pixelSize) {
     if (sunShow) {
@@ -44,16 +45,37 @@ export function drawSun(ctx, canvas, pixelSize) {
 }
 
 export function generateRain(grid, gridWidth) {
-    if (!sunShow) {
-        if (Math.random() < 0.5) {
+    if (rainShow) {
+        if (Math.random() < 0.8) {
             let x = Math.floor(Math.random() * gridWidth);
-            if (grid[0][x] === null) {
-                grid[0][x] = 'water';
+            let raindropLength = Math.floor(Math.random() * 3) + 1; // Random number between 1 and 3
+
+            for (let i = 0; i < raindropLength; i++) {
+                if (grid[i][x] === null) {
+                    grid[i][x] = 'water';
+                }
             }
         }
     }
 }
 
+
 setInterval(() => {
-    sunShow = !sunShow;
-}, 5 * 1000);
+    rainShow = true;  // Start rain
+    sunShow = false;
+
+    setTimeout(() => {
+        rainShow = false;  // Stop rain after 10s
+    }, 10 * 1000);
+
+    setTimeout(() => {
+        sunShow = true;  // Show sun after 15s (10s rain + 3s nothing)
+    }, 13 * 1000);
+
+}, 27 * 1000);
+
+
+
+
+
+
