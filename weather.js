@@ -1,7 +1,7 @@
 import {canvas} from "./sandSim.js";
 
 export let sunShow = true;
-export let rainShow = false;
+export let rainShow = true;
 
 export function changeRainShow(boolean) {
     rainShow = boolean;

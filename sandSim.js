@@ -156,6 +156,10 @@ export const elements = {
         behavior: [],
         plantElements: [], 
     },
+    waterInSoil: {
+        color: "#5756c2",
+        behavior: [],
+    }
 };
 
 elements.water.behavior.push((y, x, grid) => waterBehavior(y, x, grid, gridHeight));
