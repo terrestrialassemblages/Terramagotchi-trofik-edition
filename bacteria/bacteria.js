@@ -173,9 +173,12 @@ export default class Bacteria {
                 }
             }
         }
+        /*
         if (rootTipNum != 0) {
-            return false
+            //return false
+            //disable root tip chec
         }
+        */
 
         if (bacNum >= number) {
             if (this.aggregateCooldown <= 0) {
