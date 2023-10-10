@@ -1,5 +1,6 @@
-import { elements } from './sandSim.js';
-import { findBacteriaByPosition } from './sandSim.js';
+
+import { elements } from '../sandSim.js';
+import { findBacteriaByPosition } from './bacteria_behavior.js';
 
 export default class Bacteria {
     constructor(color, frameTimer, currentDirection, directionTimer, behavior, x, y, lifespan) {
@@ -141,8 +142,8 @@ export default class Bacteria {
     //implement for aggregate
     // Check for nearby liquidSugar
     IfNearBacteria(DISTANCE, grid, number) {
-
-        let bacNum = 0
+        let rootTipNum = 0;
+        let bacNum = 0;
         const gridHeight = grid.length;
         const gridWidth = grid[0].length;
 
@@ -166,18 +167,25 @@ export default class Bacteria {
 
                         }
                     }
+                    if (grid[this.y + dy][this.x + dx] === 'rootTip') {
+                        rootTipNum++;
+                    }
                 }
             }
+        }
+        if (rootTipNum != 0) {
+            return false
         }
 
         if (bacNum >= number) {
             if (this.aggregateCooldown <= 0) {
-                this.aggregateCooldown = 1000; //adjust value to change how often bacteria can form aggregates
+                this.aggregateCooldown = 4000; //adjust value to change how often bacteria can form aggregates
                 return true;
             }
 
 
         }
+
         return false;
     }
 
@@ -232,7 +240,7 @@ export default class Bacteria {
 
         if (this.fadeAlpha <= 0) {
             grid[this.y][this.x] = this.oldElement;
-            elements.bacteria.bacteriaElements.splice(index, 1);
+            //elements.bacteria.bacteriaElements.splice(index, 1);
         } else {
             const fadedColor = this.interpolateColor(this.color, elements.soil.color, 1 - this.fadeAlpha);
             ctx.fillStyle = fadedColor;

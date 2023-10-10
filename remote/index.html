@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <link href="remote.css" rel="stylesheet"/>
+    <title>Terramagotchi remote</title>
+</head>
+<body class="h-screen flex items-center justify-center bg-gray-100">
+
+    <div class="w-full bg-gray-800 text-white p-4 fixed top-0">
+        TERRAMAGOTCHI TRŌFIK EDITION
+    </div>
+
+    <div class="flex flex-col justify-evenly h-full w-1/2 mx-auto mt-20">
+
+        <div class="flex flex-row mx-auto">
+            <div class=" flex flex-col text-center">
+                <p> Connected to instance: </p>
+                <p id="instanceID" class="font-bold"> Loading... </p>
+            </div>
+        </div>
+        
+        <div class="flex flex-row mx-auto" >
+            <div class=" flex flex-col justify-evenly">
+                <button id="addWater" class="flex items-center my-2 bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-5 h-5 float-left">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    <p class="m-auto"> WATER </p>
+                </button>
+                <button id="addSun" class="flex items-center my-2 bg-orange-400 hover:bg-yellow-700 text-white font-bold py-2 px-8 rounded">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-5 h-5 float-left">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    <p class="m-auto"> SUNLIGHT </p>
+                </button>
+                <button id="addChemicals" class="flex items-center my-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-8 rounded">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-5 h-5 float-left">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    <p class="m-auto"> CHEMICALS </p>
+                </button>
+
+                <!-- BUTTON TO CHANGE TIME (FUCTION NOT IMPLEMENTED YET) -->
+                <!-- <button id="changeTime" class="flex items-center my-2 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-8 rounded">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 float-left">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg> 
+                    <p class="m-auto"> CHANGE TIME </p>
+                </button> -->
+            </div>
+        </div>
+
+        <div class="flex flex-row mx-auto text-center">
+            <h3 id="status-text"> Authenticating... </h3>
+
+            <!-- SPINNER HERE -->
+            <svg id="spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 mx-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="transparent" stroke-width="4"></circle>
+                <path class="opacity-75" fill="black" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+        </div>
+
+        <div class="flex flex-row mx-auto">
+                
+            <hr>
+        </div>
+
+    </div>
+
+    <script type = "module" src="remote.js"></script>
+
+</body>
+</html>

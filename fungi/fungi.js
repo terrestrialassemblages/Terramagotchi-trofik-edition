@@ -1,15 +1,15 @@
-import RootStructure from './root.js';
-import { grid } from './sandSim.js';
+import RootStructure from '../root/root.js';
+import { grid } from '../sandSim.js';
+import { currentParticleType } from '../sandSim.js';
+import { rootIndex } from '../sandSim.js';
+import { totalRootIndex } from '../sandSim.js';
+import { totalFungiIndex } from '../sandSim.js';
+import { fungiIndex } from '../sandSim.js';
+import { incrementTotalFungiIndex,  decrementTotalFungiIndex} from '../sandSim.js';
+import { elements } from '../sandSim.js';
+import { timeStep } from '../sandSim.js';
+import { gridWidth, gridHeight } from '../sandSim.js';
 
-import { currentParticleType } from './sandSim.js';
-import { timeStep } from './sandSim.js';
-import { rootIndex } from './sandSim.js';
-import { totalRootIndex } from './sandSim.js';
-import { fungiIndex } from './sandSim.js';
-import { totalFungiIndex } from './sandSim.js';
-import { incrementTotalFungiIndex,  decrementTotalFungiIndex} from './sandSim.js';
-import { elements } from './sandSim.js';
-import { gridWidth, gridHeight } from './sandSim.js';
 
 export default class Fungi extends RootStructure {
     // Fungi will first start at a location and branch out normally like rootTip
@@ -171,7 +171,7 @@ export default class Fungi extends RootStructure {
             growOptions.splice(1, 1);
         }
         // Don't grow diagonally
-        else if (this.countDiag >= 5) {
+        else if (this.countDiag >= 4) {
             console.log("CANT GROW DIAG");
             growOptions.splice(0, 1);
             console.log(growOptions);
@@ -230,18 +230,14 @@ export default class Fungi extends RootStructure {
 
         // No valid grow directions, so remove from fungiElements
         if (remove == true) {
-            console.log(this.index, elements.fungi.fungiElements, this.y, this.x, this, "REMOVING");
             // Remove from parent root array
             this.parentRoot.parentFungi.splice(this.parentRoot.parentFungi.indexOf(this), 1);
-            //elements.fungi.fungiElements.splice(elements.fungi.fungiElements.indexOf(this), 1);
             elements.fungi.fungiElements.splice(this.index, 1);
             decrementTotalFungiIndex(totalFungiIndex - 1);
             // Update the index of all the fungiElements above it
             for (let i = this.index; i < totalFungiIndex; i++) {
-                console.log(i, elements.fungi.fungiElements, "TESTING FUNG REMOV");
                 elements.fungi.fungiElements[i].index = i;
             }
-            console.log("REMOVED", totalFungiIndex, elements.fungi.fungiElements);
             return false;
         }
 
@@ -257,11 +253,11 @@ export default class Fungi extends RootStructure {
         else if (this.countX == 2) {
             this.countX = 0;
         }
-        else if (this.countDiag == 2) {
+        else if (this.countDiag == 4) {
             this.countDiag = 0;
         }
         // Growing vertical
-        else if (finalGrowX == 0 && finalGrowY == this.expandYDir) {
+        if (finalGrowX == 0 && finalGrowY == this.expandYDir) {
             console.log(finalGrowY, finalGrowX, this.countY, this.index, this.expandYDir, this.expandXDir, "INCREMENTING CAUSE GROWING VERT");
             this.countY++;
         }

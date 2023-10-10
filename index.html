@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Falling Sand Simulation</title>
+    <style>
+        /* Styles to make the canvas visible */
+        #sandCanvas {
+            border: 1px solid black;
+            display: block;
+            margin: 20px auto;
+            background-color: rgb(124, 172, 201);
+        }
+
+        /* Prevent dragging of the canvas */
+        canvas {
+            user-drag: none;
+            user-select: none;
+        }
+
+        /* Styles for the buttons */
+        button {
+            margin: 5px;
+            padding: 10px;
+        }
+    </style>
+    <script src="qrCodeFunctions.js"></script>
+</head>
+
+<body>
+    <canvas height="600" id="sandCanvas" width="800"></canvas>
+
+    <div id="qr-container" class="qr-overlay">
+        <!-- <canvas id="qr-code"></canvas> -->
+        <p id="remote-url"> Loading ...</p>
+        <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    </div>
+
+    <script type="module" src="sandSim.js"></script>
+</body>
+
+</html>

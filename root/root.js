@@ -1,12 +1,8 @@
-import RootTip from './sandSim.js';
-import { grid } from './sandSim.js';
+import RootTip from '../sandSim.js';
+import { grid } from '../sandSim.js';
 
-import { currentParticleType } from './sandSim.js';
-import { timeStep } from './sandSim.js';
-import { rootIndex } from './sandSim.js';
-import { totalRootIndex } from './sandSim.js';
-import { fungiIndex } from './sandSim.js';
-import { totalFungiIndex } from './sandSim.js';
+import { timeStep } from '../sandSim.js';
+
 
 export default class RootStructure {
     constructor(startingY, startingX, growthLimit, growthSpeed, elementName, startingSpeed, index) {
@@ -26,21 +22,27 @@ export default class RootStructure {
 
     // Determines if root should grow or not
     growBool(totalIndex) {
-        // If root is at max size, stop growing
-        if (this.length >= this.maxGrowthLength) {
-            // Mark the root as Developed
-            this.developed = true;
+        try{
+            // If root is at max size, stop growing
+            if (this.length >= this.maxGrowthLength) {
+                // Mark the root as Developed
+                this.developed = true;
+            }
+            if ((timeStep >= this.growthSpeed) && this.developed == true && this.elementName == 'rootTip') {
+                // If root is developed, produce sugar
+                this.produceSugar();
+                //console.log("FULLY GROWN, PRODUCING SUGAR");
+                return ([false, totalIndex]);
+            }
+            if (timeStep > this.growthSpeed) {
+                console.log("FOUDN ERROR", this.growthSpeed, timeStep, this);
+            }
+            return ([(timeStep >= this.growthSpeed) && (this.length < this.maxGrowthLength), (totalIndex)]);
+        } catch (error) {
+            // If an error occurs, log it and return from the function
+            console.error('An error occurred:', error.message);
+            return;
         }
-        if ((timeStep >= this.growthSpeed) && this.developed == true && this.elementName == 'rootTip') {
-            // If root is developed, produce sugar
-            this.produceSugar();
-            //console.log("FULLY GROWN, PRODUCING SUGAR");
-            return ([false, totalIndex]);
-        }
-        if (timeStep > this.growthSpeed) {
-            console.log("FOUDN ERROR", this.growthSpeed, timeStep, this);
-        }
-        return ([(timeStep >= this.growthSpeed) && (this.length < this.maxGrowthLength), (totalIndex)]);
     }
 
     // Adjusts the growth speed depending on the current length
@@ -48,22 +50,27 @@ export default class RootStructure {
         // Growth speed scaled according to difference in length from maxGrowthLength
         // this.growthSpeed += Math.ceil(this.startingSpeed / (this.maxGrowthLength / 1 + this.length));
         // Have tos cale it to1
-        let baseIncrement = 1 + ((this.maxGrowthLength - this.length) / this.maxGrowthLength);
+        //let baseIncrement = 1 + ((this.maxGrowthLength - this.length) / this.maxGrowthLength);
+        let baseIncrement = 1 + (1 - (Math.abs(this.length - this.maxGrowthLength)) / this.maxGrowthLength);
         baseIncrement = Math.max(1.05, baseIncrement);
         let speedCap = 0;
-        if (timeStep < 5000) {
+        if (this.length <= 20) {
             speedCap = 500;
         }
-        else if (timeStep >= 5000 && timeStep < 15000) {
+        else if (this.length > 20 && this.length <= 40) {
             speedCap = 900;
         }
         else {
-            speedCap = 1250;
+            speedCap = 1200;
         }
-        this.growthSpeed = Math.min((Math.round(baseIncrement * this.growthSpeed)), this.growthSpeed + speedCap);
-
+        // Introduce variability in speed for fungi
+        if (speedCap >= 900) {
+            // Generate random speedCap between 75% and 100%
+            speedCap = Math.round(Math.random() * (speedCap - (0.75 * speedCap)) + (0.75 * speedCap));
+            console.log("RANDOM SPEEDCAP", speedCap);
+        }
         if (timeStep > this.growthSpeed) {
-            this.growthSpeed = this.growthSpeed + speedCap;
+            this.growthSpeed = timeStep + speedCap;
         }
         else {
             this.growthSpeed = Math.min((Math.round(baseIncrement * this.growthSpeed)), this.growthSpeed + speedCap);
@@ -88,6 +95,8 @@ export default class RootStructure {
 
     // Fuction to grow root by one block
     expandRoot(elementsArray, index, totalIndex) {
+        //console.log("EXPANDING ROOT NOW NO: ", this.index);
+
         // Randomly choose -1, 0, or 1 for x growth direction (either grow left-down, down, right-down)
         let x_direction = Math.floor(Math.random() * 3) - 1;
 
@@ -109,6 +118,7 @@ export default class RootStructure {
             branchRootTip.length = this.length + 2;
             branchRootTip.maxGrowthLength = this.maxGrowthLength;
             elementsArray.push(branchRootTip);
+            console.log(elementsArray, branchRootTip, "NEWROOT TIP");
 
             // Produce sugar at branching point
             this.produceSugar();
