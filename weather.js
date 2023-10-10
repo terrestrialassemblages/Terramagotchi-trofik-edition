@@ -50,6 +50,7 @@ export function drawSun(ctx, canvas, pixelSize) {
 
 export function generateRain(grid, gridWidth) {
     if (rainShow) {
+<<<<<<< HEAD
         var div = document.querySelector('.gradient-layer2');
         // Set the new opacity
         div.style.opacity = 1;
@@ -57,19 +58,21 @@ export function generateRain(grid, gridWidth) {
 
         //console.log(gradientLayer);
         if (Math.random() < 0.5) {
+=======
+        if (Math.random() < 0.8) {
+>>>>>>> ff11532766241fd2f9572fb13fd206cdfa609aab
             let x = Math.floor(Math.random() * gridWidth);
-            if (grid[0][x] === null) {
-                grid[0][x] = 'water';
-                if (grid[1][x] === null) {
-                    grid[1][x] = 'water';
-                }
-                if (grid[2][x] === null) {
-                    grid[2][x] = 'water';
+            let raindropLength = Math.floor(Math.random() * 3) + 1; // Random number between 1 and 3
+
+            for (let i = 0; i < raindropLength; i++) {
+                if (grid[i][x] === null) {
+                    grid[i][x] = 'water';
                 }
             }
         }
     }
 }
+
 
 setInterval(() => {
     rainShow = true;  // Start rain

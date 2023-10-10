@@ -1,5 +1,6 @@
 import RootTip from '../sandSim.js';
 import { grid } from '../sandSim.js';
+import Plant from '../plant.js';
 
 import { timeStep } from '../sandSim.js';
 
@@ -18,6 +19,7 @@ export default class RootStructure {
         this.startingSpeed = startingSpeed;
         this.nutrientBoosted = false;
         this.developed = false;    // If root is not developed, it will grow. If fully developed, it will produce sugar instead of growing
+        this.plant = new Plant(this.startingY, this.startingX, this);
     }
 
     // Determines if root should grow or not
@@ -34,6 +36,7 @@ export default class RootStructure {
                 //console.log("FULLY GROWN, PRODUCING SUGAR");
                 return ([false, totalIndex]);
             }
+            this.plant.grow();
             return ([(timeStep >= this.growthSpeed) && (this.length < this.maxGrowthLength), (totalIndex)]);
         } catch (error) {
             // If an error occurs, log it and return from the function
@@ -147,6 +150,7 @@ export default class RootStructure {
         }
 
         this.updateGrowthSpeed();
+       
         return totalIndex;
     }
 }
