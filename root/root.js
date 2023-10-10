@@ -34,9 +34,6 @@ export default class RootStructure {
                 //console.log("FULLY GROWN, PRODUCING SUGAR");
                 return ([false, totalIndex]);
             }
-            if (timeStep > this.growthSpeed) {
-                console.log("FOUDN ERROR", this.growthSpeed, timeStep, this);
-            }
             return ([(timeStep >= this.growthSpeed) && (this.length < this.maxGrowthLength), (totalIndex)]);
         } catch (error) {
             // If an error occurs, log it and return from the function
@@ -67,7 +64,6 @@ export default class RootStructure {
         if (speedCap >= 900) {
             // Generate random speedCap between 75% and 100%
             speedCap = Math.round(Math.random() * (speedCap - (0.75 * speedCap)) + (0.75 * speedCap));
-            console.log("RANDOM SPEEDCAP", speedCap);
         }
         if (timeStep > this.growthSpeed) {
             this.growthSpeed = timeStep + speedCap;
@@ -118,7 +114,6 @@ export default class RootStructure {
             branchRootTip.length = this.length + 2;
             branchRootTip.maxGrowthLength = this.maxGrowthLength;
             elementsArray.push(branchRootTip);
-            console.log(elementsArray, branchRootTip, "NEWROOT TIP");
 
             // Produce sugar at branching point
             this.produceSugar();

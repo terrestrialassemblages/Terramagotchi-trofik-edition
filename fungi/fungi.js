@@ -173,7 +173,6 @@ export default class Fungi extends RootStructure {
         // Don't grow diagonally
         else if (this.countDiag >= 4) {
             growOptions.splice(0, 1);
-            console.log(growOptions);
         }
 
         //console.log("GROWING fungi", index);
