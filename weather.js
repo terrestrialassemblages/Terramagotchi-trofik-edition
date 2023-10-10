@@ -1,8 +1,8 @@
 
 
 export let sunShow = true;
-export let rainShow = false;
-export let sunValue = 8; 
+export let rainShow = true;
+export let sunValue = 7; 
 
 export function changeRainShow(boolean) {
     rainShow = boolean;

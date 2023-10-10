@@ -4,6 +4,7 @@ import Plant from './plant.js';
 //import {calculateSoilColor} from './aggregate_behavior.js';
 import { updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor } from './aggregate/aggregate_behavior.js';
 import { waterBehavior } from './water_behavior.js';
+import { waterInSoilBehavior } from './waterInSoil.js'
 import { soilBehavior } from './soil_behavior.js';
 import { rootBehavior } from './root/root_behavior.js';
 import { rootTipBehavior } from './root/roottip_behavior.js';
@@ -18,10 +19,15 @@ import { connectToDB } from './firebase.js';
 export const canvas = document.getElementById('sandCanvas');
 const ctx = canvas.getContext('2d');
 
+export const topCanvas = document.getElementById('topCanvas');
+const ctxTop = topCanvas.getContext('2d');
+
+
 export const gridWidth = 200;  // Change for finer granularity
 export const gridHeight = 150; // Change for finer granularity
 const cellSize = canvas.width / gridWidth;
 
+export let topGrid = Array(gridHeight).fill().map(() => Array(gridWidth).fill(null));
 export let grid = Array(gridHeight).fill().map(() => Array(gridWidth).fill(null));
 export let processed = Array(gridHeight).fill().map(() => Array(gridWidth).fill(false));
 
@@ -164,6 +170,7 @@ export const elements = {
 };
 
 elements.water.behavior.push((y, x, grid) => waterBehavior(y, x, grid, gridHeight));
+elements.waterInSoil.behavior.push((y, x, grid) => waterInSoilBehavior(y, x, grid));
 elements.fungi.behavior.push((y, x, grid) => fungiBehavior(y, x, grid));
 elements.root.behavior.push((y, x, grid) => rootBehavior(y, x, grid));
 elements.soil.behavior.push((y, x, grid) => soilBehavior(y, x, grid));
@@ -197,6 +204,7 @@ elements.liquidSugar.behavior.push(function (y, x, grid) {
 });
 
 
+
 function updateGrid() {
     processed = Array(gridHeight).fill().map(() => Array(gridWidth).fill(false));
 
@@ -211,6 +219,13 @@ function updateGrid() {
                     }
                 }
             }
+            element = topGrid[y][x];
+            if (element && elements[element] && Array.isArray(elements[element].behavior)) {
+                for (let func of elements[element].behavior) {
+                    func(y, x, grid);
+                }
+            }
+            
         }
     }
 }
@@ -242,6 +257,13 @@ function drawGrid() {
                         ctx.fillRect(x * cellSize, (y - plantObj.height) * cellSize, cellSize, cellSize * plantObj.height);
                     }
                 }
+                /*
+                if (topGrid[y][x] === 'waterInSoil') {
+                    ctxTop.globalAlpha = 0.1;
+                    ctxTop.fillStyle = elements.waterInSoil.color; 
+                    ctxTop.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                }
+                */
 
                 ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
             }
@@ -249,6 +271,27 @@ function drawGrid() {
     }
 
     ctx.globalAlpha = 1.0;
+}
+
+function drawTopGrid(){
+    ctxTop.clearRect(0, 0, topCanvas.width, topCanvas.height);
+    for (let y = 0; y < gridHeight; y++) {
+        for (let x = 0; x < gridWidth; x++) {
+            if (topGrid[y][x] in elements) {
+                if (topGrid[y][x] === 'waterInSoil') {
+                    console.log('waterInSoil')
+                    ctxTop.globalAlpha = 0.5;
+                    ctxTop.fillStyle = elements.waterInSoil.color; 
+                    //ctxTop.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                }
+                
+
+                ctxTop.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+            }
+        }
+    }
+
+    ctxTop.globalAlpha = 1.0;
 }
 
 
@@ -310,6 +353,7 @@ canvas.addEventListener('mousedown', (event) => {
 function loop() {
     updateGrid();
     drawGrid();
+    drawTopGrid();
     requestAnimationFrame(loop);
     
 
