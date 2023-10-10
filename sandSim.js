@@ -1,7 +1,7 @@
 import RootStructure from './root/root.js';
 import Fungi from './fungi/fungi.js';
 //import {calculateSoilColor} from './aggregate_behavior.js';
-import { updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor} from './aggregate/aggregate_behavior.js';
+import { updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor } from './aggregate/aggregate_behavior.js';
 import { waterBehavior } from './water_behavior.js';
 import { soilBehavior } from './soil_behavior.js';
 import { rootBehavior } from './root/root_behavior.js';
@@ -38,7 +38,9 @@ export let chosenDirection = null;
 export default class RootTip extends RootStructure {
     constructor(startingY, startingX, fungiParent, index) {
         super(startingY, startingX, 10, 500, 'rootTip', 900, index);
-        this.parentFungi = fungiParent;
+        this.parentFungi = new Array();
+        this.parentFungi.push(fungiParent);
+        //console.log(this.parentFungi);
     }
 
     // Function to produce 1 block of liquid sugar from root tip
@@ -59,27 +61,11 @@ export default class RootTip extends RootStructure {
             // Increase max length of rootTip
             this.developed = false;
             this.maxGrowthLength += 2;
-            for (let fungi of this.parentFungi) {
-                //this.parentFungi[i].expandRoot(elements.fungi.fungiElements, fungiIndex, totalFungiIndex);
-                //console.log("EXPANDING NORMALLY WITH SUGAR", fungi.growthSpeed);
-                if (fungi.length < fungi.maxGrowthLength && fungi.growthSpeed / timeStep > 1.2) {
-                    fungi.expandRoot(elements.fungi.fungiElements, fungiIndex, totalFungiIndex);
-                }
-                //console.log("AFTER", fungi.growthSpeed);
-/*                if (fungi.length <= 25) {
-                    console.log("EXPANDING NORMALLY WITH SUGAR");
-                    fungi.expandRoot(elements.fungi.fungiElements, fungiIndex, totalFungiIndex);
-                }
-                else {
-                    // Speeding up the growth speed of fungi
-                    console.log("SPEED BEFORE", fungi.growthSpeed, timeStep, (fungi.growthSpeed - timeStep % fungi.growthSpeed));
-                    fungi.growthSpeed = Math.round(fungi.growthSpeed - (fungi.growthSpeed - timeStep % fungi.growthSpeed) / 2);
-                    console.log("SPEED AFTER", fungi.growthSpeed);
-                }
-*/
+            for (let i = 0; i < this.parentFungi.length; i++) {
+                this.parentFungi[i].expandRoot(elements.fungi.fungiElements, fungiIndex, totalFungiIndex);
             }
-            console.log("SUGAR EATEN, INCREASING LENGTH FOR ROOT: ", this.index);
-
+            // this.growthSpeed = Math.round(this.growthSpeed * (2 / 3));
+            //console.log("SUGAR EATEN, INCREASING LENGTH FOR ROOT: ", this.index);
         }
     }
 }
@@ -234,10 +220,10 @@ function drawGrid() {
                     ctx.globalAlpha = 1.0; // Reset alpha for other elements
                 }
                 if (grid[y][x] === 'soil') {
-                    let soilColor = calculateSoilColor('#26170d',elements.soil.color, elements.soil.soilAlpha[y + "," + x]);
+                    let soilColor = calculateSoilColor('#26170d', elements.soil.color, elements.soil.soilAlpha[y + "," + x]);
                     ctx.fillStyle = soilColor;
                 }
-                
+
                 ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
             }
         }
@@ -253,14 +239,14 @@ canvas.addEventListener('mousedown', (event) => {
     const y = Math.floor((event.clientY - rect.top) / cellSize);
 
     // Add 'aggregate' to the grid at the clicked location
-    
+
     /*
     grid[y][x] = 'aggregate';
     let aggInstance = new Aggregate(y, x, null, null);
     elements.aggregate.aggregateElements[y + "," + x] = aggInstance;
     */
-   testing(y, x)
-    
+    testing(y, x)
+
     //add liquidSugar
     //grid[y][x] = 'liquidSugar';
 });
@@ -310,16 +296,16 @@ function loop() {
         bacteria.decreaseLifespan();
         if (bacteria.lifespan <= 0) {
             // Bacteria dies out
-            bacteria.fade(ctx, elements, cellSize, grid, index);            
+            bacteria.fade(ctx, elements, cellSize, grid, index);
         }
     });
 
     elements.bacteria.bacteriaElements.forEach((bacteria, index) => {
-        if(grid[bacteria.y][bacteria.x]!= "bacteria"){
+        if (grid[bacteria.y][bacteria.x] != "bacteria") {
             elements.bacteria.bacteriaElements.splice(index, 1);
         }
         //console.log(elements.bacteria.bacteriaElements);
-        
+
     });
 }
 
@@ -354,32 +340,32 @@ function drawAutomatically() {
     let fungiObj = new Fungi(81, 25, false, totalFungiIndex++);
     grid[81][25] = 'fungi';
     elements.fungi.fungiElements.push(fungiObj);
-    let rootObj = new RootTip(80, 25, [fungiObj], totalRootIndex++);
+    let rootObj = new RootTip(80, 25, fungiObj, totalRootIndex++);
     grid[80][25] = 'rootTip';
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
 
 
     // 80 75
-    /*    grid[81][75] = 'fungi';
-        fungiObj = new Fungi(81, 75, false, totalFungiIndex++);
-        elements.fungi.fungiElements.push(fungiObj);
-        rootObj = new RootTip(80, 75, fungiObj, totalRootIndex++);
-        grid[80][75] = 'rootTip';
-        elements.rootTip.rootElements.push(rootObj);
-        fungiObj.parentRoot = rootObj;*/
+    grid[81][75] = 'fungi';
+    fungiObj = new Fungi(81, 75, false, totalFungiIndex++);
+    elements.fungi.fungiElements.push(fungiObj);
+    rootObj = new RootTip(80, 75, fungiObj, totalRootIndex++);
+    grid[80][75] = 'rootTip';
+    elements.rootTip.rootElements.push(rootObj);
+    fungiObj.parentRoot = rootObj;
 
 
 
 
     // 81 140
-    /*    grid[81][140] = 'fungi';
-        fungiObj = new Fungi(81, 140, false, totalFungiIndex++)
-        elements.fungi.fungiElements.push(fungiObj);
-        rootObj = new RootTip(80, 140, fungiObj, totalRootIndex++);
-        grid[80][140] = 'rootTip';
-        elements.rootTip.rootElements.push(rootObj);
-        fungiObj.parentRoot = rootObj;*/
+    grid[81][140] = 'fungi';
+    fungiObj = new Fungi(81, 140, false, totalFungiIndex++)
+    elements.fungi.fungiElements.push(fungiObj);
+    rootObj = new RootTip(80, 140, fungiObj, totalRootIndex++);
+    grid[80][140] = 'rootTip';
+    elements.rootTip.rootElements.push(rootObj);
+    fungiObj.parentRoot = rootObj;
 
 
     // Call any other functions required to render the grid on the canvas.

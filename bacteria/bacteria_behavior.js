@@ -111,8 +111,38 @@ export function generateBacterial() {
 
 
         const randomX = Math.floor(Math.random() * (200 - 0 + 1)) + 0;
-        const randomY = Math.floor(Math.random() * (120 - 80 + 1)) + 80;
+        const randomY = Math.floor(Math.random() * (100 - 80 + 1)) + 80;
         if (grid[randomY][randomX]== 'soil') {
+            grid[randomY][randomX] = 'bacteria';
+            //grid[randomY+1][randomX+1] = 'bacteria';
+        }
+
+
+        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 400000))
+
+
+    }
+    for (let i = 0; i < 40; i++) {
+
+
+        const randomX = Math.floor(Math.random() * (200 - 0 + 1)) + 0;
+        const randomY = Math.floor(Math.random() * (110 - 100 + 1)) + 100;
+        if (grid[randomY][randomX] == 'soil') {
+            grid[randomY][randomX] = 'bacteria';
+            //grid[randomY+1][randomX+1] = 'bacteria';
+        }
+
+
+        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 400000))
+
+
+    }
+    for (let i = 0; i < 10; i++) {
+
+
+        const randomX = Math.floor(Math.random() * (200 - 0 + 1)) + 0;
+        const randomY = Math.floor(Math.random() * (130 - 110 + 1)) + 110;
+        if (grid[randomY][randomX] == 'soil') {
             grid[randomY][randomX] = 'bacteria';
             //grid[randomY+1][randomX+1] = 'bacteria';
         }
