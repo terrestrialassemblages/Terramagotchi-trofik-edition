@@ -1,4 +1,4 @@
-import { elements } from "./sandSim.js";
+import { elements , topGrid} from "./sandSim.js";
 import {sunShow} from './weather.js';
 
 let life_span = 20;
@@ -9,9 +9,10 @@ export function waterBehavior(y, x, grid, gridHeight) {
         grid[y + 1][x] = 'water';
         grid[y][x] = null;
     } else if( y + 1 < gridHeight && grid[y + 1][x] === 'soil') {
-        if (elements.soil.soilAlpha[(y+1) + "," + x] <= 0.3){
+        if (elements.soil.soilAlpha[(y+1) + "," + x] <= 0.8){
             if (grid[y + 1][x] = 'soil'){
-                grid[y + 1][x] = "waterInSoil";
+                topGrid[y + 1][x] = "waterInSoil";
+                grid[y][x] = null;
                 
             }
         }
