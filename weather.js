@@ -3,6 +3,13 @@
 export let sunShow = true;
 export let rainShow = false;
 
+export function changeRainShow(boolean) {
+    rainShow = boolean;
+}
+export function changeSunShow(boolean) {
+    sunShow = boolean;
+}
+
 export function drawSun(ctx, canvas, pixelSize) {
     if (sunShow) {
         let sunPixels = [
@@ -46,6 +53,12 @@ export function drawSun(ctx, canvas, pixelSize) {
 
 export function generateRain(grid, gridWidth) {
     if (rainShow) {
+        var div = document.querySelector('.gradient-layer2');
+        // Set the new opacity
+        div.style.opacity = 1;
+
+
+        
         if (Math.random() < 0.8) {
             let x = Math.floor(Math.random() * gridWidth);
             let raindropLength = Math.floor(Math.random() * 3) + 1; // Random number between 1 and 3

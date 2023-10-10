@@ -7,7 +7,7 @@ import { waterBehavior } from './water_behavior.js';
 import { soilBehavior } from './soil_behavior.js';
 import { rootBehavior } from './root/root_behavior.js';
 import { rootTipBehavior } from './root/roottip_behavior.js';
-import { sunShow, drawSun, generateRain } from './weather.js';
+import { sunShow, drawSun, generateRain, rainShow, changeRainShow , changeSunShow} from './weather.js';
 import {drawGrass} from './grass_draw.js';
 import { findBacteriaByPosition, generateBacterial, bacteriaBehavior } from './bacteria/bacteria_behavior.js';
 import { fungiBehavior } from './fungi/fungi_behavior.js';
@@ -173,7 +173,9 @@ export function addToCanvas(element) {
     const y = 10;
 
     if (element == 'water') {
-        grid[y][x] = 'water';
+        //grid[y][x] = 'water';
+        changeRainShow(true);
+        changeSunShow(false);
 
     } else if (element == 'chemical') {
         grid[y][x] = 'chemical';
