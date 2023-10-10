@@ -2,6 +2,10 @@
 
 export let sunShow = true;
 export let rainShow = false;
+export let sunValue = 30; 
+
+const minDiameter = 5; 
+const maxDiameter = 30; 
 
 export function changeRainShow(boolean) {
     rainShow = boolean;
