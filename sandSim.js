@@ -111,9 +111,10 @@ export function resetRootIndex() {
 
 export const elements = {
     soil: {
-        color: "#452c1b",
+        color: "#8f614a",
         behavior: [],
         soilAlpha: {},
+        initAlpha: {},
     },
     water: {
         color: "#5756c2",
@@ -140,12 +141,12 @@ export const elements = {
         behavior: [],
     },
     bacteria: {
-        color: "#800080", frameTimer: 15, directionTimer: 20,
+        color: "#c151e0", frameTimer: 15, directionTimer: 20,
         bacteriaElements: [],
         behavior: [],
     },
     aggregate: {
-        color: '#593e2b',
+        color: '#5e3920',
         //color: '#000000',
         aggregateElements: {},
         behavior: [],
@@ -330,6 +331,7 @@ function drawAutomatically() {
         for (let j = 0; j < 200; j++) {
             grid[i][j] = 'soil';
             elements.soil.soilAlpha[i + "," + j] = 1;
+            elements.soil.initAlpha[i + "," + j] = 1;
         }
 
     }
