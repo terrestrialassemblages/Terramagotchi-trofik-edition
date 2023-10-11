@@ -1,6 +1,6 @@
 
 import { elements } from '../sandSim.js';
-import { totalRootIndex, rootIndex, IncementRootIndex, resetRootIndex, incrementTotalRootIndex} from '../sandSim.js';
+import { totalRootIndex, rootIndex, IncementRootIndex, resetRootIndex, incrementTotalRootIndex } from '../sandSim.js';
 
 
 
