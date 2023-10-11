@@ -1,5 +1,6 @@
 import RootTip from '../sandSim.js';
 import { grid } from '../sandSim.js';
+import Plant from '../plant/plant.js';
 
 import { timeStep } from '../sandSim.js';
 
@@ -18,38 +19,60 @@ export default class RootStructure {
         this.startingSpeed = startingSpeed;
         this.nutrientBoosted = false;
         this.developed = false;    // If root is not developed, it will grow. If fully developed, it will produce sugar instead of growing
+        this.plant = new Plant(this.startingY, this.startingX, this);
     }
 
     // Determines if root should grow or not
     growBool(totalIndex) {
         try{
-                        // If root is at max size, stop growing
+            // If root is at max size, stop growing
             if (this.length >= this.maxGrowthLength) {
                 // Mark the root as Developed
                 this.developed = true;
             }
-            if ((timeStep % this.growthSpeed == 0) && this.developed == true && this.elementName == 'rootTip') {
+            if ((timeStep >= this.growthSpeed) && this.developed == true && this.elementName == 'rootTip') {
                 // If root is developed, produce sugar
                 this.produceSugar();
                 //console.log("FULLY GROWN, PRODUCING SUGAR");
                 return ([false, totalIndex]);
             }
-            return ([(timeStep % this.growthSpeed == 0) && (this.length < this.maxGrowthLength), (totalIndex)]);
+            return ([(timeStep >= this.growthSpeed) && (this.length < this.maxGrowthLength), (totalIndex)]);
         } catch (error) {
             // If an error occurs, log it and return from the function
             console.error('An error occurred:', error.message);
             return;
         }
-
-        
     }
 
     // Adjusts the growth speed depending on the current length
     updateGrowthSpeed() {
-        // Pythagoras from starting location
-        // let distance = Math.sqrt(Math.pow(Math.abs(this.y - this.startingY), 2) + (Math.pow(Math.abs(this.x - this.startingX), 2)));
         // Growth speed scaled according to difference in length from maxGrowthLength
-        this.growthSpeed += Math.ceil(this.startingSpeed / (this.maxGrowthLength / 1 + this.length));
+        // this.growthSpeed += Math.ceil(this.startingSpeed / (this.maxGrowthLength / 1 + this.length));
+        // Have tos cale it to1
+        //let baseIncrement = 1 + ((this.maxGrowthLength - this.length) / this.maxGrowthLength);
+        let baseIncrement = 1 + (1 - (Math.abs(this.length - this.maxGrowthLength)) / this.maxGrowthLength);
+        baseIncrement = Math.max(1.05, baseIncrement);
+        let speedCap = 0;
+        if (this.length <= 20) {
+            speedCap = 500;
+        }
+        else if (this.length > 20 && this.length <= 40) {
+            speedCap = 900;
+        }
+        else {
+            speedCap = 1200;
+        }
+        // Introduce variability in speed for fungi
+        if (speedCap >= 900) {
+            // Generate random speedCap between 75% and 100%
+            speedCap = Math.round(Math.random() * (speedCap - (0.75 * speedCap)) + (0.75 * speedCap));
+        }
+        if (timeStep > this.growthSpeed) {
+            this.growthSpeed = timeStep + speedCap;
+        }
+        else {
+            this.growthSpeed = Math.min((Math.round(baseIncrement * this.growthSpeed)), this.growthSpeed + speedCap);
+        }
     }
 
     // Checks neighboring cells
@@ -70,7 +93,6 @@ export default class RootStructure {
 
     // Fuction to grow root by one block
     expandRoot(elementsArray, index, totalIndex) {
-
         //console.log("EXPANDING ROOT NOW NO: ", this.index);
 
         // Randomly choose -1, 0, or 1 for x growth direction (either grow left-down, down, right-down)
@@ -89,9 +111,10 @@ export default class RootStructure {
 
             // Create a new rootTip object for new branch
             grid[this.y + 1][this.x + 1] = 'rootTip';
-            let branchRootTip = new RootTip(this.y + 1, this.x + 1, totalIndex++);
+            let branchRootTip = new RootTip(this.y + 1, this.x + 1, this.parentFungi, totalIndex++);
             branchRootTip.parentFungi = this.parentFungi;
             branchRootTip.length = this.length + 2;
+            branchRootTip.maxGrowthLength = this.maxGrowthLength;            
             elementsArray.push(branchRootTip);
 
             // Produce sugar at branching point
@@ -126,6 +149,7 @@ export default class RootStructure {
         }
 
         this.updateGrowthSpeed();
+       
         return totalIndex;
     }
 }
