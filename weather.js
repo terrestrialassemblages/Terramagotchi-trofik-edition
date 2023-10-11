@@ -17,6 +17,7 @@ export function drawSun(ctx, canvas, pixelSize) {
         // Set the new opacity
         div.style.opacity = 0;
         
+        /*
         let sunPixels = [
             "      X       ",
             "   X XX XXX   ",
@@ -55,6 +56,7 @@ export function drawSun(ctx, canvas, pixelSize) {
                 ctx.fillRect(i, j, sunValue, sunValue);
             }
         }
+        */
     }
 }
 

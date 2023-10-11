@@ -59,9 +59,18 @@ export default class RootTip extends RootStructure {
         if (grid[this.y][this.x] == 'rootTip') {
 
             // If the block below is soil or fungi, produce liquid sugar
+            /*
             if (grid[this.y + 1][this.x] === 'soil' || grid[this.y + 1][this.x] === 'fungi') {
                 grid[this.y + 1][this.x] = 'liquidSugar';
             }
+            */
+            if (grid[this.y + 1][this.x] === 'soil' || grid[this.y + 1][this.x] === 'fungi') {
+                //grid[this.y + 1][this.x] = 'liquidSugar';
+                topGrid[this.y + 1][this.x] = 'liquidSugar';
+            }
+                
+            
+           
         }
     }
 
@@ -283,10 +292,15 @@ function drawTopGrid(){
         for (let x = 0; x < gridWidth; x++) {
             if (topGrid[y][x] in elements) {
                 if (topGrid[y][x] === 'waterInSoil') {
-                    console.log('waterInSoil')
+                    //console.log('waterInSoil')
                     ctxTop.globalAlpha = 0.5;
                     ctxTop.fillStyle = elements.waterInSoil.color; 
                     //ctxTop.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                }
+                else {
+                    //console.log('liquidSugar')
+                    ctxTop.fillStyle = elements[topGrid[y][x]].color; // Set color based on element type
+                    ctxTop.globalAlpha = 1.0; // Reset alpha for other elements
                 }
                 
 
