@@ -1,4 +1,4 @@
-import { grid, processed } from '../sandSim.js';
+import { grid, processed, topGrid } from '../sandSim.js';
 import Bacteria from './bacteria.js';
 import { elements, timeMove, changeChosenDirection, chosenDirection} from '../sandSim.js';
 import {generateSoil} from '../aggregate/aggregate_behavior.js';
@@ -50,9 +50,11 @@ export function bacteriaBehavior (y, x, grid){
             let newY = y + chosenDirection.dy;
             let newX = x + chosenDirection.dx;
 
-            if (grid[newY][newX] === 'liquidSugar') {
+            if (topGrid[newY][newX] === 'liquidSugar') {
+                
+                topGrid[newY][newX] = null;
+                elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], newX, newY, 400000, grid[newY][newX]));
                 grid[newY][newX] = 'bacteria';
-                elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], newX, newY, 400000))
             } else {
                 currentBac.bacteriaMovement(newY, newX, grid, processed);
             }
@@ -107,21 +109,23 @@ export function findBacteriaByPosition(bacteriaElements, x, y) {
 export function generateBacterial() {
     //grid[129][20] = 'bacteria';
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 5; i++) {
 
 
         const randomX = Math.floor(Math.random() * (200 - 0 + 1)) + 0;
         const randomY = Math.floor(Math.random() * (100 - 80 + 1)) + 80;
         if (grid[randomY][randomX]== 'soil') {
+            elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 400000))
             grid[randomY][randomX] = 'bacteria';
             //grid[randomY+1][randomX+1] = 'bacteria';
         }
 
 
-        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 400000))
+        
 
 
     }
+
     for (let i = 0; i < 40; i++) {
 
 
@@ -137,6 +141,7 @@ export function generateBacterial() {
 
 
     }
+    
     for (let i = 0; i < 10; i++) {
 
 
