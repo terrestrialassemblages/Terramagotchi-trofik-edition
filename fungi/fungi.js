@@ -35,7 +35,7 @@ export default class Fungi extends RootStructure {
         this.expandXDir = Math.random() < 0.5 ? -1 : 1;
         this.expandYDir = 1;
         // Remaining branch counts
-        this.branchCount = 8;
+        this.branchCount = 15;
         // Spacing from other fungi branches
         this.spacing = 1;
         // Amount of times it stayed on same horizontal and vertical in a row
