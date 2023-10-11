@@ -1,4 +1,4 @@
-import { grid, processed, canvas } from '../sandSim.js';
+import { grid, processed, canvas, globalY } from '../sandSim.js';
 import Bacteria from './bacteria.js';
 import { elements, timeMove, changeChosenDirection, chosenDirection} from '../sandSim.js';
 import {generateSoil} from '../aggregate/aggregate_behavior.js';
@@ -107,18 +107,46 @@ export function findBacteriaByPosition(bacteriaElements, x, y) {
 export function generateBacterial() {
     //grid[129][20] = 'bacteria';
 
-    let currY = 80
+    let currY = globalY;
 
-    if (canvas.width > canvas.height){
-        currY = (Math.ceil(80/(canvas.width/canvas.height)));
-    }
+
 
     for (let i = 0; i < 50; i++) {
 
 
         const randomX = Math.floor(Math.random() * (200 - 0 + 1)) + 0;
-        const randomY = Math.floor(Math.random() * (120 - currY + 1)) + currY;
+        const randomY = Math.floor(Math.random() * ((currY+20) - currY + 1)) + currY;
         if (grid[randomY][randomX]== 'soil') {
+            grid[randomY][randomX] = 'bacteria';
+            //grid[randomY+1][randomX+1] = 'bacteria';
+        }
+
+
+        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 400000))
+
+
+    }
+    for (let i = 0; i < 40; i++) {
+
+
+        const randomX = Math.floor(Math.random() * (200 - 0 + 1)) + 0;
+        const randomY = Math.floor(Math.random() * ((currY+30) - (currY+20) + 1)) + (currY+20);
+        if (grid[randomY][randomX] == 'soil') {
+            grid[randomY][randomX] = 'bacteria';
+            //grid[randomY+1][randomX+1] = 'bacteria';
+        }
+
+
+        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 400000))
+
+
+    }
+    for (let i = 0; i < 10; i++) {
+
+
+        const randomX = Math.floor(Math.random() * (200 - 0 + 1)) + 0;
+        const randomY = Math.floor(Math.random() * ((currY+50) - (currY+30) + 1)) + (currY+30);
+        if (grid[randomY][randomX] == 'soil') {
             grid[randomY][randomX] = 'bacteria';
             //grid[randomY+1][randomX+1] = 'bacteria';
         }

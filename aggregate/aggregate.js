@@ -1,6 +1,6 @@
 
 
-export default class Aggregate{
+export default class Aggregate {
     constructor(y, x, behavior, color) {
         this.x = x;
         this.y = y;
@@ -20,15 +20,15 @@ export default class Aggregate{
 
         const gridHeight = grid.length;
         const gridWidth = grid[0].length;
-/*
-        directions.forEach((dir) => {
-    
-            if (this.y+dir.dy >= 0 && this.y+dir.dy < gridHeight && this.x+dir.dx >= 0 && this.x+dir.dx < gridWidth) {
-                if (grid[newY][newX] === 'fungi') {
-                    return true;
-                }
-            }
-        });*/
+        /*
+                directions.forEach((dir) => {
+            
+                    if (this.y+dir.dy >= 0 && this.y+dir.dy < gridHeight && this.x+dir.dx >= 0 && this.x+dir.dx < gridWidth) {
+                        if (grid[newY][newX] === 'fungi') {
+                            return true;
+                        }
+                    }
+                });*/
 
         for (let dir of directions) {
             let newX = this.x + dir.dx;
@@ -51,16 +51,16 @@ export default class Aggregate{
         const gridHeight = grid.length;
         const gridWidth = grid[0].length;
         let isNear = false;  // Initialize the return value
-    
+
         for (let dy = -DISTANCE; dy <= DISTANCE; dy++) {
             for (let dx = -DISTANCE; dx <= DISTANCE; dx++) {
                 // Skip the current cell
                 if (dy === 0 && dx === 0) {
                     continue;
                 }
-                if (this.y+dy >= 0 && this.y+dy < gridHeight && this.x+dx >= 0 && this.x+dx < gridWidth) {
+                if (this.y + dy >= 0 && this.y + dy < gridHeight && this.x + dx >= 0 && this.x + dx < gridWidth) {
                     if (grid[this.y + dy][this.x + dx] === 'aggregate') {
-                        const distance = Math.sqrt(dy*dy + dx*dx);
+                        const distance = Math.sqrt(dy * dy + dx * dx);
                         if (distance <= 3) {
                             //aggrCount ++;
                             //console.log('near');
@@ -71,52 +71,55 @@ export default class Aggregate{
                             }
                         }
                         if (distance <= DISTANCE) {
-                            aggrCount ++;
+                            aggrCount++;
                         }
                         if (distance <= DISTANCE && grid[this.y + dy][this.x + dx] === 'rootTip') {
-                            rootTipCount ++;
+                            rootTipCount++;
                         }
-                    } 
-                }
-            }
-        }
-
-        if(aggrCount != this.aggrCount){
-            hasMoreAggre = true;
-            this.aggrCount = aggrCount;
-        }
-        if (rootTipCount!=0){
-            isNear = false;
-        }
-        return [isNear, aggrCount, hasMoreAggre];  // Return the result
-    }
-
-/*
-    darkSoil(grid, ctx, cellSize) {
-        const DISTANCE = 10;
-        const gridHeight = grid.length;
-        const gridWidth = grid[0].length;
-    
-        for (let dy = -DISTANCE; dy <= DISTANCE; dy++) {
-            for (let dx = -DISTANCE; dx <= DISTANCE; dx++) {
-                // Ensuring the indices are within grid bounds
-                if (this.y + dy >= 0 && this.y + dy < gridHeight && this.x + dx >= 0 && this.x + dx < gridWidth) {
-                    // Check if the cell in the range is soil, then darken it
-                    if (grid[this.y + dy][this.x + dx] === 'soil') {
-                        console.log(`Darkening soil at position [${this.y + dy},${this.x + dx}]`);
-
-                        // Darken based on distance to center.
-                        //const alpha = (DISTANCE - distance) / DISTANCE;
-                        //const darkSoilColor = this.interpolateColor(elements.soil.color, "#2b1d0e", alpha);
-
-                        const darkSoilColor = "#2b1d0e"; // Dark soil color
-                        // Draw the darkened soil on the canvas.
-                        ctx.fillStyle = darkSoilColor;
-                        ctx.fillRect((this.x + dx) * cellSize, (this.y + dy) * cellSize, cellSize, cellSize);
                     }
                 }
             }
         }
-    }*/
+
+        if (aggrCount != this.aggrCount) {
+            hasMoreAggre = true;
+            this.aggrCount = aggrCount;
+        }
+        /*
+        if (rootTipCount != 0) {
+            //isNear = false;
+            isNear = true;   //disable check for root tips
+        }
+        */
+        return [isNear, aggrCount, hasMoreAggre];  // Return the result
+    }
+
+    /*
+        darkSoil(grid, ctx, cellSize) {
+            const DISTANCE = 10;
+            const gridHeight = grid.length;
+            const gridWidth = grid[0].length;
+        
+            for (let dy = -DISTANCE; dy <= DISTANCE; dy++) {
+                for (let dx = -DISTANCE; dx <= DISTANCE; dx++) {
+                    // Ensuring the indices are within grid bounds
+                    if (this.y + dy >= 0 && this.y + dy < gridHeight && this.x + dx >= 0 && this.x + dx < gridWidth) {
+                        // Check if the cell in the range is soil, then darken it
+                        if (grid[this.y + dy][this.x + dx] === 'soil') {
+                            console.log(`Darkening soil at position [${this.y + dy},${this.x + dx}]`);
     
+                            // Darken based on distance to center.
+                            //const alpha = (DISTANCE - distance) / DISTANCE;
+                            //const darkSoilColor = this.interpolateColor(elements.soil.color, "#2b1d0e", alpha);
+    
+                            const darkSoilColor = "#2b1d0e"; // Dark soil color
+                            // Draw the darkened soil on the canvas.
+                            ctx.fillStyle = darkSoilColor;
+                            ctx.fillRect((this.x + dx) * cellSize, (this.y + dy) * cellSize, cellSize, cellSize);
+                        }
+                    }
+                }
+            }
+        }*/
+
 }

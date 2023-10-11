@@ -4,20 +4,37 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Falling Sand Simulation</title>
+    <title>Terramagotchi Trōfik Edition</title>
     <style>
         /* Add this to your existing CSS styles */
         #qr-container {
             display: flex;
             justify-content: center; /* Aligns children horizontally in the center */
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            z-index: 9999;
+        }
+
+        #qrCodeElement, #qrFrame, #remote-url {
             position: absolute;
             bottom: 0;
-            left: 0;
-            z-index: 2;
+            right: 0;
+        }
+
+        #qrCodeElement {
+            position: fixed;
+            margin-right: 30px;
+            margin-bottom: 40px;
+        }
+
+        #qrFrame {
+            z-index: -1; /* Behind the QR code */
         }
 
         #remote-url {
-            margin-left: 0px;
+            margin-right: 40px;
+            margin-bottom: 80px;
         }
         body {
             margin: 0;  /* No margin */
@@ -30,31 +47,69 @@
         }
 
         #image-container {
-            position: absolute;  /* Absolute positioning */
+            position: fixed;  /* Absolute positioning */
             margin: 0;  /* No margin */
             bottom: 0;  /* Align to the bottom */
-            left: 0;  /* Align to the left */
+            right: 0;  /* Align to the left */
             z-index: 1;  /* Lower z-index to ensure it's behind the qr-container */
         }
 
-        /* Styles to make the canvas visible */
-        #sandCanvas {
-            border: 1px solid black;
-            margin: 0;  /* No margin */
-            background-color: rgb(124, 172, 201);
-            position: relative;  /* Relative positioning to act as a base for absolute positioning */
-            z-index: 1;  /* Lower z-index to ensure it's below the qr-container */
+
+        #canvas-wrap {
+            position: relative;
+            margin: 20px auto;
+            top: 0;
+            left: 0;
+            margin: 0;
+        }
+
+        /* Styles for the gradient layer */
+        .gradient-layer1 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;  /* 100% of viewport width */
+            height: 100vh;  /* 100% of viewport height */
+            background: linear-gradient(to bottom, rgb(130, 192, 225), rgb(198, 220, 230));
+            z-index: -1;
+            opacity: 1;
+            transition: opacity 1s linear;
+        }
+
+        /* Styles for the gradient layer */
+        .gradient-layer2 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;  /* 100% of viewport width */
+            height: 100vh;  /* 100% of viewport height */
+            background: linear-gradient(to bottom, rgb(142, 158, 165), rgb(198, 220, 230));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 1s linear;
+        }
+
+        /* Styles for the canvas */
+        #sandCanvas, #topCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            margin: 0;
+            /*border: 1px solid black;*/
             overflow: hidden;
         }
 
-        /* Styles for overlaying the qr-container */
-        #qr-container {
-            margin: 0;  /* No margin */
-            position: absolute;  /* Absolute positioning */
-            bottom: 0;
-            left: 0;  /* Align to the left */
-            z-index: 2;  /* Higher z-index to ensure it's above the canvas */
+        #sandCanvas {
+            z-index: 1;
         }
+
+        #topCanvas {
+            z-index: 2; /* Higher z-index to make it appear on top */
+            /*background: linear-gradient(to bottom, rgb(58, 66, 70), rgb(198, 220, 230));*/
+            opacity: 1;
+        }
+
+
 
         /* Prevent dragging of the canvas */
         canvas {
@@ -72,10 +127,15 @@
 </head>
 
 <body>
-    <canvas height="600" id="sandCanvas" width="800"></canvas>
+    <div id="canvas-wrap">
+        <div class="gradient-layer1"></div>
+        <div class="gradient-layer2"></div>
+        <canvas height="600" id="sandCanvas" width="800"></canvas>
+        <canvas height="600" id="topCanvas" width="800"></canvas>
+    </div>
 
     <div id="image-container" style="width:100%; height:100%;">
-        <img src="qrCodeFrame.png" alt="Background" style="width:100%; height:100%;">
+        <img id="qrFrame" src="qrCodeFrame.png" alt="Background" style="width:100%; height:100%;">
     </div>
 
     <div id="qr-container" class="qr-overlay">
@@ -91,24 +151,51 @@
         document.getElementById('sandCanvas').width = window.innerWidth;
         document.getElementById('sandCanvas').height = window.innerHeight;
 
+        document.getElementById('topCanvas').width = window.innerWidth;
+        document.getElementById('topCanvas').height = window.innerHeight;
+
+        
+
         // Your remote_url value
         const remote_url = "your_remote_url_here";
 
         // Calculate the size of the QR code based on screen height
+        // Your existing JavaScript code
         const qrSize = window.innerHeight * 0.2;
 
-        // Update the size and position for image-container and qr-container
-        const imageContainer = document.getElementById('image-container');
+        // Set the size for both the QR code and the QR frame
         const qrContainer = document.getElementById('qr-container');
         const qrFrame = document.getElementById('qrFrame');
-        
-        imageContainer.style.width = `${qrSize}px`;
-        imageContainer.style.height = `${qrSize}px`;
+
         qrContainer.style.width = `${qrSize}px`;
         qrContainer.style.height = `${qrSize}px`;
-        qrFrame.src = "qrCodeFrame.png";
+
         qrFrame.style.width = `${qrSize}px`;
         qrFrame.style.height = `${qrSize}px`;
+
+        // More of your existing JavaScript code
+        // Get the gradient layers by class name
+        const gradientLayer1 = document.querySelector('.gradient-layer1');
+        const gradientLayer2 = document.querySelector('.gradient-layer2');
+
+        // Set the dimensions to cover the entire viewport
+        gradientLayer1.style.width = `${window.innerWidth}px`;
+        gradientLayer1.style.height = `${window.innerHeight}px`;
+
+        gradientLayer2.style.width = `${window.innerWidth}px`;
+        gradientLayer2.style.height = `${window.innerHeight}px`;
+
+        // Set the position to start at the top-left corner
+        gradientLayer1.style.position = 'fixed';
+        gradientLayer1.style.top = '0';
+        gradientLayer1.style.left = '0';
+
+        gradientLayer2.style.position = 'fixed';
+        gradientLayer2.style.top = '0';
+        gradientLayer2.style.left = '0';
+
+
+
 
 
     </script>
