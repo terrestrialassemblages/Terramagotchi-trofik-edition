@@ -6,6 +6,10 @@ import { elements } from '../sandSim.js';
 export function fungiBehavior(y, x, grid) {
     if (totalFungiIndex > 0) {
         try {
+            if (fungiIndex >= totalFungiIndex) {
+                console.log('An error occured with fungiIndex: ', fungiIndex, totalFungiIndex, elements.fungi.fungiElements, this);
+                DecrementFungiIndex(0);
+            }
             let curr = elements[grid[y][x]].fungiElements[fungiIndex];
             // If root is not at max size, expand root
             let result = curr.growBool(totalFungiIndex);

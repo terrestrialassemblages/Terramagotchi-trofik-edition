@@ -210,7 +210,7 @@ export default class Bacteria {
             }
 
             let elementToRestore = this.bacteriaHistory(grid[newY][newX]);
-            if (topGrid[newY][newX] == 'liquidSugar') {
+            if (topGrid[newY][newX] =='liquidSugar'){
                 console.log('moving into liquid sugar');
                 elementToRestore = this.bacteriaHistory(grid[newY][newX], topGrid[newY][newX]);
             }

@@ -62,14 +62,14 @@ export function generateSoil(y, x, macro = false) {
                 return;
 
             }
-
-            else {
-                if (grid[y][x + 1] == 'soil') {
-                    let aggInstance1 = new Aggregate(y, x + 1, null, null);
-                    elements.aggregate.aggregateElements[y + "," + (x + 1)] = aggInstance1;
-                    grid[y][x + 1] = 'aggregate';
+            
+            else{
+                if(grid[y][x+1] == 'soil'){
+                    let aggInstance1 = new Aggregate(y, x+1, null, null);
+                    elements.aggregate.aggregateElements[y + "," + (x+1)] = aggInstance1;
+                    grid[y][x+1] = 'aggregate';  
                     return;
-                }
+                }  
             }
         }
     } catch (error) {
