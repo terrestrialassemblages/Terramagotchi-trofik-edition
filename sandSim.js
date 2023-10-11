@@ -1,25 +1,33 @@
 import RootStructure from './root/root.js';
 import Fungi from './fungi/fungi.js';
+import { plantAt, updatePlantGrowth } from './plant/plant_behavior.js';
 //import {calculateSoilColor} from './aggregate_behavior.js';
 import { updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor } from './aggregate/aggregate_behavior.js';
 import { waterBehavior } from './water_behavior.js';
+import { waterInSoilBehavior } from './waterInSoil.js'
 import { soilBehavior } from './soil_behavior.js';
 import { rootBehavior } from './root/root_behavior.js';
 import { rootTipBehavior } from './root/roottip_behavior.js';
-import { sunShow, drawSun, generateRain } from './weather.js';
+import { sunShow, drawSun, generateRain, rainShow, changeRainShow, changeSunShow } from './weather.js';
+import { drawGrass } from './grass_draw.js';
 import { findBacteriaByPosition, generateBacterial, bacteriaBehavior } from './bacteria/bacteria_behavior.js';
 import { fungiBehavior } from './fungi/fungi_behavior.js';
 import { connectToDB } from './firebase.js';
 
 
 // Initialize canvas
-const canvas = document.getElementById('sandCanvas');
+export const canvas = document.getElementById('sandCanvas');
 const ctx = canvas.getContext('2d');
+
+export const topCanvas = document.getElementById('topCanvas');
+const ctxTop = topCanvas.getContext('2d');
+
 
 export const gridWidth = 200;  // Change for finer granularity
 export const gridHeight = 150; // Change for finer granularity
 const cellSize = canvas.width / gridWidth;
 
+export let topGrid = Array(gridHeight).fill().map(() => Array(gridWidth).fill(null));
 export let grid = Array(gridHeight).fill().map(() => Array(gridWidth).fill(null));
 export let processed = Array(gridHeight).fill().map(() => Array(gridWidth).fill(false));
 
@@ -35,11 +43,15 @@ export let totalFungiIndex = 0;
 export let timeMove = 0;
 export let chosenDirection = null;
 
+// water related variables
+export let timeWaterSink = 0;
+
 export default class RootTip extends RootStructure {
     constructor(startingY, startingX, fungiParent, index) {
         super(startingY, startingX, 10, 500, 'rootTip', 900, index);
         this.parentFungi = new Array();
         this.parentFungi.push(fungiParent);
+        this.spacing = 3;
         //console.log(this.parentFungi);
     }
 
@@ -48,9 +60,18 @@ export default class RootTip extends RootStructure {
         if (grid[this.y][this.x] == 'rootTip') {
 
             // If the block below is soil or fungi, produce liquid sugar
+            /*
             if (grid[this.y + 1][this.x] === 'soil' || grid[this.y + 1][this.x] === 'fungi') {
                 grid[this.y + 1][this.x] = 'liquidSugar';
             }
+            */
+            if (grid[this.y + 1][this.x] === 'soil' || grid[this.y + 1][this.x] === 'fungi') {
+                //grid[this.y + 1][this.x] = 'liquidSugar';
+                topGrid[this.y + 1][this.x] = 'liquidSugar';
+            }
+
+
+
         }
     }
 
@@ -150,9 +171,20 @@ export const elements = {
         aggregateElements: {},
         behavior: [],
     },
+    plant: {
+        color: "#00FF00",
+        behavior: [],
+        plantElements: [],
+    },
+    waterInSoil: {
+        color: "#5756c2",
+        behavior: [],
+        waterElements: [],
+    }
 };
 
 elements.water.behavior.push((y, x, grid) => waterBehavior(y, x, grid, gridHeight));
+elements.waterInSoil.behavior.push((y, x, grid) => waterInSoilBehavior(y, x, grid));
 elements.fungi.behavior.push((y, x, grid) => fungiBehavior(y, x, grid));
 elements.root.behavior.push((y, x, grid) => rootBehavior(y, x, grid));
 elements.soil.behavior.push((y, x, grid) => soilBehavior(y, x, grid));
@@ -166,7 +198,9 @@ export function addToCanvas(element) {
     const y = 10;
 
     if (element == 'water') {
-        grid[y][x] = 'water';
+        //grid[y][x] = 'water';
+        changeRainShow(true);
+        changeSunShow(false);
 
     } else if (element == 'chemical') {
         grid[y][x] = 'chemical';
@@ -184,6 +218,7 @@ elements.liquidSugar.behavior.push(function (y, x, grid) {
 });
 
 
+
 function updateGrid() {
     processed = Array(gridHeight).fill().map(() => Array(gridWidth).fill(false));
 
@@ -198,6 +233,13 @@ function updateGrid() {
                     }
                 }
             }
+            element = topGrid[y][x];
+            if (element && elements[element] && Array.isArray(elements[element].behavior)) {
+                for (let func of elements[element].behavior) {
+                    func(y, x, grid);
+                }
+            }
+
         }
     }
 }
@@ -205,6 +247,7 @@ function updateGrid() {
 function drawGrid() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawSun(ctx, canvas, 7);
+    drawGrass(ctx, canvas);
 
     for (let y = 0; y < gridHeight; y++) {
         for (let x = 0; x < gridWidth; x++) {
@@ -221,6 +264,20 @@ function drawGrid() {
                     let soilColor = calculateSoilColor('#26170d', elements.soil.color, elements.soil.soilAlpha[y + "," + x]);
                     ctx.fillStyle = soilColor;
                 }
+                if (grid[y][x] === 'plant') {
+                    const plantObj = elements.plant.plantElements.find(plant => plant.startingY === y && plant.startingX === x);
+                    if (plantObj) {
+                        ctx.fillStyle = elements.plant.color;
+                        ctx.fillRect(x * cellSize, (y - plantObj.height) * cellSize, cellSize, cellSize * plantObj.height);
+                    }
+                }
+                /*
+                if (topGrid[y][x] === 'waterInSoil') {
+                    ctxTop.globalAlpha = 0.1;
+                    ctxTop.fillStyle = elements.waterInSoil.color; 
+                    ctxTop.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                }
+                */
 
                 ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
             }
@@ -228,6 +285,32 @@ function drawGrid() {
     }
 
     ctx.globalAlpha = 1.0;
+}
+
+function drawTopGrid() {
+    ctxTop.clearRect(0, 0, topCanvas.width, topCanvas.height);
+    for (let y = 0; y < gridHeight; y++) {
+        for (let x = 0; x < gridWidth; x++) {
+            if (topGrid[y][x] in elements) {
+                if (topGrid[y][x] === 'waterInSoil') {
+                    //console.log('waterInSoil')
+                    ctxTop.globalAlpha = 0.5;
+                    ctxTop.fillStyle = elements.waterInSoil.color;
+                    //ctxTop.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                }
+                else {
+                    //console.log('liquidSugar')
+                    ctxTop.fillStyle = elements[topGrid[y][x]].color; // Set color based on element type
+                    ctxTop.globalAlpha = 1.0; // Reset alpha for other elements
+                }
+
+
+                ctxTop.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+            }
+        }
+    }
+
+    ctxTop.globalAlpha = 1.0;
 }
 
 
@@ -248,6 +331,8 @@ canvas.addEventListener('mousedown', (event) => {
     //add liquidSugar
     //grid[y][x] = 'liquidSugar';
 });
+
+
 
 
 /*
@@ -287,8 +372,9 @@ canvas.addEventListener('mousedown', (event) => {
 function loop() {
     updateGrid();
     drawGrid();
+    drawTopGrid();
     requestAnimationFrame(loop);
-    
+
 
     generateRain(grid, gridWidth);
 
@@ -300,6 +386,9 @@ function loop() {
 
     timeStep++;
     timeMove++;
+    timeWaterSink++;
+
+    updatePlantGrowth();
 
     elements.bacteria.bacteriaElements.forEach((bacteria, index) => {
         bacteria.decreaseLifespan();
@@ -315,6 +404,13 @@ function loop() {
         }
         //console.log(elements.bacteria.bacteriaElements);
 
+    });
+
+    elements.waterInSoil.waterElements.forEach((water, index) => {
+        if (topGrid[water.y][water.x] != "waterInSoil") {
+            elements.waterInSoil.waterElements.splice(index, 1);
+        }
+        //(console.log(elements.waterInSoil.waterElements));
     });
 }
 
@@ -355,6 +451,7 @@ function drawAutomatically() {
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
 
+    plantAt(79, 25, fungiObj);
 
     // 80 75
     grid[81][75] = 'fungi';
@@ -365,6 +462,8 @@ function drawAutomatically() {
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
 
+    plantAt(79, 75, fungiObj);
+
 
     // 81 140
     grid[81][140] = 'fungi';
@@ -374,6 +473,8 @@ function drawAutomatically() {
     grid[80][140] = 'rootTip';
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
+
+    plantAt(79, 140, fungiObj);
 
     // Call any other functions required to render the grid on the canvas.
 }

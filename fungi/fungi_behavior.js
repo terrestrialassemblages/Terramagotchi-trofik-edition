@@ -25,6 +25,7 @@ export function fungiBehavior(y, x, grid) {
                 }
                 else {
                     // Every other fungi root that will normally grow
+                    // If removed, stay at current index since by default it will increment fungi index after no matter the circumstances
                     if (curr.expandRoot(elements.fungi.fungiElements, fungiIndex, totalFungiIndex) == false) {
                         DecrementFungiIndex(fungiIndex - 1);
                     }

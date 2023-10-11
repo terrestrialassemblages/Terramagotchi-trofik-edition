@@ -35,7 +35,7 @@ export default class Fungi extends RootStructure {
         this.expandXDir = Math.random() < 0.5 ? -1 : 1;
         this.expandYDir = 1;
         // Remaining branch counts
-        this.branchCount = 8;
+        this.branchCount = 15;
         // Spacing from other fungi branches
         this.spacing = 1;
         // Amount of times it stayed on same horizontal and vertical in a row
@@ -197,32 +197,16 @@ export default class Fungi extends RootStructure {
 
         let forbElements = ['fungi'];
 
-        // Find direction that the fungi can grow
-        while (finalGrowDir == null && growOptions.length != 0) {
-            growIndex = Math.floor(Math.random() * (growOptions.length));
-            let testY = this.y;
-            let testX = this.x;
-            testY += growOptions[growIndex][0];
-            testX += growOptions[growIndex][1];
-            // Check grow direction
-            if (this.canGrow(testY, testX, this.expandYDir, this.expandXDir, forbElements)) {
-                finalGrowDir = growOptions[growIndex];
+        finalGrowDir = this.findGrowDir(growOptions, this.expandYDir, this.expandXDir, forbElements);
+
+        if (finalGrowDir == false) {
+            // Try last exception (grow sideways up)
+            if (this.canGrow(this.y - 1, this.x + this.expandXDir, -1, this.expandXDir, forbElements)) {
+                finalGrowDir = [-1, this.expandXDir];
+                this.expandYDir = -1;
             }
             else {
-                // Remove the option
-                growOptions.splice(growIndex, 1);
-                if (growOptions.length == 0) {
-                    // Try last exception (grow sideways up)
-                    testY = this.y - 1;
-                    testX = this.x + this.expandXDir;
-                    if (this.canGrow(testY, testX, -1, this.expandXDir, forbElements)) {
-                        finalGrowDir = [-1, this.expandXDir];
-                        this.expandYDir = -1;
-                    }
-                    else {
-                        remove = true;
-                    }
-                }
+                remove = true;
             }
         }
 
@@ -334,49 +318,11 @@ export default class Fungi extends RootStructure {
         }
 
         // If not root or root tip, grow over it
-        if (grid[this.y][this.x] != 'root' && grid[this.y][this.x] != 'rootTip' && remove == false) {
+        if (grid[this.y][this.x] != 'root' && grid[this.y][this.x] != 'rootTip') {
             grid[this.y][this.x] = 'fungi';
         }
         this.length++;
-        // If root or root tip, just go under it by not changing grid to fungi
-        //console.log(this.growthSpeed, timeStep, "FUNGI BEFORE SPEED", Math.round(1.3 * this.growthSpeed));
         this.updateGrowthSpeed();
-        /* If below 5000 timeSteps, grow every 500 timeSteps max
-        /* If 5000 - 15000 timeSteps, grow every 800 timeSteps max
-        /* If >15000, grow every 1500 timesteps max
-        if (timeStep < 5000) {
-            this.growthSpeed = Math.round(this.growthSpeed * 1.3);
-            if (timeStep - this.growthSpeed > 500) {
-                this.growthSpeed = timeStep + 500;
-            }
-        }
-        else if (timeStep >= 5000 && timeStep < 15000) {
-            this.growthSpeed = Math.round(this.growthSpeed * 1.2);
-            if (timeStep - this.growthSpeed > 700) {
-                this.growthSpeed = timeStep + 700;
-            }
-        }
-        else {
-            this.growthSpeed = Math.round(this.growthSpeed * 1.1);
-            if (timeStep - this.growthSpeed > 1000) {
-                this.growthSpeed = timeStep + 1000;
-            }
-        }
-/*        if (this.length >= 25) {
-            this.growthSpeed = Math.round(this.growthSpeed * 1.3);
-        }
-        else {
-            this.growthSpeed = Math.round(this.growthSpeed * 1.1);
-        }
-        if (timeStep >= 5000 && this.growthSpeed > 1.1 * timeStep) {
-            this.growthSpeed = Math.round(1.1 * timeStep);
-        }
-        else if (timeStep < 5000 && this.growthSpeed > 1.5 * timeStep) {
-            this.growthSpeed = Math.round(1.5 * timeStep);
-        }*/
         this.updateSpacing();
-        //console.log("UPDATED VALUES", this.growthSpeed, this.spacing, this.length, totalFungiIndex);
-
-
     }
 }

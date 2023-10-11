@@ -1,9 +1,9 @@
 
-import { elements } from '../sandSim.js';
+import { elements, topGrid } from '../sandSim.js';
 import { findBacteriaByPosition } from './bacteria_behavior.js';
 
 export default class Bacteria {
-    constructor(color, frameTimer, currentDirection, directionTimer, behavior, x, y, lifespan) {
+    constructor(color, frameTimer, currentDirection, directionTimer, behavior, x, y, lifespan, oldElement = "soil") {
         this.x = x;
         this.y = y;
         this.color = color;
@@ -12,7 +12,7 @@ export default class Bacteria {
         this.currentDirection = currentDirection;
         this.directionTimer = directionTimer;
         this.behavior = behavior;
-        this.oldElement = "soil"  // Default value
+        this.oldElement = oldElement;  // Default value
         this.index = 0;
         this.lifespan = lifespan;
         this.hasGenerated = false;
@@ -36,9 +36,13 @@ export default class Bacteria {
     createBacteriaHistoryTracker() {
         //let oldElement = "soil";  // Default value
 
-        return function (newElement) {
-            if (newElement == "liquidSugar") {
-                newElement = "soil";
+        return function (newElement, topElement = null) {
+            if (topElement == "liquidSugar") {
+                //newElement = "soil";
+                let output = this.oldElement;
+                this.oldElement = newElement;
+                topGrid[this.y][this.x] = null;
+                return output;
             }
             let output = this.oldElement;
             this.oldElement = newElement;
@@ -103,7 +107,7 @@ export default class Bacteria {
         for (let dy = -DISTANCE; dy <= DISTANCE; dy++) {
             for (let dx = -DISTANCE; dx <= DISTANCE; dx++) {
                 if (this.y + dy >= 0 && this.y + dy < gridHeight && this.x + dx >= 0 && this.x + dx < gridWidth) {
-                    if (grid[this.y + dy][this.x + dx] === 'liquidSugar') {
+                    if (topGrid[this.y + dy][this.x + dx] === 'liquidSugar') {
                         const distance = Math.sqrt(dy * dy + dx * dx);
                         if (distance <= DISTANCE) {
 
@@ -201,13 +205,16 @@ export default class Bacteria {
         //console.log(currBacteria instanceof Bacteria );
         try {
             if (newX < 0 || newY < 0 || newX >= gridWidth || newY >= gridHeight - 1 || grid[newY][newX] == null
-                || grid[newY][newX] == 'bacteria') {
+                || grid[newY][newX] == 'bacteria' || grid[newY][newX] == 'plant') {
                 return; // Exit the function if out of bounds
             }
 
             let elementToRestore = this.bacteriaHistory(grid[newY][newX]);
-            //console.log(grid[newY][newX])
-            //console.log(elementToRestore);
+            if (topGrid[newY][newX] == 'liquidSugar') {
+                console.log('moving into liquid sugar');
+                elementToRestore = this.bacteriaHistory(grid[newY][newX], topGrid[newY][newX]);
+            }
+
 
             // Move the bacteria to the new cell
             grid[newY][newX] = 'bacteria';
