@@ -8,7 +8,7 @@ export function fungiBehavior(y, x, grid) {
         try {
             if (fungiIndex >= totalFungiIndex) {
                 console.log('An error occured with fungiIndex: ', fungiIndex, totalFungiIndex, elements.fungi.fungiElements, this);
-                fungiIndex = 0;
+                DecrementFungiIndex(0);
             }
             let curr = elements[grid[y][x]].fungiElements[fungiIndex];
             // If root is not at max size, expand root
