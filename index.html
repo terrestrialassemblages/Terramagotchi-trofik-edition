@@ -6,14 +6,59 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Terramagotchi Trōfik Edition</title>
     <style>
-        /* Styles to make the canvas visible */
-        #sandCanvas {
-            border: 1px solid black;
-            display: block;
+        /* Container to hold the canvas and gradient layer */
+        #canvas-wrap {
+            position: relative;
+            width: 800px;
+            height: 600px;
             margin: 20px auto;
-            background-color: rgb(124, 172, 201);
-            background: linear-gradient(to bottom, rgb(130, 192, 225), rgb(198, 220, 230));
         }
+
+        /* Styles for the gradient layer */
+        .gradient-layer1 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 801px;
+            height: 601px;
+            background: linear-gradient(to bottom, rgb(130, 192, 225), rgb(198, 220, 230));
+            z-index: -1;
+            opacity: 1;
+            transition: opacity 1s linear;
+        }
+
+        /* Styles for the gradient layer */
+        .gradient-layer2 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 801px;
+            height: 601px;
+            background: linear-gradient(to bottom, rgb(142, 158, 165), rgb(198, 220, 230));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 1s linear;
+        }
+
+        /* Styles for the canvas */
+        #sandCanvas, #topCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            border: 1px solid black;
+        }
+
+        #sandCanvas {
+            z-index: 1;
+        }
+
+        #topCanvas {
+            z-index: 2; /* Higher z-index to make it appear on top */
+            /*background: linear-gradient(to bottom, rgb(58, 66, 70), rgb(198, 220, 230));*/
+            opacity: 1;
+        }
+
+
 
         /* Prevent dragging of the canvas */
         canvas {
@@ -31,7 +76,12 @@
 </head>
 
 <body>
-    <canvas height="600" id="sandCanvas" width="800"></canvas>
+    <div id="canvas-wrap">
+        <div class="gradient-layer1"></div>
+        <div class="gradient-layer2"></div>
+        <canvas height="600" id="sandCanvas" width="800"></canvas>
+        <canvas height="600" id="topCanvas" width="800"></canvas>
+    </div>
 
     <div id="qr-container" class="qr-overlay">
         <!-- <canvas id="qr-code"></canvas> -->
