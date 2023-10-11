@@ -1,7 +1,7 @@
 import RootTip from '../sandSim.js';
 import { grid } from '../sandSim.js';
 
-import { timeStep } from '../sandSim.js';
+import { timeStep, gridWidth, gridHeight } from '../sandSim.js';
 
 
 export default class RootStructure {
@@ -73,29 +73,112 @@ export default class RootStructure {
         }
     }
 
-    // Checks neighboring cells
-    canGrow(y, x, element, rootTipBool) {
-        let element2 = 'fungi';
-        if (rootTipBool == false) {
-            element2 = 'root';
+    // Should check 1 to right as well when going diagonal
+    canGrow(y, x, yDir, xDir, forbElements) {
+        // If exceeds boundaries
+        if (y > gridHeight - 1 || y < 80 + 1 || x < 0 + 1 || x > gridWidth - 1) {
+            return false;
         }
-        if ((grid[y][x - 1] === element || grid[y][x - 1] == element2) &&
-            (grid[y][x + 1] === element || grid[y][x + 1] == element2) &&
-            (grid[y + 1][x] === element || grid[y + 1][x] == element2) &&
-            (grid[y + 1][x - 1] === element || grid[y + 1][x - 1] == element2) &&
-            (grid[y + 1][x + 1] === element || grid[y + 1][x + 1] == element2)) {
-            return true;
+        // Loops through one above, one below, to spacing
+        for (let spaceY = -1; spaceY <= this.spacing; spaceY++) {
+            for (let spaceX = -1; spaceX <= this.spacing; spaceX++) {
+                if (y + (yDir * spaceY) > gridHeight - 1 || y + (yDir * spaceY) < 80 + 1 || x + (xDir * spaceX) > gridWidth - 1 || x + (xDir * spaceX) < 0 + 1) {
+                    continue;
+                }
+                for (let element of forbElements) {
+                    //console.log("CHECKING ELEMENT", element);
+                    if (grid[y + (yDir * spaceY)][x + (xDir * spaceX)] == element) {
+                        //console.log("FOUND FUNGI");
+                        if (y + (yDir * spaceY) == this.y && (x + (xDir * spaceX)) == this.x) {
+                            //console.log("CHECKING OG POS");
+                            continue;
+                        }
+                        //console.log("CAN'T GROW")
+                        return false;
+                    }
+                }
+            }
+        }
+        //console.log("FUNGI CAN INDEED GROW HERE", y, x, xDir);
+        return true;
+    }
+
+    findGrowDir(growOptions, expandYDir, expandXDir, forbElements) {
+        let finalGrowDir = null;
+        while (finalGrowDir == null && growOptions.length != 0) {
+            if (forbElements.length == 3) {
+                console.log("TRYING NOW2");
+            }
+            let growIndex = Math.floor(Math.random() * (growOptions.length));
+            let testY = this.y;
+            let testX = this.x;
+            testY += growOptions[growIndex][0];
+            testX += growOptions[growIndex][1];
+            if (forbElements.length == 3) {
+                console.log(growOptions[growIndex], testY, testX);
+            }
+            // Check grow direction
+            if (this.canGrow(testY, testX, expandYDir, expandXDir, forbElements)) {
+                finalGrowDir = growOptions[growIndex];
+                return finalGrowDir;
+            }
+            else {
+                // Remove the option
+                growOptions.splice(growIndex, 1);
+            }
         }
         return false;
     }
 
+
     // Fuction to grow root by one block
     expandRoot(elementsArray, index, totalIndex) {
         //console.log("EXPANDING ROOT NOW NO: ", this.index);
+        let forbElements = ['aggregate', 'root', 'rootTip'];
+        // Prioritise growing downwards so vertically down or diagonally
+        let growOptions = [[1, 0], [1, 1], [1, -1]];
+        if (this.length == 1) {
+            growOptions = [[1, 1], [1, -1]];
+        }
+        // Randomly choose -1 or 1 for x growth direction 
+        let x_direction = Math.random() < 0.5 ? -1 : 1;
 
-        // Randomly choose -1, 0, or 1 for x growth direction (either grow left-down, down, right-down)
-        let x_direction = Math.floor(Math.random() * 3) - 1;
 
+        // Try with random x_direction
+        let finalGrowDir = this.findGrowDir(growOptions, 1, x_direction, forbElements);
+        // Can't grow in that x_direction
+        if (finalGrowDir == false) {
+            console.log("FAIL1");
+            finalGrowDir = this.findGrowDir(growOptions, 1, -x_direction, forbElements);
+            // Can't grow vertically down or diagonally down so check sideways
+            if (finalGrowDir == false) {
+                // Try grow sideways
+                console.log("FAIL2");
+                growOptions = [[0, x_direction]];
+                finalGrowDir = this.findGrowDir(growOptions, 1, x_direction, forbElements);
+                if (finalGrowDir == false) {
+                    console.log("FAIL3");
+                    // Try growing the other way
+                    growOptions = [[0, -x_direction]];
+                    finalGrowDir = this.findGrowDir(growOptions, 1, -x_direction, forbElements);
+                    if (finalGrowDir == false) {
+                        console.log("FAIL4");
+                        // Remove from parent root array
+                        elementsArray.splice(this.index, 1);
+                        totalIndex--;
+                        // Update the index of all the fungiElements above it
+                        for (let i = this.index; i < totalIndex; i++) {
+                            elementsArray[i].index = i;
+                        }
+                        return false;
+                    }
+                }
+
+            }
+        }
+        // Have a valid grow direction
+        let finalGrowY = finalGrowDir[0];
+        let finalGrowX = finalGrowDir[1];
         // Set initial values
         let rootTipBool = true;
         let prob = 0.2;
@@ -104,12 +187,11 @@ export default class RootStructure {
         let shouldBranch = Math.random() < prob;
 
         // If shouldBranch is true, and there is enough space to grow, grow an additional branch in the bottom right direction
-        if (((grid[this.y + 1][this.x - 1] === 'soil' || grid[this.y + 1][this.x - 1] == 'fungi') && this.canGrow(this.y + 1, this.x - 1, 'soil', rootTipBool)) &&
-            ((grid[this.y + 1][this.x + 1] === 'soil' || grid[this.y + 1][this.x + 1] == 'fungi') && this.canGrow(this.y + 1, this.x + 1, 'soil', rootTipBool)) && shouldBranch) {
+        if (shouldBranch && grid[this.y + finalGrowY][this.x - finalGrowX] == 'soil') {
 
             // Create a new rootTip object for new branch
-            grid[this.y + 1][this.x + 1] = 'rootTip';
-            let branchRootTip = new RootTip(this.y + 1, this.x + 1, this.parentFungi, totalIndex++);
+            grid[this.y + finalGrowY][this.x - finalGrowX] = 'rootTip';
+            let branchRootTip = new RootTip(this.y + finalGrowY, this.x + finalGrowX, this.parentFungi, totalIndex++);
             branchRootTip.parentFungi = this.parentFungi;
             branchRootTip.length = this.length + 2;
             branchRootTip.maxGrowthLength = this.maxGrowthLength;
@@ -119,33 +201,13 @@ export default class RootStructure {
             this.produceSugar();
             //console.log("BRANCHING, PRODUCE SUGAR");
 
-            // Update Current rootTip object
-            grid[this.y][this.x] = 'root';
-            this.length += 2;
-            this.y++;
-            this.x--;
-
-            // Not branching but there is enough space to grow, grow in that direction
-        } else if ((grid[this.y + 1][this.x + x_direction] === 'soil' || grid[this.y + 1][this.x + x_direction] === 'fungi') && this.canGrow(this.y + 1, this.x + x_direction, 'soil', rootTipBool)) {
-            // Update length
-            this.length += 1;
-            grid[this.y + 1][this.x + x_direction] = 'rootTip';
-            grid[this.y][this.x] = 'root';
-            this.y++;
-            this.x += x_direction;
-            // Just grow at the same height and branch out sideways
-        } else if ((grid[this.y][this.x + x_direction] === 'soil' || grid[this.y][this.x + x_direction] === 'fungi') && this.canGrow(this.y, this.x + x_direction, 'soil', rootTipBool)) {
-            // Update length
-            this.length += 1;
-            grid[this.y][this.x + x_direction] = 'rootTip';
-            grid[this.y][this.x] = 'root';
-            this.x += x_direction;
-
-            // If no block is below the root, remove root
-        } else if (grid[this.y + 1][this.x] === null) {
-            grid[this.y][this.x] = null;
         }
-
+        // Update Current rootTip object
+        grid[this.y][this.x] = 'root';
+        this.length += 2;
+        this.y += finalGrowY;
+        this.x += finalGrowX;
+        grid[this.y][this.x] = 'rootTip';
         this.updateGrowthSpeed();
         return totalIndex;
     }
