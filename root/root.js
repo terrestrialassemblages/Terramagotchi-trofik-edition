@@ -24,7 +24,7 @@ export default class RootStructure {
 
     // Determines if root should grow or not
     growBool(totalIndex) {
-        try{
+        try {
             // If root is at max size, stop growing
             if (this.length >= this.maxGrowthLength) {
                 // Mark the root as Developed
@@ -114,7 +114,7 @@ export default class RootStructure {
             let branchRootTip = new RootTip(this.y + 1, this.x + 1, this.parentFungi, totalIndex++);
             branchRootTip.parentFungi = this.parentFungi;
             branchRootTip.length = this.length + 2;
-            branchRootTip.maxGrowthLength = this.maxGrowthLength;            
+            branchRootTip.maxGrowthLength = this.maxGrowthLength;
             elementsArray.push(branchRootTip);
 
             // Produce sugar at branching point
@@ -149,7 +149,7 @@ export default class RootStructure {
         }
 
         this.updateGrowthSpeed();
-       
+
         return totalIndex;
     }
 }

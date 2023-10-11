@@ -8,8 +8,8 @@ import { waterInSoilBehavior } from './waterInSoil.js'
 import { soilBehavior } from './soil_behavior.js';
 import { rootBehavior } from './root/root_behavior.js';
 import { rootTipBehavior } from './root/roottip_behavior.js';
-import { sunShow, drawSun, generateRain, rainShow, changeRainShow , changeSunShow} from './weather.js';
-import {drawGrass} from './grass_draw.js';
+import { sunShow, drawSun, generateRain, rainShow, changeRainShow, changeSunShow } from './weather.js';
+import { drawGrass } from './grass_draw.js';
 import { findBacteriaByPosition, generateBacterial, bacteriaBehavior } from './bacteria/bacteria_behavior.js';
 import { fungiBehavior } from './fungi/fungi_behavior.js';
 import { connectToDB } from './firebase.js';
@@ -70,6 +70,7 @@ export default class RootTip extends RootStructure {
         super(startingY, startingX, 10, 500, 'rootTip', 900, index);
         this.parentFungi = new Array();
         this.parentFungi.push(fungiParent);
+        this.spacing = 3;
         //console.log(this.parentFungi);
     }
 
@@ -78,8 +79,14 @@ export default class RootTip extends RootStructure {
         if (grid[this.y][this.x] == 'rootTip') {
 
             // If the block below is soil or fungi, produce liquid sugar
+            /*
             if (grid[this.y + 1][this.x] === 'soil' || grid[this.y + 1][this.x] === 'fungi') {
                 grid[this.y + 1][this.x] = 'liquidSugar';
+            }
+            */
+            if (grid[this.y + 1][this.x] === 'soil' || grid[this.y + 1][this.x] === 'fungi') {
+                //grid[this.y + 1][this.x] = 'liquidSugar';
+                topGrid[this.y + 1][this.x] = 'liquidSugar';
             }
         }
     }
@@ -181,7 +188,7 @@ export const elements = {
         behavior: [],
     },
     plant: {
-        color: "#00FF00", 
+        color: "#00FF00",
         behavior: [],
         plantElements: [], 
     },
@@ -248,7 +255,7 @@ function updateGrid() {
                     func(y, x, grid);
                 }
             }
-            
+
         }
     }
 }
@@ -276,7 +283,7 @@ function drawGrid() {
                 if (grid[y][x] === 'plant') {
                     const plantObj = elements.plant.plantElements.find(plant => plant.startingY === y && plant.startingX === x);
                     if (plantObj) {
-                        ctx.fillStyle = elements.plant.color; 
+                        ctx.fillStyle = elements.plant.color;
                         ctx.fillRect(x * cellSize, (y - plantObj.height) * cellSize, cellSize, cellSize * plantObj.height);
                     }
                 }
@@ -304,8 +311,13 @@ function drawTopGrid(){
                 if (topGrid[y][x] === 'waterInSoil') {
                     //console.log('waterInSoil')
                     ctxTop.globalAlpha = 0.5;
-                    ctxTop.fillStyle = elements.waterInSoil.color; 
+                    ctxTop.fillStyle = elements.waterInSoil.color;
                     //ctxTop.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                }
+                else {
+                    //console.log('liquidSugar')
+                    ctxTop.fillStyle = elements[topGrid[y][x]].color; // Set color based on element type
+                    ctxTop.globalAlpha = 1.0; // Reset alpha for other elements
                 }
                 
 
@@ -378,7 +390,7 @@ function loop() {
     drawGrid();
     drawTopGrid();
     requestAnimationFrame(loop);
-    
+
 
     generateRain(grid, gridWidth);
 
