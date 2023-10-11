@@ -174,7 +174,7 @@ export const elements = {
     plant: {
         color: "#00FF00",
         behavior: [],
-        plantElements: [],
+        plantElements: [], 
     },
     waterInSoil: {
         color: "#5756c2",
@@ -287,21 +287,16 @@ function drawGrid() {
     ctx.globalAlpha = 1.0;
 }
 
-function drawTopGrid() {
+function drawTopGrid(){
     ctxTop.clearRect(0, 0, topCanvas.width, topCanvas.height);
     for (let y = 0; y < gridHeight; y++) {
         for (let x = 0; x < gridWidth; x++) {
             if (topGrid[y][x] in elements) {
                 if (topGrid[y][x] === 'waterInSoil') {
-                    //console.log('waterInSoil')
+                    console.log('waterInSoil')
                     ctxTop.globalAlpha = 0.5;
                     ctxTop.fillStyle = elements.waterInSoil.color;
                     //ctxTop.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
-                }
-                else {
-                    //console.log('liquidSugar')
-                    ctxTop.fillStyle = elements[topGrid[y][x]].color; // Set color based on element type
-                    ctxTop.globalAlpha = 1.0; // Reset alpha for other elements
                 }
 
 
@@ -478,3 +473,4 @@ function drawAutomatically() {
 
     // Call any other functions required to render the grid on the canvas.
 }
+
