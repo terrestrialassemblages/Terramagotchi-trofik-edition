@@ -500,5 +500,22 @@ function drawAutomatically() {
 }
 
 
-  
+document.addEventListener("fullscreenchange", function() {
+    let isFullScreen = (document.fullscreenElement != null);
+
+    const sandCanvas = document.getElementById('sandCanvas');
+    const topCanvas = document.getElementById('topCanvas');
+
+    if (isFullScreen) {
+        sandCanvas.width = window.innerWidth;
+        sandCanvas.height = window.innerHeight;
+        
+        topCanvas.width = window.innerWidth;
+        topCanvas.height = window.innerHeight;
+        document.body.style.cursor = 'none';
+    } else{
+        document.body.style.cursor = 'auto';
+    }
+});
+
 
