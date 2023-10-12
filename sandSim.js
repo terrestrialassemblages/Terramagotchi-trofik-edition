@@ -221,6 +221,11 @@ export function addToCanvas(element) {
     } else if (element == 'chemical') {
         grid[y][x] = 'chemical';
 
+    } else if (element == 'sunlight') {
+        changeRainShow(false);
+        setTimeout(() => {
+            changeSunShow(true);
+        }, 3 * 1000);
     } else {
         // CODE FOR ADD SUN HERE
     }
