@@ -105,3 +105,32 @@ signInAnonymously(auth)
     updateStatus("Error signing in anonymously");
 });
 
+
+// Listener for info buttons. Displays an outline and the corresponding description for the currently selected element.
+const buttons = document.querySelectorAll('.infoBtn');
+const elementInfo = document.getElementById('elementInfo');
+let lastClicked = null;
+const descriptions = {
+    soilInfo: "Soil is a natural resource housing the various organisms of the soil food web. Darker areas represent more aggregated soil, allowing for better water infiltration and promoting root growth.",
+    waterInfo: "Water is an essential element for sustaining all forms of life.",
+    rootInfo: "The underground structre of plants allowing the intake of water and nutrients from the soil. They extend and flourish in areas rich in aggregated soil and fungi, optimizing their growth and nourishment.",
+    fungiInfo: "The white roots or hyphae of fungi play a crucial role in decomposing organic matter and binding soil particles together, enhancing soil structure and nutrient availability.",
+    sugarInfo: "Liquid sugar created from the plant roots feeds the bacteria in the soil.",
+    bacteriaInfo: "Bacteria travels around the soil searching for liquid sugar to feed on, aggregating the soil together with fungi as they interact with other clusters of bacteria."
+};
+
+
+buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+        if (lastClicked) {
+            lastClicked.classList.remove('active');
+        }
+        button.classList.add('active');
+        lastClicked = button;
+
+        elementInfo.innerHTML = descriptions[button.id];
+        
+    });
+});
+
+
