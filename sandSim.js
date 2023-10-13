@@ -8,7 +8,7 @@ import { waterInSoilBehavior } from './waterInSoil.js'
 import { soilBehavior } from './soil_behavior.js';
 import { rootBehavior } from './root/root_behavior.js';
 import { rootTipBehavior } from './root/roottip_behavior.js';
-import { sunShow, drawSun, generateRain, rainShow, changeRainShow, changeSunShow } from './weather.js';
+import { sunShow, drawSun, rainTimeout, generateRain, rainShow, changeRainShow, changeSunShow } from './weather.js';
 import { drawGrass } from './grass_draw.js';
 import { findBacteriaByPosition, generateBacterial, bacteriaBehavior } from './bacteria/bacteria_behavior.js';
 import { fungiBehavior } from './fungi/fungi_behavior.js';
@@ -214,10 +214,29 @@ export function addToCanvas(element) {
     const y = 10;
 
     if (element == 'water') {
-        //grid[y][x] = 'water';
-        changeRainShow(true);
-        changeSunShow(false);
+        if (sunShow) {
+            changeRainShow(true);
+            changeSunShow(false);
 
+            setTimeout(() => {
+                changeRainShow(false);
+            }, 10 * 1000);
+
+            setTimeout(() => {
+                changeSunShow(true);
+            }, 13 * 1000);
+
+        } else if (rainShow){
+            clearTimeout(rainTimeout);
+
+            rainTimeout = setTimeout(() => {
+                changeRainShow(false);
+            }, 10 * 1000);
+
+            setTimeout(() => {
+                changeSunShow(true);
+            }, 13 * 1000);
+        }
     } else if (element == 'chemical') {
         grid[y][x] = 'chemical';
 
@@ -226,9 +245,7 @@ export function addToCanvas(element) {
         setTimeout(() => {
             changeSunShow(true);
         }, 3 * 1000);
-    } else {
-        // CODE FOR ADD SUN HERE
-    }
+    } 
 }
 
 elements.liquidSugar.behavior.push(function (y, x, grid) {
