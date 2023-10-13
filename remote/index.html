@@ -7,36 +7,39 @@
     <link href="remote.css" rel="stylesheet"/>
     <title>Terramagotchi User Controls</title>
 </head>
-<body class="h-screen flex items-center justify-center bg-gray-100">
+<body class="h-screen bg-gray-100">
 
-    <div class="w-full bg-gray-800 text-white p-4 fixed top-0">
+    <div id="nav" class="w-full bg-gray-800 text-white p-3 fixed top-0">
         TERRAMAGOTCHI TRŌFIK EDITION
     </div>
 
-    <div class="flex flex-col justify-evenly h-full w-1/2 mx-auto mt-20">
+    <!-- space out evenly vertically, with full screen height -->
+    <div class="flex flex-col justify-evenly h-full">
 
-        <div class="flex flex-row mx-auto">
+
+        <div id="instanceInfo" class="flex flex-col mx-auto">
             <div class=" flex flex-col text-center">
                 <p> Connected to instance: </p>
-                <p id="instanceID" class="font-bold"> Loading... </p>
+                <p id="instanceID" class="font-bold text-xl"> Loading... </p>
             </div>
         </div>
         
+
         <div class="flex flex-row mx-auto" >
             <div class=" flex flex-col justify-evenly">
-                <button id="addWater" class="flex items-center my-2 bg-blue-400 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded">
+                <button id="addWater" class="flex items-center my-2 text-white font-bold py-2 px-8 rounded">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-5 h-5 float-left">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                     <p class="m-auto"> WATER </p>
                 </button>
-                <button id="addSun" class="flex items-center my-2 bg-orange-400 hover:bg-yellow-700 text-white font-bold py-2 px-8 rounded">
+                <button id="addSun" class="flex items-center my-2 bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-8 rounded">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-5 h-5 float-left">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                     <p class="m-auto"> SUNLIGHT </p>
                 </button>
-                <button id="addChemicals" class="flex items-center my-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-8 rounded">
+                <button id="addChemicals" class="flex items-center my-2 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-8 rounded">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="white" class="w-5 h-5 float-left">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
@@ -50,23 +53,51 @@
                     </svg> 
                     <p class="m-auto"> CHANGE TIME </p>
                 </button> -->
+
             </div>
         </div>
 
-        <div class="flex flex-row mx-auto text-center">
-            <h3 id="status-text"> Authenticating... </h3>
 
-            <!-- SPINNER HERE -->
-            <svg id="spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 mx-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="transparent" stroke-width="4"></circle>
-                <path class="opacity-75" fill="black" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
+        <div class="flex flex-row mx-auto text-center mt-0">
+            <h3 id="status-text" class="font-bold mx-6"> Authenticating... </h3>
+    
+                <!-- SPINNER HERE -->
+                <svg id="spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 mx-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="transparent" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="black" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
         </div>
 
-        <div class="flex flex-row mx-auto">
-                
-            <hr>
+
+        <div class="flex flex-col">
+
+            <div class="flex flex-row mx-auto my-2">
+                <button id="soilInfo" class="infoBtn flex items-center text-white font-bold p-1 rounded mx-0.5" style="background-color: #8f614a">
+                    <p class="text-xs"> Soil </p>
+                </button>
+                <button id="waterInfo" class="infoBtn flex items-center text-white font-bold p-1 rounded mx-0.5" style="background-color: #5756c2">
+                    <p class="text-xs"> Water </p>
+                </button>
+                <button id="rootInfo" class="infoBtn flex items-center text-white font-bold p-1 rounded mx-0.5" style="background-color: #706f6e">
+                    <p class="text-xs"> Plant Root </p>
+                </button>
+                <button id="fungiInfo" class="infoBtn flex items-center text-white font-bold p-1 rounded mx-0.5" style="background-color: #b5b5b5">
+                    <p class="text-xs"> Fungi </p>
+                </button>
+                <button id="sugarInfo" class="infoBtn flex items-center text-white font-bold p-1 rounded mx-0.5" style="background-color: #FFB700">
+                    <p class="text-xs"> Sugar </p>
+                </button>
+                <button id="bacteriaInfo" class="infoBtn flex items-center text-white font-bold p-1 rounded mx-0.5" style="background-color: #c151e0">
+                    <p class="text-xs"> Bacteria </p>
+                </button>
+            </div>
+
+            <div class="flex flex-row justify-center text-center my-2">
+                <p id="elementInfo" class="text-sm mx-2 max-w-2xl"> Click to show what each element does! </p>
+            </div>
+            
         </div>
+
 
     </div>
 

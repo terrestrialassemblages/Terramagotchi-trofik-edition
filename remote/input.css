@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@media screen and (max-width: 1000px) and (orientation: landscape) {
+  #instanceInfo {
+    margin-top: 100px;
+    /* Adjust the margin-top value according to your preference */
+  }
+}
+
+#addWater {
+  background-color: #5756c2
+}
+#addWater:hover {
+  background-color: #1e1e52;
+}
+
+.infoBtn {
+  outline: none;
+}
+.active {
+  outline: 2px solid black;
+}
