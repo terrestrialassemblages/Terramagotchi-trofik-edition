@@ -3,6 +3,7 @@
 export let sunShow = true;
 export let rainShow = false;
 export let sunValue = 7; 
+export let rainTimeout;
 
 export function changeRainShow(boolean) {
     rainShow = boolean;
@@ -84,12 +85,12 @@ setInterval(() => {
     rainShow = true;  // Start rain
     sunShow = false;
 
-    setTimeout(() => {
+    rainTimeout = setTimeout(() => {
         rainShow = false;  // Stop rain after 10s
     }, 10 * 1000);
 
     setTimeout(() => {
-        sunShow = true;  // Show sun after 15s (10s rain + 3s nothing)
+        sunShow = true;  // Show sun after 13s (10s rain + 3s nothing)
     }, 13 * 1000);
 
 }, 27 * 1000);
