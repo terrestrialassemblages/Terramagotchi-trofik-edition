@@ -484,39 +484,44 @@ function drawAutomatically() {
 
     // Grow some roots and fungi
 
+    let randomX = Math.round(Math.random() * (35 - 15) + 15);
+
     // 80 25
-    let fungiObj = new Fungi(currY+1, 25, false, totalFungiIndex++);
-    grid[currY+1][25] = 'fungi';
+    let fungiObj = new Fungi(currY+1, randomX, false, totalFungiIndex++);
+    grid[currY+1][randomX] = 'fungi';
     elements.fungi.fungiElements.push(fungiObj);
-    let rootObj = new RootTip(currY, 25, fungiObj, totalRootIndex++);
-    grid[currY][25] = 'rootTip';
+    let rootObj = new RootTip(currY, randomX, fungiObj, totalRootIndex++);
+    grid[currY][randomX] = 'rootTip';
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
 
-    plantAt(currY-1, 25, fungiObj);
+    plantAt(currY-1, randomX, fungiObj);
+
+    randomX = Math.round(Math.random() * (90 - 60) + 60);
 
     // 80 75
-    grid[currY+1][75] = 'fungi';
-    fungiObj = new Fungi(currY+1, 75, false, totalFungiIndex++);
+    grid[currY+1][randomX] = 'fungi';
+    fungiObj = new Fungi(currY+1, randomX, false, totalFungiIndex++);
     elements.fungi.fungiElements.push(fungiObj);
-    rootObj = new RootTip(currY, 75, fungiObj, totalRootIndex++);
-    grid[currY][75] = 'rootTip';
+    rootObj = new RootTip(currY, randomX, fungiObj, totalRootIndex++);
+    grid[currY][randomX] = 'rootTip';
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
 
-    plantAt(currY-1, 75, fungiObj);
+    plantAt(currY-1, randomX, fungiObj);
 
+    randomX = Math.round(Math.random() * (160 - 120) + 120);
 
     // 81 140
-    grid[currY+1][140] = 'fungi';
-    fungiObj = new Fungi(currY+1, 140, false, totalFungiIndex++)
+    grid[currY+1][randomX] = 'fungi';
+    fungiObj = new Fungi(currY+1, randomX, false, totalFungiIndex++)
     elements.fungi.fungiElements.push(fungiObj);
-    rootObj = new RootTip(currY, 140, fungiObj, totalRootIndex++);
-    grid[currY][140] = 'rootTip';
+    rootObj = new RootTip(currY, randomX, fungiObj, totalRootIndex++);
+    grid[currY][randomX] = 'rootTip';
     elements.rootTip.rootElements.push(rootObj);
     fungiObj.parentRoot = rootObj;
 
-    plantAt(currY-1, 140, fungiObj);
+    plantAt(currY-1, randomX, fungiObj);
 
     // Call any other functions required to render the grid on the canvas.
 }
