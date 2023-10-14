@@ -484,7 +484,7 @@ function drawAutomatically() {
 
     // Grow some roots and fungi
 
-    let randomX = Math.round(Math.random() * (35 - 15) + 15);
+    let randomX = Math.round(Math.random() * (35 - 20) + 20);
 
     // 80 25
     let fungiObj = new Fungi(currY+1, randomX, false, totalFungiIndex++);
