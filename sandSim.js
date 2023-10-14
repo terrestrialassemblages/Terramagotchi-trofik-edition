@@ -244,7 +244,7 @@ export function addToCanvas(element) {
         changeRainShow(false);
         setTimeout(() => {
             changeSunShow(true);
-        }, 3 * 1000);
+        }, 1 * 1000);
     } 
 }
 
@@ -527,22 +527,45 @@ function drawAutomatically() {
 }
 
 
-document.addEventListener("fullscreenchange", function() {
-    let isFullScreen = (document.fullscreenElement != null);
+document.addEventListener("fullscreenchange", handleFullScreenChange);
+document.addEventListener("webkitfullscreenchange", handleFullScreenChange);
+window.addEventListener("resize", handleFullScreenChange);
 
+function handleFullScreenChange() {
     const sandCanvas = document.getElementById('sandCanvas');
     const topCanvas = document.getElementById('topCanvas');
+    
+    sandCanvas.width = window.innerWidth;
+    sandCanvas.height = window.innerHeight;
 
+    topCanvas.width = window.innerWidth;
+    topCanvas.height = window.innerHeight;
+    
+
+    const gradientLayer1 = document.querySelector('.gradient-layer1');
+    const gradientLayer2 = document.querySelector('.gradient-layer2');
+
+    // Set the dimensions to cover the entire viewport
+    gradientLayer1.style.width = `${window.innerWidth}px`;
+    gradientLayer1.style.height = `${window.innerHeight}px`;
+
+    gradientLayer2.style.width = `${window.innerWidth}px`;
+    gradientLayer2.style.height = `${window.innerHeight}px`;
+
+
+    cellSize = Math.ceil(4 * (canvas.height / 600));
+    if(canvas.width > canvas.height && canvas.width/canvas.height >1.33){
+        cellSize = Math.ceil(4 * (canvas.width / 800));
+    }
+
+    let isFullScreen = (document.fullscreenElement != null || document.webkitFullscreenElement != null);
     if (isFullScreen) {
-        sandCanvas.width = window.innerWidth;
-        sandCanvas.height = window.innerHeight;
-        
-        topCanvas.width = window.innerWidth;
-        topCanvas.height = window.innerHeight;
+    
         document.body.style.cursor = 'none';
-    } else{
+    } else {
         document.body.style.cursor = 'auto';
     }
-});
+}
+
 
 
