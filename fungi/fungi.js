@@ -1,6 +1,6 @@
 import RootStructure from '../root/root.js';
 import { grid, canvas } from '../sandSim.js';
-import { currY } from '../sandSim.js';
+import { globalY } from '../sandSim.js';
 import { currentParticleType } from '../sandSim.js';
 import { rootIndex } from '../sandSim.js';
 import { totalRootIndex } from '../sandSim.js';
@@ -110,20 +110,28 @@ export default class Fungi extends RootStructure {
 
     // Should check 1 to right as well when going diagonal
     canGrow(y, x, yDir, xDir, forbElements) {
+        let count = 0;
         // If exceeds boundaries
-        //if (y > gridHeight || y < this.currY || x < 0 || x > gridWidth) {
-        if (y > gridHeight - this.spacing - 1 || y < currY + this.spacing + 1 || x < 0 + this.spacing + 1|| x > gridWidth - this.spacing - 1) {
+        if (y > gridHeight - this.spacing - 1 || y < globalY + this.spacing + 1 || x < 0 + this.spacing + 1|| x > gridWidth - this.spacing - 1) {
             return false;
         }
         // Loops through one above, one below, to spacing
         for (let spaceY = -1; spaceY <= this.spacing; spaceY++) {
             for (let spaceX = -1; spaceX <= this.spacing; spaceX++) {
                 for (let element of forbElements) {
+                    let newY = y + (yDir * spaceY);
+                    let newX = x + (xDir * spaceX);
                     //console.log("CHECKING ELEMENT", element);
-                    if (grid[y + (yDir * spaceY)][x + (xDir * spaceX)] == element) {
+                    if (grid[newY][newX] == element) {
                         //console.log("FOUND FUNGI");
-                        if (y + (yDir * spaceY) == this.y && (x + (xDir * spaceX)) == this.x) {
+                        if (element == 'fungi' && (newY == this.y && newX == this.x)) {
                             //console.log("CHECKING OG POS");
+                            continue;
+                        }
+                        // Get a pass even if it is a forbidden element to encourage cellular automata
+                        else if (element == 'fungi' && (this.length >= 3 / 4 * this.maxGrowthLength && count < 1)) {
+                            console.log("NOW TESTING", newY, newX, this);
+                            count++;
                             continue;
                         }
                         //console.log("CAN'T GROW")
@@ -325,7 +333,7 @@ export default class Fungi extends RootStructure {
                 // Add to general fungi array
                 elements.fungi.fungiElements.push(branchFungi);
                 grid[branchFungi.y][branchFungi.x] = 'fungi';
-                this.branchProb = 0.5;
+                this.branchProb = 0.75;
             }
             else {
                 this.branchProb += 0.02;
