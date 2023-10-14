@@ -1,5 +1,6 @@
 import RootStructure from '../root/root.js';
-import { grid, canvas, globalY} from '../sandSim.js';
+import { grid, canvas } from '../sandSim.js';
+import { currY } from '../sandSim.js';
 import { currentParticleType } from '../sandSim.js';
 import { rootIndex } from '../sandSim.js';
 import { totalRootIndex } from '../sandSim.js';
@@ -48,7 +49,7 @@ export default class Fungi extends RootStructure {
         // Amount of times diagonal
         this.countDiag = 0;
         // Branching probability
-        this.branchProb = 0.85;
+        this.branchProb = 0.9;
         this.parentRoot = null;
 
 
@@ -111,7 +112,7 @@ export default class Fungi extends RootStructure {
     canGrow(y, x, yDir, xDir, forbElements) {
         // If exceeds boundaries
         //if (y > gridHeight || y < this.currY || x < 0 || x > gridWidth) {
-        if (y > gridHeight - this.spacing - 1 || y < globalY + this.spacing + 1 || x < 0 + this.spacing + 1|| x > gridWidth - this.spacing - 1) {
+        if (y > gridHeight - this.spacing - 1 || y < currY + this.spacing + 1 || x < 0 + this.spacing + 1|| x > gridWidth - this.spacing - 1) {
             return false;
         }
         // Loops through one above, one below, to spacing
