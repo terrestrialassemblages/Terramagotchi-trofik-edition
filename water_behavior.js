@@ -10,7 +10,7 @@ export function waterBehavior(y, x, grid, gridHeight) {
         grid[y + 1][x] = 'water';
         grid[y][x] = null;
     } else if( y + 1 < gridHeight && grid[y + 1][x] === 'soil') {
-        if (elements.soil.soilAlpha[(y+1) + "," + x] <= 0.4){
+        if (elements.soil.soilAlpha[(y+1) + "," + x] <= 0.49){
             if (grid[y + 1][x] = 'soil'){
                 topGrid[y + 1][x] = "waterInSoil";
                 //console.log("behavior", x, y+1);
