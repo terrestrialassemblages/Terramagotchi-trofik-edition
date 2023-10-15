@@ -4,26 +4,51 @@ export let sunShow = true;
 export let rainShow = false;
 export let sunValue = 10; 
 export let rainTimeout;
+export let rainInterval = 30000;
 let increasing = true;
+let rainCycle = setInterval(() => {
+    rainShow = true;  // Start rain
+    sunShow = false;
+
+    rainTimeout = setTimeout(() => {
+        rainShow = false;  // Stop rain after 10s
+    }, 10 * 1000);
+
+    setTimeout(() => {
+        sunShow = true;  // Show sun after 12s (10s rain + 2s nothing)
+    }, 12 * 1000);
+}, rainInterval);
 
 
+export function getRandomRainInterval() {
+    // Generate a random rain interval between 30 and 60 seconds
+    return Math.floor(Math.random() * (60000 - 30000 + 1) + 30000);
+}
 
 export function getNextsunValue() {
-  if (increasing) {
-    if (sunValue < 10) {
-      return sunValue++;
-    } else {
-      increasing = false;
-      return sunValue--;
+    // Check if sunValue is 0 and update rainInterval
+    if (sunValue === 0) {
+        // Generate new random rain intervals
+        rainInterval = getRandomRainInterval();
+        startRainCycle();
     }
-  } else {
-    if (sunValue > 0) {
-      return sunValue--;
+    console.log('rainInterval: ', rainInterval);
+
+    if (increasing) {
+        if (sunValue < 10) {
+            return sunValue++;
+        } else {
+            increasing = false;
+            return sunValue--;
+        }
     } else {
-      increasing = true;
-      return sunValue++;
+        if (sunValue > 0) {
+            return sunValue--;
+        } else {
+            increasing = true;
+            return sunValue++;
+        }   
     }
-  }
 }
 
 export function changeRainShow(boolean) {
@@ -86,8 +111,6 @@ export function generateRain(grid, gridWidth) {
         // Set the new opacity
         div.style.opacity = 1;
 
-
-        
         if (Math.random() < 0.8) {
             let x = Math.floor(Math.random() * gridWidth);
             let raindropLength = Math.floor(Math.random() * 3) + 1; // Random number between 1 and 3
@@ -124,11 +147,26 @@ export function sunlight(){
         div.style.opacity = 0;
         div2.style.opacity = 0;
     }
-    
-
 }
 
-setInterval(() => {
+export function startRainCycle() {
+    rainShow = true; // Start rain
+    sunShow = false;
+  
+    rainTimeout = setTimeout(() => {
+      rainShow = false; // Stop rain after 10s
+    }, 10 * 1000);
+
+    setTimeout(() => {
+        changeSunShow(true); // Show sun after 12s (10s rain + 2s nothing)
+      }, 12 * 1000);
+  
+    // Clears the previous timer and resets the next rain cycle
+    clearInterval(rainCycle);
+    rainCycle = setInterval(startRainCycle, rainInterval);
+}
+
+/*setInterval(() => {
     rainShow = true;  // Start rain
     sunShow = false;
 
@@ -137,8 +175,8 @@ setInterval(() => {
     }, 10 * 1000);
 
     setTimeout(() => {
-        sunShow = true;  // Show sun after 13s (10s rain + 3s nothing)
-    }, 13 * 1000);
+        sunShow = true;  // Show sun after 12s (10s rain + 2s nothing)
+    }, 12 * 1000);
 
-}, 27 * 1000);
+}, rainInterval);*/
 
