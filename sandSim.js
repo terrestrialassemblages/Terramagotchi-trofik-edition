@@ -225,7 +225,7 @@ export function addToCanvas(element) {
 
             setTimeout(() => {
                 changeSunShow(true);
-            }, 13 * 1000);
+            }, 12 * 1000);
 
         } else if (rainShow){
             clearTimeout(rainTimeout);
@@ -236,7 +236,7 @@ export function addToCanvas(element) {
 
             setTimeout(() => {
                 changeSunShow(true);
-            }, 13 * 1000);
+            }, 12 * 1000);
         }
     } else if (element == 'chemical') {
         grid[y][x] = 'chemical';
