@@ -2,8 +2,29 @@
 
 export let sunShow = true;
 export let rainShow = false;
-export let sunValue = 7; 
+export let sunValue = 10; 
 export let rainTimeout;
+let increasing = true;
+
+
+
+export function getNextsunValue() {
+  if (increasing) {
+    if (sunValue < 10) {
+      return sunValue++;
+    } else {
+      increasing = false;
+      return sunValue--;
+    }
+  } else {
+    if (sunValue > 0) {
+      return sunValue--;
+    } else {
+      increasing = true;
+      return sunValue++;
+    }
+  }
+}
 
 export function changeRainShow(boolean) {
     rainShow = boolean;
@@ -80,6 +101,32 @@ export function generateRain(grid, gridWidth) {
     }
 }
 
+export function sunlight(){
+    //sunValue = 5; // Replace this with your actual sunValue
+
+    // Ensure sunValue is within the range of 0 to 10
+    sunValue = Math.min(10, Math.max(0, sunValue));
+
+    // Calculate the opacity value based on sunValue (inverse relationship)
+    //var opacityValue = (10 - sunValue) / 20; // Subtract from 10 and divide by 20
+
+    // Select the element with the class "gradient-layer2"
+    var div = document.querySelector(".layer-night");
+    var div2 = document.querySelector('.layer-night-multiply');
+
+    
+    if (sunValue<3){
+        // Set the new opacity
+        div.style.opacity = 0.5;
+        div2.style.opacity = 0.6;
+    }
+    else if(sunValue>6){
+        div.style.opacity = 0;
+        div2.style.opacity = 0;
+    }
+    
+
+}
 
 setInterval(() => {
     rainShow = true;  // Start rain

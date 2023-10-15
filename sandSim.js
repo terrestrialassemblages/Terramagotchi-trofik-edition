@@ -8,7 +8,7 @@ import { waterInSoilBehavior } from './waterInSoil.js'
 import { soilBehavior } from './soil_behavior.js';
 import { rootBehavior } from './root/root_behavior.js';
 import { rootTipBehavior } from './root/roottip_behavior.js';
-import { sunShow, drawSun, rainTimeout, generateRain, rainShow, changeRainShow, changeSunShow } from './weather.js';
+import { sunShow, drawSun, rainTimeout, generateRain, rainShow, changeRainShow, changeSunShow, sunlight, getNextsunValue, sunValue } from './weather.js';
 import { drawGrass } from './grass_draw.js';
 import { findBacteriaByPosition, generateBacterial, bacteriaBehavior } from './bacteria/bacteria_behavior.js';
 import { fungiBehavior } from './fungi/fungi_behavior.js';
@@ -57,6 +57,7 @@ export let rootIndex = 0;
 export let totalRootIndex = 0;
 export let fungiIndex = 0;
 export let totalFungiIndex = 0;
+export let envTimeCounter = 0;
 
 // Bacteira related variables
 export let timeMove = 0;
@@ -411,7 +412,14 @@ function loop() {
     updateGrid();
     drawGrid();
     drawTopGrid();
+    sunlight();
     requestAnimationFrame(loop);
+
+    if(envTimeCounter % 260 == 0){
+        console.log(sunValue);
+        getNextsunValue();
+    }
+    
 
 
     generateRain(grid, gridWidth);
@@ -425,6 +433,7 @@ function loop() {
     timeStep++;
     timeMove++;
     timeWaterSink++;
+    envTimeCounter++;
 
     updatePlantGrowth();
 
