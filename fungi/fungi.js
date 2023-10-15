@@ -129,7 +129,7 @@ export default class Fungi extends RootStructure {
                             continue;
                         }
                         // Get a pass even if it is a forbidden element to encourage cellular automata
-                        else if (element == 'fungi' && (this.length >= 3 / 4 * this.maxGrowthLength && count < 1)) {
+                        else if (element == 'fungi' && (this.length / this.maxGrowthLength >= 0.55 && count < 1)) {
                             console.log("NOW TESTING", newY, newX, this);
                             count++;
                             continue;
