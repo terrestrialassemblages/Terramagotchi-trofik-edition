@@ -111,12 +111,12 @@ const buttons = document.querySelectorAll('.infoBtn');
 const elementInfo = document.getElementById('elementInfo');
 let lastClicked = null;
 const descriptions = {
-    soilInfo: "Soil is a natural resource housing the various organisms of the soil food web. Darker areas represent more aggregated soil, allowing for better water infiltration and promoting root growth.",
-    waterInfo: "Water is an essential element for sustaining all forms of life.",
-    rootInfo: "The underground structre of plants allowing the intake of water and nutrients from the soil. They extend and flourish in areas rich in aggregated soil and fungi, optimizing their growth and nourishment.",
-    fungiInfo: "The white roots or hyphae of fungi play a crucial role in decomposing organic matter and binding soil particles together, enhancing soil structure and nutrient availability.",
-    sugarInfo: "Liquid sugar created from the plant roots feeds the bacteria in the soil.",
-    bacteriaInfo: "Bacteria travels around the soil searching for liquid sugar to feed on, aggregating the soil together with fungi as they interact with other clusters of bacteria."
+    soilInfo: "Soil is a natural resource housing the various organisms of the soil food web. It is naturally filled with sand, silt, and clay spread throughout the soil with minimal space between them. This restricts plant roots from growing pass these spaces and deep into the soil. Darker areas represent more aggregated soil, allowing for better water infiltration and promoting root growth.",
+    waterInfo: "Water is an essential element for sustaining all forms of life. Water droplets are held in organic matter, and in cracks and crevices in the soil. It can be retained for longer periods as it goes deeper into the soil, thus increasing drought resistance.",
+    rootInfo: "The underground structure of plants allows the intake of water and nutrients from the soil. They extend and flourish in areas rich in aggregated soil and fungi, optimizing their growth and nourishment. With minimal space between the soil particles, plant roots can only grow deeper into the soil when the microbes (bacteria and fungi) form aggregates to create larger paths.",
+    fungiInfo: "The white roots or hyphae of fungi play a crucial role in providing the plant with soil minerals, decomposing organic matter, and binding microaggregates (soil particles) together to form macroaggregates. This enhances soil structure and nutrient availability for the plant.",
+    sugarInfo: "Liquid sugars containing the nutrients the plant needs are created at the plant roots which feed the bacteria in the soil. Predatory organisms such as nematodes consume these bacteria and the waste produced are then absorbed by the plant, it to obtain the necessary nutrients needed.",
+    bacteriaInfo: "Bacteria travels around the soil searching for liquid sugar to feed on. They interact with other clusters of bacteria to form the “glue” to bind the sand, silt, and clay into microaggregates. This aggregates the soil together to form spaces for the plant root to grow through."
 };
 
 
