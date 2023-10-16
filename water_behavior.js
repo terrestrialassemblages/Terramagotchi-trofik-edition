@@ -38,3 +38,9 @@ export function waterBehavior(y, x, grid, gridHeight) {
         grid[y][x] = null;
     }
 }
+
+export function chemicalBehavior(y, x, grid) {
+    topGrid[y + 1][x] = "soil";      
+    grid[y][x] = null;
+                
+}

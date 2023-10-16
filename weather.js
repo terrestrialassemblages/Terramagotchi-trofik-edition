@@ -6,6 +6,7 @@ export let sunValue = 10;
 export let rainTimeout;
 export let rainInterval = 30000;
 let increasing = true;
+/*
 let rainCycle = setInterval(() => {
     rainShow = true;  // Start rain
     sunShow = false;
@@ -18,6 +19,7 @@ let rainCycle = setInterval(() => {
         sunShow = true;  // Show sun after 12s (10s rain + 2s nothing)
     }, 12 * 1000);
 }, rainInterval);
+*/
 
 
 export function getRandomRainInterval() {
@@ -29,10 +31,10 @@ export function getNextsunValue() {
     // Check if sunValue is 0 and update rainInterval
     if (sunValue === 0) {
         // Generate new random rain intervals
-        rainInterval = getRandomRainInterval();
-        startRainCycle();
+        //rainInterval = getRandomRainInterval();
+        //startRainCycle();
     }
-    console.log('rainInterval: ', rainInterval);
+    //console.log('rainInterval: ', rainInterval);
 
     if (increasing) {
         if (sunValue < 10) {
@@ -149,6 +151,7 @@ export function sunlight(){
     }
 }
 
+/*
 export function startRainCycle() {
     rainShow = true; // Start rain
     sunShow = false;
@@ -165,8 +168,9 @@ export function startRainCycle() {
     clearInterval(rainCycle);
     rainCycle = setInterval(startRainCycle, rainInterval);
 }
+*/
 
-/*setInterval(() => {
+setInterval(() => {
     rainShow = true;  // Start rain
     sunShow = false;
 
@@ -178,5 +182,5 @@ export function startRainCycle() {
         sunShow = true;  // Show sun after 12s (10s rain + 2s nothing)
     }, 12 * 1000);
 
-}, rainInterval);*/
+}, 27 * 1000);
 
