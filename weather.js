@@ -167,6 +167,7 @@ export function startRainCycle() {
     // Clears the previous timer and resets the next rain cycle
     clearInterval(rainCycle);
     rainCycle = setInterval(startRainCycle, rainInterval);
+    console.log('rainInterval: ', rainInterval);
 }
 */
 

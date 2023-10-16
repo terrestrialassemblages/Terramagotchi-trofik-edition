@@ -3,6 +3,7 @@ import Fungi from './fungi/fungi.js';
 import { plantAt, updatePlantGrowth } from './plant/plant_behavior.js';
 //import {calculateSoilColor} from './aggregate_behavior.js';
 import { updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor } from './aggregate/aggregate_behavior.js';
+import { chemicalBehavior } from './chemical.js';
 import { waterBehavior } from './water_behavior.js';
 import { waterInSoilBehavior } from './waterInSoil.js'
 import { soilBehavior } from './soil_behavior.js';
@@ -197,6 +198,14 @@ export const elements = {
         color: "#5756c2",
         behavior: [],
         waterElements: [],
+    },
+    chemical: {
+        color: "#446B32",
+        behavior: [],
+    },
+    chemInWater: {
+        color: "#446B32",
+        behavior: [],
     }
 };
 
@@ -207,6 +216,7 @@ elements.root.behavior.push((y, x, grid) => rootBehavior(y, x, grid));
 elements.soil.behavior.push((y, x, grid) => soilBehavior(y, x, grid));
 elements.rootTip.behavior.push((y, x, grid) => rootTipBehavior(y, x, grid, gridHeight));
 elements.bacteria.behavior.push((y, x, grid) => bacteriaBehavior(y, x, grid));
+elements.chemical.behavior.push((y, x, grid) => chemicalBehavior(y, x, grid, gridHeight, topGrid));
 
 // Function for adding user actions to the canvas
 export function addToCanvas(element) {
@@ -239,7 +249,7 @@ export function addToCanvas(element) {
             }, 12 * 1000);
         }
     } else if (element == 'chemical') {
-        grid[y][x] = 'chemical';
+        grid[0][x] = 'chemical';
 
     } else if (element == 'sunlight') {
         changeRainShow(false);
@@ -336,6 +346,10 @@ function drawTopGrid(){
                     ctxTop.globalAlpha = 0.5;
                     ctxTop.fillStyle = elements.waterInSoil.color;
                     //ctxTop.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                }
+                else if (topGrid[y][x] === 'chemInWater') {
+                    ctxTop.globalAlpha = 0.2;
+                    ctxTop.fillStyle = elements.chemInWater.color;
                 }
                 else {
                     //console.log('liquidSugar')
