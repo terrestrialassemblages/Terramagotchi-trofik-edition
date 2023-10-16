@@ -1,6 +1,6 @@
 import RootStructure from './root/root.js';
 import Fungi from './fungi/fungi.js';
-import { plantAt, updatePlantGrowth } from './plant/plant_behavior.js';
+import { plantAt, updatePlantGrowth, plantPattern } from './plant/plant_behavior.js';
 //import {calculateSoilColor} from './aggregate_behavior.js';
 import { updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor } from './aggregate/aggregate_behavior.js';
 import { chemicalBehavior } from './chemical.js';
@@ -317,10 +317,14 @@ function drawGrid() {
                     const plantObj = elements.plant.plantElements.find(plant => plant.startingY === y && plant.startingX === x);
                     if (plantObj) {
                         ctx.fillStyle = elements.plant.color;
-                        for(let h = 0; h < plantObj.height; h++) {
-                            const factor = (plantObj.height - h) / plantObj.height;
-                            const currentWidth = 1 + factor * (plantObj.height / 10); 
-                            ctx.fillRect((x - currentWidth/2) * cellSize, (y - h) * cellSize, currentWidth * cellSize, cellSize);
+                        if (plantObj && plantObj.heightMatrix) {
+                            for (let row = 0; row < plantObj.heightMatrix.length; row++) {
+                                for (let col = 0; col < plantObj.heightMatrix[row].length; col++) {
+                                    if (plantObj.heightMatrix[row][col] === 1) {
+                                        ctx.fillRect((x + col - Math.floor(plantPattern[0].length/2)) * cellSize, (y - row) * cellSize, cellSize, cellSize);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
