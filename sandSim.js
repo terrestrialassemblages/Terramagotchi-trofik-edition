@@ -317,7 +317,11 @@ function drawGrid() {
                     const plantObj = elements.plant.plantElements.find(plant => plant.startingY === y && plant.startingX === x);
                     if (plantObj) {
                         ctx.fillStyle = elements.plant.color;
-                        ctx.fillRect(x * cellSize, (y - plantObj.height) * cellSize, cellSize, cellSize * plantObj.height);
+                        for(let h = 0; h < plantObj.height; h++) {
+                            const factor = (plantObj.height - h) / plantObj.height;
+                            const currentWidth = 1 + factor * (plantObj.height / 10); 
+                            ctx.fillRect((x - currentWidth/2) * cellSize, (y - h) * cellSize, currentWidth * cellSize, cellSize);
+                        }
                     }
                 }
                 /*
