@@ -4,16 +4,15 @@ export default class Plant {
         this.startingY = startingY;
         this.startingX = startingX;
         this.root = root; 
-        this.height = 0; 
+        this.heightMatrix = [];
+
     }
 
-    grow() {
-        this.height = this.root.length; 
+    grow(rootLength, pattern) {
+        this.patternHeight = Math.min(rootLength, pattern.length);
+        this.heightMatrix = pattern.slice(0, this.patternHeight);
     }
 
-    setHeight(height) {
-        this.height = height;
-    }
 
 }
 

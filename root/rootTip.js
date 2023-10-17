@@ -7,7 +7,7 @@ import { grid, topGrid, canvas } from '../sandSim.js';
 
 export default class RootTip extends RootStructure {
     constructor(startingY, startingX, fungiParent, index) {
-        super(startingY, startingX, 10, 500, 'rootTip', 900, 0.4, index);
+        super(startingY, startingX, 10, 500, 'rootTip', 900, 1, index);
         this.parentFungi = new Array();
         this.parentFungi.push(fungiParent);
         this.developed = false;    // If root is not developed, it will grow. If fully developed, it will produce sugar instead of growing

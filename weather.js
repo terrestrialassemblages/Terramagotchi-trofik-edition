@@ -2,8 +2,56 @@
 
 export let sunShow = true;
 export let rainShow = false;
-export let sunValue = 7; 
+export let sunValue = 10; 
 export let rainTimeout;
+export let rainInterval = 30000;
+let increasing = true;
+/*
+let rainCycle = setInterval(() => {
+    rainShow = true;  // Start rain
+    sunShow = false;
+
+    rainTimeout = setTimeout(() => {
+        rainShow = false;  // Stop rain after 10s
+    }, 10 * 1000);
+
+    setTimeout(() => {
+        sunShow = true;  // Show sun after 12s (10s rain + 2s nothing)
+    }, 12 * 1000);
+}, rainInterval);
+*/
+
+
+export function getRandomRainInterval() {
+    // Generate a random rain interval between 30 and 60 seconds
+    return Math.floor(Math.random() * (60000 - 30000 + 1) + 30000);
+}
+
+export function getNextsunValue() {
+    // Check if sunValue is 0 and update rainInterval
+    if (sunValue === 0) {
+        // Generate new random rain intervals
+        //rainInterval = getRandomRainInterval();
+        //startRainCycle();
+    }
+    //console.log('rainInterval: ', rainInterval);
+
+    if (increasing) {
+        if (sunValue < 10) {
+            return sunValue++;
+        } else {
+            increasing = false;
+            return sunValue--;
+        }
+    } else {
+        if (sunValue > 0) {
+            return sunValue--;
+        } else {
+            increasing = true;
+            return sunValue++;
+        }   
+    }
+}
 
 export function changeRainShow(boolean) {
     rainShow = boolean;
@@ -65,8 +113,6 @@ export function generateRain(grid, gridWidth) {
         // Set the new opacity
         div.style.opacity = 1;
 
-
-        
         if (Math.random() < 0.8) {
             let x = Math.floor(Math.random() * gridWidth);
             let raindropLength = Math.floor(Math.random() * 3) + 1; // Random number between 1 and 3
@@ -80,6 +126,50 @@ export function generateRain(grid, gridWidth) {
     }
 }
 
+export function sunlight(){
+    //sunValue = 5; // Replace this with your actual sunValue
+
+    // Ensure sunValue is within the range of 0 to 10
+    sunValue = Math.min(10, Math.max(0, sunValue));
+
+    // Calculate the opacity value based on sunValue (inverse relationship)
+    //var opacityValue = (10 - sunValue) / 20; // Subtract from 10 and divide by 20
+
+    // Select the element with the class "gradient-layer2"
+    var div = document.querySelector(".layer-night");
+    var div2 = document.querySelector('.layer-night-multiply');
+
+    
+    if (sunValue<3){
+        // Set the new opacity
+        div.style.opacity = 0.5;
+        div2.style.opacity = 0.6;
+    }
+    else if(sunValue>6){
+        div.style.opacity = 0;
+        div2.style.opacity = 0;
+    }
+}
+
+/*
+export function startRainCycle() {
+    rainShow = true; // Start rain
+    sunShow = false;
+  
+    rainTimeout = setTimeout(() => {
+      rainShow = false; // Stop rain after 10s
+    }, 10 * 1000);
+
+    setTimeout(() => {
+        changeSunShow(true); // Show sun after 12s (10s rain + 2s nothing)
+      }, 12 * 1000);
+  
+    // Clears the previous timer and resets the next rain cycle
+    clearInterval(rainCycle);
+    rainCycle = setInterval(startRainCycle, rainInterval);
+    console.log('rainInterval: ', rainInterval);
+}
+*/
 
 setInterval(() => {
     rainShow = true;  // Start rain
@@ -90,8 +180,8 @@ setInterval(() => {
     }, 10 * 1000);
 
     setTimeout(() => {
-        sunShow = true;  // Show sun after 13s (10s rain + 3s nothing)
-    }, 13 * 1000);
+        sunShow = true;  // Show sun after 12s (10s rain + 2s nothing)
+    }, 12 * 1000);
 
 }, 27 * 1000);
 

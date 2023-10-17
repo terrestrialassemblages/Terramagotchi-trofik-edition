@@ -37,18 +37,27 @@ export function rootTipBehavior(y, x, grid) {
                 }
                 // Returned branchRoot variables
                 else if (expandRoot != null) {
+
+                    // Update branch probability 
+                    if (curr.length <= 3) {
+                        curr.branchProb = 1;
+                    }
+                    else {
+                        curr.branchProb = 0.4;
+                    }
+
                     // Create branch root object
-                    curr.branchProb = 0.4;
                     let branchRoot = new RootTip(expandRoot[0], expandRoot[1], curr.fungiParent, totalRootIndex);
                     incrementTotalRootIndex(totalRootIndex + 1);
 
+                    // Update values
                     branchRoot.expandYDir = expandRoot[2];
                     branchRoot.expandXDir = expandRoot[3];
                     branchRoot.branchCount = --curr.branchCount;
                     branchRoot.length = curr.length + 1;
                     branchRoot.growthSpeed = curr.growthSpeed;
                     branchRoot.updateGrowthSpeed();
-                    branchRoot.branchProb = 0.4;
+                    branchRoot.branchProb = curr.branchProb;
                     branchRoot.spacing = curr.spacing;
                     branchRoot.parentFungi = curr.parentFungi;
 
