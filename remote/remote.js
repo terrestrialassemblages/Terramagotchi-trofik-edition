@@ -90,6 +90,12 @@ signInAnonymously(auth)
             chemical_button.addEventListener('click', () => {
                 particle_button_click('chemical')
             })
+            
+            const time_button = document.getElementById('changeTime')
+            time_button.addEventListener('click', () => {
+                particle_button_click('time')
+            })
+            
         } else {
             console.log("Game instance does not exist");
             updateStatus("Game does not exist, please rescan the QR code");

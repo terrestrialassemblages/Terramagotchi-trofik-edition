@@ -1,8 +1,12 @@
 import { elements , topGrid} from "./sandSim.js";
-import {sunShow} from './weather.js';
+import {sunShow, sunValue} from './weather.js';
 import WaterInSoil from './waterInSoil.js';
 
 let life_span = 20;
+
+export function resetLifeSpan(){
+    life_span = 20;
+}
 
 export function waterBehavior(y, x, grid, gridHeight) {
     try{
@@ -21,10 +25,26 @@ export function waterBehavior(y, x, grid, gridHeight) {
                     
                 }
             }
-            else{
+            else {
                 grid[y][x] = 'water';
+                
                 if (sunShow) {
-                    life_span--;
+                    // Introduce a random factor to decide whether life_span should decrease.
+                    let randomFactor = Math.random();  // This will generate a random number between 0 and 1
+                    
+                    // Calculate the probability for life_span to not decrease
+                    // assuming sunValue is between 0 and 10.
+                    let noDecreaseProbability = (10 - sunValue) / 10;
+                    
+                    // Only decrease the life_span if the random factor is greater than the calculated probability.
+                    if (randomFactor >= noDecreaseProbability) {
+                        life_span--;
+                    }
+                    else{
+                        if (sunValue <= 5){
+                            life_span++;
+                        }
+                    }
             
                     // If life_span is 0, evaporate the water
                     if (life_span <= 0) {
@@ -34,10 +54,18 @@ export function waterBehavior(y, x, grid, gridHeight) {
                 }
             }
             
+            
+            
+            
         }else if ( y + 1 < gridHeight && grid[y + 1][x] === 'chemical'){
             topGrid[y + 1][x] = 'chemInWater';
             grid[y][x] = null;
         }
+        /*
+        else if ( y + 1 < gridHeight && grid[y + 1][x] === 'plant'){
+            grid[y][x] = 'water';
+        }
+        */
         else {
             grid[y][x] = null;
         }

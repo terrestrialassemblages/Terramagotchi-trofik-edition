@@ -1,15 +1,15 @@
 import RootStructure from './root/root.js';
 import Fungi from './fungi/fungi.js';
-import { plantAt, updatePlantGrowth } from './plant/plant_behavior.js';
+import { plantAt, updatePlantGrowth, plantPattern } from './plant/plant_behavior.js';
 //import {calculateSoilColor} from './aggregate_behavior.js';
 import { updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor } from './aggregate/aggregate_behavior.js';
 import { chemicalBehavior } from './chemical.js';
-import { waterBehavior } from './water_behavior.js';
+import { waterBehavior, resetLifeSpan } from './water_behavior.js';
 import { waterInSoilBehavior } from './waterInSoil.js'
 import { soilBehavior } from './soil_behavior.js';
 import { rootBehavior } from './root/root_behavior.js';
 import { rootTipBehavior } from './root/roottip_behavior.js';
-import { sunShow, drawSun, rainTimeout, generateRain, rainShow, changeRainShow, changeSunShow, sunlight, getNextsunValue, sunValue } from './weather.js';
+import { sunShow, drawSun, rainTimeout, generateRain, rainShow, changeRainShow, changeSunShow, sunlight, getNextsunValue, sunValue, setTime} from './weather.js';
 import { drawGrass } from './grass_draw.js';
 import { findBacteriaByPosition, generateBacterial, bacteriaBehavior } from './bacteria/bacteria_behavior.js';
 import { fungiBehavior } from './fungi/fungi_behavior.js';
@@ -187,7 +187,7 @@ export const elements = {
         behavior: [],
     },
     plant: {
-        color: "#00FF00",
+        color: '#4af05e',
         behavior: [],
         plantElements: [], 
     },
@@ -254,6 +254,10 @@ export function addToCanvas(element) {
             changeSunShow(true);
         }, 1 * 1000);
     } 
+    else if (element == 'time') {
+        setTime();
+        resetLifeSpan();
+    }
 }
 
 elements.liquidSugar.behavior.push(function (y, x, grid) {
@@ -314,10 +318,14 @@ function drawGrid() {
                     const plantObj = elements.plant.plantElements.find(plant => plant.startingY === y && plant.startingX === x);
                     if (plantObj) {
                         ctx.fillStyle = elements.plant.color;
-                        for(let h = 0; h < plantObj.height; h++) {
-                            const factor = (plantObj.height - h) / plantObj.height;
-                            const currentWidth = 1 + factor * (plantObj.height / 10); 
-                            ctx.fillRect((x - currentWidth/2) * cellSize, (y - h) * cellSize, currentWidth * cellSize, cellSize);
+                        if (plantObj && plantObj.heightMatrix) {
+                            for (let row = 0; row < plantObj.heightMatrix.length; row++) {
+                                for (let col = 0; col < plantObj.heightMatrix[row].length; col++) {
+                                    if (plantObj.heightMatrix[row][col] === 1) {
+                                        ctx.fillRect((x + col - Math.floor(plantPattern[0].length/2)) * cellSize, (y - row) * cellSize, cellSize, cellSize);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -431,7 +439,7 @@ function loop() {
     requestAnimationFrame(loop);
 
     if(envTimeCounter % 260 == 0){
-        //console.log(sunValue);
+        console.log(sunValue);
         getNextsunValue();
     }
     
