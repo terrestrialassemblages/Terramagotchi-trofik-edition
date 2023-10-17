@@ -13,9 +13,6 @@ import { gridWidth, gridHeight } from '../sandSim.js';
 
 
 export default class Fungi extends RootStructure {
-    
-
-    
 
     // Fungi will first start at a location and branch out normally like rootTip
     // It will then find the nearest rootTip and do 1 singular branch to it while still branching out normally
