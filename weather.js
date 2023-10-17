@@ -47,8 +47,8 @@ export function getNextsunValue() {
         
         
         // If counter reaches 30, reset it and proceed
-        if (stayingCounter >= 3) {
-            console.log("counter: ", stayingCounter)
+        if (stayingCounter >= 10) {
+            //console.log("counter: ", stayingCounter)
             stayingCounter = 0; // Reset the counter
             
             //console.log("counter: ", stayingCounter)

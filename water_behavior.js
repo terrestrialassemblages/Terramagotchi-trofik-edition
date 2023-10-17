@@ -35,7 +35,9 @@ export function waterBehavior(y, x, grid, gridHeight) {
                     // Calculate the probability for life_span to not decrease
                     // assuming sunValue is between 0 and 10.
                     let noDecreaseProbability = (10 - sunValue) / 10;
-                    
+                    if (sunValue == 6){
+                        life_span = 20;
+                    }
                     // Only decrease the life_span if the random factor is greater than the calculated probability.
                     if (randomFactor >= noDecreaseProbability) {
                         life_span--;
