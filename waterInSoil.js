@@ -17,13 +17,23 @@ export function waterInSoilBehavior(y, x, grid){
     if (topGrid[y + 1][x] === null && (grid[y + 1][x] === 'soil' || grid[y + 1][x] === 'fungi'
     || grid[y + 1][x] === 'root' || grid[y + 1][x] === 'rootTip')) {
         //console.log(elements.soil.soilAlpha[(y+1) + "," + x])
-        if (timeWaterSink % 120 == 0) {
+        if (timeWaterSink % 60 == 0) {
 
             if (elements.soil.soilAlpha[(y+1) + "," + x] <= 0.7){
                 topGrid[y][x] = null;
                 topGrid[y+1][x] = 'waterInSoil';
                 currWater.updatePosition(x, y+1);
                 currWater.IncreaseLifespan();
+            }
+            else if (topGrid[y][x+1] === null && elements.soil.soilAlpha[(y) + "," + (x+1)] <= 0.7){
+                topGrid[y][x] = null;
+                topGrid[y][x+1] = 'waterInSoil';
+                currWater.updatePosition(x+1, y);
+            }
+            else if (topGrid[y][x-1] === null && elements.soil.soilAlpha[(y) + "," + (x-1)] <= 0.7){
+                topGrid[y][x] = null;
+                topGrid[y][x-1] = 'waterInSoil';
+                currWater.updatePosition(x-1, y);
             }
         }
         else{

@@ -98,10 +98,10 @@
             width: 100vw;  /* 100% of viewport width */
             height: 100vh;  /* 100% of viewport height */
             background: linear-gradient(to bottom, rgb(56, 58, 58), rgb(75, 87, 92));
-            z-index: 2;
+            z-index: 999;
             opacity: 0;
             mix-blend-mode: multiply;
-            transition: opacity 20s linear;
+            transition: opacity 1s linear;
         }
 
         .layer-night {
@@ -113,7 +113,7 @@
             background: linear-gradient(to bottom, rgb(56, 58, 58), rgb(117, 164, 184));
             z-index: -1;
             opacity: 0;
-            transition: opacity 20s linear;
+            transition: opacity 1s linear;
         }
 
         /* Styles for the canvas */

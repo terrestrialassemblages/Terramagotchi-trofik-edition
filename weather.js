@@ -142,8 +142,8 @@ export function sunlight(){
     
     if (sunValue<3){
         // Set the new opacity
-        div.style.opacity = 0.5;
-        div2.style.opacity = 0.6;
+        //div.style.opacity = 0.5;
+        //div2.style.opacity = 0.6;
     }
     else if(sunValue>6){
         div.style.opacity = 0;
@@ -167,6 +167,7 @@ export function startRainCycle() {
     // Clears the previous timer and resets the next rain cycle
     clearInterval(rainCycle);
     rainCycle = setInterval(startRainCycle, rainInterval);
+    console.log('rainInterval: ', rainInterval);
 }
 */
 
