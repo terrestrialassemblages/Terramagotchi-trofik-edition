@@ -8,6 +8,7 @@ const INSTANCE_ID = Math.floor(Math.random() * 1000000000);
 function createQR() {
     //const qr_code_canvas = document.getElementById("qr-code");
     const remote_url = document.location.origin + "/remote/?id=" + INSTANCE_ID;
+    console.log(remote_url);
 
     // CURRENT VERSION GENERATES TEXT LINK INSTEAD OF QR CODE
     const remote_url_link = document.createElement("a");

@@ -6,6 +6,8 @@ export let sunValue = 10;
 export let rainTimeout;
 export let rainInterval = 30000;
 let increasing = true;
+let stayingCounter = 0;
+
 /*
 let rainCycle = setInterval(() => {
     rainShow = true;  // Start rain
@@ -20,6 +22,16 @@ let rainCycle = setInterval(() => {
     }, 12 * 1000);
 }, rainInterval);
 */
+export function setTime() {
+    if (sunValue >= 5){
+        sunValue = 0;
+        increasing = false;
+    }
+    else{
+        increasing = true;
+        sunValue = 10;
+    }
+}
 
 
 export function getRandomRainInterval() {
@@ -28,27 +40,48 @@ export function getRandomRainInterval() {
 }
 
 export function getNextsunValue() {
-    // Check if sunValue is 0 and update rainInterval
-    if (sunValue === 0) {
-        // Generate new random rain intervals
-        //rainInterval = getRandomRainInterval();
-        //startRainCycle();
+    // When the value is 0 or 10
+    if (sunValue === 0 || sunValue === 10) {
+        // Increment the counter
+        stayingCounter++;
+        
+        
+        // If counter reaches 30, reset it and proceed
+        if (stayingCounter >= 10) {
+            //console.log("counter: ", stayingCounter)
+            stayingCounter = 0; // Reset the counter
+            
+            //console.log("counter: ", stayingCounter)
+            // Proceed to the next value
+            if (increasing) {
+                //console.log("increasing")
+                increasing = false;
+                return --sunValue;
+            } else {
+                increasing = true;
+                return ++sunValue;
+            }
+        } else {
+            
+            // Stay in the current state
+            return sunValue;
+        }
     }
-    //console.log('rainInterval: ', rainInterval);
-
+    
+    // Regular increasing and decreasing logic
     if (increasing) {
         if (sunValue < 10) {
-            return sunValue++;
+            return ++sunValue;
         } else {
             increasing = false;
-            return sunValue--;
+            return --sunValue;
         }
     } else {
         if (sunValue > 0) {
-            return sunValue--;
+            return --sunValue;
         } else {
             increasing = true;
-            return sunValue++;
+            return ++sunValue;
         }   
     }
 }
@@ -139,16 +172,11 @@ export function sunlight(){
     var div = document.querySelector(".layer-night");
     var div2 = document.querySelector('.layer-night-multiply');
 
-    
-    if (sunValue<3){
-        // Set the new opacity
-        div.style.opacity = 0.5;
-        div2.style.opacity = 0.6;
-    }
-    else if(sunValue>6){
-        div.style.opacity = 0;
-        div2.style.opacity = 0;
-    }
+    var opacity = (10 - sunValue) * 0.05; // Range is 0 to 0.5
+    var opacityBg = (10 - sunValue) * 0.1; // Range is 0 to 1.0
+    div.style.opacity = opacityBg;
+    div2.style.opacity = opacity;
+
 }
 
 /*
