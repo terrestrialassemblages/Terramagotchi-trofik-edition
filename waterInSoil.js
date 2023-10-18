@@ -41,7 +41,7 @@ export function waterInSoilBehavior(y, x, grid){
         }
         
     }
-    else if (topGrid[y + 1][x] === 'waterInSoil' || topGrid[y + 1][x] === 'liquidSugar'){
+    else if (topGrid[y + 1][x] === 'waterInSoil' || topGrid[y + 1][x] === 'liquidSugar' || topGrid[y + 1][x] === 'chemInWater'){
         topGrid[y][x] = null;
     }
     else{

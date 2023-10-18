@@ -79,41 +79,47 @@ export function generateSoil(y, x, macro = false) {
     }
 
 
+    try{
+        if (macro == true) {
+            let aggregateSizeX = Math.floor(Math.random() * 2) + 2;
+            let aggregateSizeY = Math.floor(Math.random() * 2) + 1;
 
-    if (macro == true) {
-        let aggregateSizeX = Math.floor(Math.random() * 2) + 2;
-        let aggregateSizeY = Math.floor(Math.random() * 2) + 1;
-
-        const rotationAngle = Math.random() * Math.PI * 2;
+            const rotationAngle = Math.random() * Math.PI * 2;
 
 
-        //const rotationAngle = Math.random() * Math.PI * 2;
-        for (let i = 0; i < aggregateSizeX; i++) {
-            for (let j = 0; j < aggregateSizeY; j++) {
-                const aggregateX = x + i;
-                const aggregateY = y - j;
-                // Calculate elliptical values with increased noise
-                const noise = Math.random() * 0.3 - 0.15;
-                let ellipseX = (i - aggregateSizeX / 2 + noise) / (aggregateSizeX / 2);
-                let ellipseY = (j - aggregateSizeY / 2 + noise) / (aggregateSizeY / 2);
-                // Rotate the coordinates
-                const rotatedX = ellipseX * Math.cos(rotationAngle) - ellipseY * Math.sin(rotationAngle);
-                const rotatedY = ellipseX * Math.sin(rotationAngle) + ellipseY * Math.cos(rotationAngle);
-                // Use the elliptical equation to determine if a pixel is inside the ellipse
-                if (rotatedX * rotatedX + rotatedY * rotatedY <= 1) {
-                    if (rotatedX * rotatedX + rotatedY * rotatedY <= 1 && grid[aggregateY][aggregateX] == 'soil') {
-                        let aggInstance = new Aggregate(aggregateY, aggregateX, null, null);
-                        elements.aggregate.aggregateElements[aggregateY + "," + aggregateX] = aggInstance;
-                        grid[aggregateY][aggregateX] = 'aggregate';
+            //const rotationAngle = Math.random() * Math.PI * 2;
+            for (let i = 0; i < aggregateSizeX; i++) {
+                for (let j = 0; j < aggregateSizeY; j++) {
+                    const aggregateX = x + i;
+                    const aggregateY = y - j;
+                    // Calculate elliptical values with increased noise
+                    const noise = Math.random() * 0.3 - 0.15;
+                    let ellipseX = (i - aggregateSizeX / 2 + noise) / (aggregateSizeX / 2);
+                    let ellipseY = (j - aggregateSizeY / 2 + noise) / (aggregateSizeY / 2);
+                    // Rotate the coordinates
+                    const rotatedX = ellipseX * Math.cos(rotationAngle) - ellipseY * Math.sin(rotationAngle);
+                    const rotatedY = ellipseX * Math.sin(rotationAngle) + ellipseY * Math.cos(rotationAngle);
+                    // Use the elliptical equation to determine if a pixel is inside the ellipse
+                    if (rotatedX * rotatedX + rotatedY * rotatedY <= 1) {
+                        if (rotatedX * rotatedX + rotatedY * rotatedY <= 1 && grid[aggregateY][aggregateX] == 'soil') {
+                            let aggInstance = new Aggregate(aggregateY, aggregateX, null, null);
+                            elements.aggregate.aggregateElements[aggregateY + "," + aggregateX] = aggInstance;
+                            grid[aggregateY][aggregateX] = 'aggregate';
 
-                        aggInstance.hasGrow = true;
+                            aggInstance.hasGrow = true;
+
+                        }
 
                     }
-
                 }
             }
         }
-    }
+    }  
+    catch (error) {
+        // If an error occurs, log it and return from the function
+        console.error('An error occurred:', error.message);
+        return;
+    } 
 
 }
 

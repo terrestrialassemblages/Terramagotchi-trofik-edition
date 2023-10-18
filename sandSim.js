@@ -4,7 +4,7 @@ import RootTip from './root/rootTip.js';
 import { plantAt, updatePlantGrowth, plantPattern } from './plant/plant_behavior.js';
 //import {calculateSoilColor} from './aggregate_behavior.js';
 import { updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor } from './aggregate/aggregate_behavior.js';
-import { chemicalBehavior } from './chemical.js';
+import { chemicalBehavior, generateChemical, chemInWaterBehavior} from './chemical.js';
 import { waterBehavior, resetLifeSpan } from './water_behavior.js';
 import { waterInSoilBehavior } from './waterInSoil.js'
 import { soilBehavior } from './soil_behavior.js';
@@ -37,6 +37,8 @@ if(canvas.width > canvas.height && canvas.width/canvas.height >1.33){
 
 
 export let globalY = Math.ceil(canvas.height/3/pixelSize);
+export let rangeX = Math.ceil(canvas.width/pixelSize);
+
 
 
 export let cellSize = pixelSize;
@@ -171,7 +173,7 @@ export const elements = {
         behavior: [],
     },
     chemInWater: {
-        color: "#446B32",
+        color: "#167360",
         behavior: [],
     }
 };
@@ -184,6 +186,7 @@ elements.soil.behavior.push((y, x, grid) => soilBehavior(y, x, grid));
 elements.rootTip.behavior.push((y, x, grid) => rootTipBehavior(y, x, grid, gridHeight));
 elements.bacteria.behavior.push((y, x, grid) => bacteriaBehavior(y, x, grid));
 elements.chemical.behavior.push((y, x, grid) => chemicalBehavior(y, x, grid, gridHeight, topGrid));
+elements.chemInWater.behavior.push((y, x, grid) => chemInWaterBehavior(y, x, gridHeight));
 
 // Function for adding user actions to the canvas
 export function addToCanvas(element) {
@@ -216,7 +219,9 @@ export function addToCanvas(element) {
             }, 12 * 1000);
         }
     } else if (element == 'chemical') {
-        grid[0][x] = 'chemical';
+        let randomX = Math.floor(Math.random() * rangeX);
+        generateChemical(15, randomX);
+
 
     } else if (element == 'sunlight') {
         changeRainShow(false);
@@ -327,7 +332,7 @@ function drawTopGrid(){
                     //ctxTop.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
                 }
                 else if (topGrid[y][x] === 'chemInWater') {
-                    ctxTop.globalAlpha = 0.2;
+                    ctxTop.globalAlpha = 0.5;
                     ctxTop.fillStyle = elements.chemInWater.color;
                 }
                 else {
@@ -358,7 +363,8 @@ canvas.addEventListener('mousedown', (event) => {
     let aggInstance = new Aggregate(y, x, null, null);
     elements.aggregate.aggregateElements[y + "," + x] = aggInstance;
     */
-    testing(y, x)
+    //testing(y, x)
+    topCanvas[y][x] = 'chemical';
 
     //add liquidSugar
     //grid[y][x] = 'liquidSugar';
@@ -457,12 +463,23 @@ function loop() {
 window.addEventListener('load', function () {
     // Logic to draw sand on the canvas automatically
     // This is a placeholder; the actual logic will depend on the structure of the JS code.
+    //generateChemical(0, 200);
+
+    //topGrid[0][0] = "chemical";
     loop();
 
     drawAutomatically();
     //generateSoil();
     generateBacterial();
     initSoilGradient();
+    /*
+    topGrid[0][70] = 'chemical';
+    topGrid[1][70] = 'chemical';
+    topGrid[2][70] = 'chemical';
+    topGrid[3][70] = 'chemical';
+    topGrid[4][70] = 'chemical';
+    */
+    
 
     connectToDB();
 });

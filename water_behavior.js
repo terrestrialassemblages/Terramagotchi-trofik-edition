@@ -11,7 +11,7 @@ export function resetLifeSpan(){
 export function waterBehavior(y, x, grid, gridHeight) {
     try{
         // Check for an empty space below and move water down
-        if (y + 1 < gridHeight && grid[y + 1][x] === null) {
+        if (y + 1 < gridHeight && grid[y + 1][x] === null && topGrid[y + 1][x] === null) {
             grid[y + 1][x] = 'water';
             grid[y][x] = null;
         } else if( y + 1 < gridHeight && grid[y + 1][x] === 'soil') {
@@ -59,10 +59,33 @@ export function waterBehavior(y, x, grid, gridHeight) {
             
             
             
-        }else if ( y + 1 < gridHeight && grid[y + 1][x] === 'chemical'){
+        }else if (y + 1 < gridHeight && topGrid[y + 1][x] === 'chemical') {
+            // Make the element at [y+1][x] 'chemInWater'
             topGrid[y + 1][x] = 'chemInWater';
-            grid[y][x] = null;
+            
+            // Define the offsets for directly adjacent elements
+            const offsets = [
+                { dy: 0, dx: 1 },  // Right
+                { dy: 0, dx: -1 }, // Left
+                { dy: 1, dx: 0 },  // Down
+                { dy: -1, dx: 0 }  // Up
+            ];
+            
+            // Iterate through the offsets to update adjacent elements
+            for (const { dy, dx } of offsets) {
+                const newY = y + 1 + dy;
+                const newX = x + dx;
+                
+                // Check boundary conditions
+                if (newY >= 0 && newY < gridHeight && newX >= 0 && newX < topGrid[0].length) {
+                    topGrid[newY][newX] = 'chemInWater';
+                }
+            }
+            
+            topGrid[y][x] = null;
+            //console.log('chemInWater');
         }
+        
         /*
         else if ( y + 1 < gridHeight && grid[y + 1][x] === 'plant'){
             grid[y][x] = 'water';

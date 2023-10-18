@@ -11,6 +11,10 @@ export function bacteriaBehavior (y, x, grid){
 
     let currentBac = findBacteriaByPosition(elements.bacteria.bacteriaElements, x, y)
 
+    if (topGrid[y][x] == "chemInWater"){
+        currentBac.lifespan = 0;
+    }
+
     // if bacteria is fading, dont move
     if (currentBac.fading) {      
         return;

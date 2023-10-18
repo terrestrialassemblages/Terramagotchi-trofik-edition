@@ -1,6 +1,7 @@
 
 import { elements, topGrid } from '../sandSim.js';
 import { findBacteriaByPosition } from './bacteria_behavior.js';
+import { updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor } from '../aggregate/aggregate_behavior.js';
 
 export default class Bacteria {
     constructor(color, frameTimer, currentDirection, directionTimer, behavior, x, y, lifespan, oldElement = "soil") {
@@ -250,14 +251,26 @@ export default class Bacteria {
 
         if (this.fadeAlpha <= 0) {
             grid[this.y][this.x] = this.oldElement;
+            let soilColor = calculateSoilColor('#26170d', elements.soil.color, elements.soil.soilAlpha[this.y + "," + this.x]);
+            ctx.fillStyle = soilColor;
+            ctx.fillRect(this.x * cellSize, this.y * cellSize, cellSize, cellSize);
+            //console.log(soilColor);
             //elements.bacteria.bacteriaElements.splice(index, 1);
         } else {
-            const fadedColor = this.interpolateColor(this.color, elements.soil.color, 1 - this.fadeAlpha);
+            let soilColor = calculateSoilColor('#26170d', elements.soil.color, elements.soil.soilAlpha[this.y + "," + this.x]);
+            const fadedColor = this.interpolateColor(this.color, soilColor, 1 - this.fadeAlpha);
+
             ctx.fillStyle = fadedColor;
             ctx.fillRect(this.x * cellSize, this.y * cellSize, cellSize, cellSize);
 
             if (1 - this.fadeAlpha === 0) {
+                
+                
+                let soilColor = calculateSoilColor('#26170d', elements.soil.color, elements.soil.soilAlpha[this.y + "," + this.x]);
+                ctx.fillStyle = soilColor;
+                ctx.fillRect(this.x * cellSize, this.y * cellSize, cellSize, cellSize);
                 grid[this.y][this.x] = 'soil';
+                //console.log(soilColor);
             }
         }
     }
