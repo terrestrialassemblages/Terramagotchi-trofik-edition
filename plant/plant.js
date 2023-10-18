@@ -9,7 +9,7 @@ export default class Plant {
     }
 
     grow(rootLength, pattern) {
-        this.patternHeight = Math.min(rootLength, pattern.length);
+        this.patternHeight = Math.min(rootLength / 2, pattern.length);
         this.heightMatrix = pattern.slice(0, this.patternHeight);
     }
 
