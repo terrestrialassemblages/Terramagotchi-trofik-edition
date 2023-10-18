@@ -7,7 +7,7 @@ import { grid, topGrid, canvas } from '../sandSim.js';
 
 export default class RootTip extends RootStructure {
     constructor(startingY, startingX, fungiParent, index) {
-        super(startingY, startingX, 10, 500, 'rootTip', 900, 1, index);
+        super(startingY, startingX, 4, 500, 'rootTip', 900, 1, index);
         this.parentFungi = new Array();
         this.parentFungi.push(fungiParent);
         this.developed = false;    // If root is not developed, it will grow. If fully developed, it will produce sugar instead of growing
@@ -55,10 +55,21 @@ export default class RootTip extends RootStructure {
     // Function to produce 1 block of liquid sugar from root tip
     produceSugar() {
         if (grid[this.y][this.x] == 'rootTip') {
-
             // If the block below is soil or fungi, produce liquid sugar
             if (grid[this.y + 1][this.x] === 'soil' || grid[this.y + 1][this.x] === 'fungi') {
                 topGrid[this.y + 1][this.x] = 'liquidSugar';
+            }
+            // Check at the sides instead
+            else if (grid[this.y][this.x + this.expandXDir] == 'soil' || grid[this.y][this.x + this.expandXDir] == 'fungi') {
+                topGrid[this.y][this.x + this.expandXDir] = 'liquidSugar';
+            }
+            else if (grid[this.y][this.x - this.expandXDir] == 'soil' || grid[this.y][this.x - this.expandXDir] == 'fungi') {
+                topGrid[this.y][this.x - this.expandXDir] = 'liquidSugar';
+            }
+            else {
+                // Let it continue growing to free up some more space
+                this.developed = false;
+                this.maxGrowthLength++;
             }
         }
     }

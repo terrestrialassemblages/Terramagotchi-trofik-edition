@@ -48,7 +48,6 @@ export default class RootStructure {
         if ((timeStep >= this.growthSpeed) && this.developed == true && this.elementName == 'rootTip') {
             // If root is developed, produce sugar
             this.produceSugar();
-            //console.log("FULLY GROWN, PRODUCING SUGAR");
             return ([false, totalIndex]);
         }
         return ([(timeStep >= this.growthSpeed) && (this.length < this.maxGrowthLength), (totalIndex)]);
