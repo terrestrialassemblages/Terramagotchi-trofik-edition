@@ -48,7 +48,6 @@ export default class RootStructure {
         if ((timeStep >= this.growthSpeed) && this.developed == true && this.elementName == 'rootTip') {
             // If root is developed, produce sugar
             this.produceSugar();
-            //console.log("FULLY GROWN, PRODUCING SUGAR");
             return ([false, totalIndex]);
         }
         return ([(timeStep >= this.growthSpeed) && (this.length < this.maxGrowthLength), (totalIndex)]);
@@ -94,23 +93,22 @@ export default class RootStructure {
     findGrowDir(growOptions, expandYDir, expandXDir, isFungi, forbElements) {
         // Create copy of array so changes are not made to the actual growOptions
 /*        let growOptions = growOptionsPar.slice();
-*/        let finalGrowDir = null;
+*/      let finalGrowDir = null;
+        // Loops if there are still options and a final direction is not found yet
         while (finalGrowDir == null && growOptions.length != 0) {
             let growIndex = Math.floor(Math.random() * (growOptions.length));
             // Encourage plant root tips to grow vertically down instead of out
-            if (forbElements.length == 3 || forbElements.length == 2) {
-                if (!isFungi) {
-                    if (this.length < 5) {
-                        growIndex = 0;
-                    }
-                    else {
-                        growIndex = Math.round(Math.random());
-                    }
+            if (!isFungi && growOptions.length == 3 || growOptions.length == 2) {
+                if (this.length < 5) {
+                    growIndex = 0;
                 }
                 else {
-                    //  Encourage fungi to grow out
-                    growIndex = Math.random() < 0.5 ? 0 : 2;
+                    growIndex = Math.round(Math.random());
                 }
+            }
+            // Encourage fungi to grow out
+            if (isFungi && growOptions.length == 3 && this.length < 10) {
+                growIndex = Math.random() < 0.5 ? 0 : 2;
             }
             let testY = this.y;
             let testX = this.x;
@@ -132,7 +130,7 @@ export default class RootStructure {
     canGrow(y, x, yDir, xDir, isFungi, forbElements) {
         let count = 0;
         // If exceeds boundaries
-        if (y > gridHeight || y < globalY || x < 0 || x > gridWidth) {
+        if (y > gridHeight -1 || y < globalY || x < 0 + 1 || x > gridWidth - 1) {
             return false;
         }
 
@@ -142,18 +140,24 @@ export default class RootStructure {
                 for (let element of forbElements) {
                     let newY = y + (yDir * spaceY);
                     let newX = x + (xDir * spaceX);
+                    // Exceeded boundary. Stil grow as long as current location is not exceeding boundaries but this will mean future growth is limited
                     if (newY > gridHeight - 1 || newY < globalY + 1 || newX > gridWidth - 1 || newX < 0 + 1) {
                         continue;
                     }
+                    // Nearby is a forbidden element
                     if (grid[newY][newX] == element) {
                         // canGrow is called at the location that we want to grow in, so it could be checking the original location
                         if (element == grid[this.y][this.x] && (newY == this.y && newX == this.x)) {
                             continue;
                         }
                         // Get a pass even if it is another fungi to encourage cellular automata
-                        else if (element == 'fungi' && isFungi == true && (this.length / this.maxGrowthLength >= 0.55 && count < 1)) {
-                            count++;
-                            continue;
+                        // (this.length / this.maxGrowthLength >= 0.5
+                        else if (isFungi == true && element == 'fungi' && this.boundaryXWithOtherFungi != null && spaceX > 0 && count < 1) {
+                            // In the boundary with other fungi object and is growing horizontally
+                            if ((this.expandXDir == -1 && x < this.boundaryXWithOtherFungi) ||  (this.expandXDir == 1 && x > this.boundaryXWithOtherFungi)) {
+                                count++;
+                                continue;
+                            }
                         }
                         return false;
                     }
@@ -167,7 +171,6 @@ export default class RootStructure {
             }
             return false;
         }
-        //console.log("FUNGI CAN INDEED GROW HERE", y, x, xDir);
         return true;
     }
 
@@ -327,7 +330,8 @@ export default class RootStructure {
                 newXDir = -(this.expandXDir);
                 console.log("BRANCING DIAG", finalGrowY, finalGrowX);
             }*/
-            //console.log("CHECKING BRANCH", newXDir);
+
+            // Checking if it can grow for new branch values
             if (this.canGrow(newY, newX, newYDir, newXDir, isFungi, this.forbElements)) {
                 branchRoot = [newY, newX, newYDir, newXDir];
             }
@@ -358,12 +362,9 @@ export default class RootStructure {
         }
         this.length++;
         // If root or root tip, just go under it by not changing grid to fungi
-        //console.log(this.growthSpeed, timeStep, "FUNGI BEFORE SPEED", Math.round(1.3 * this.growthSpeed));
+        // Update growth speed
         this.updateGrowthSpeed();
-        /* If below 5000 timeSteps, grow every 500 timeSteps max
-        /* If 5000 - 15000 timeSteps, grow every 800 timeSteps max
-        /* If >15000, grow every 1500 timesteps max */
-        //console.log("UPDATED VALUES", this.growthSpeed, this.spacing, this.length, totalFungiIndex);
+
         return (branchRoot);
 
     }

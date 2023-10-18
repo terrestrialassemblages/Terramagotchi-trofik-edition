@@ -46,6 +46,11 @@ export function fungiBehavior(y, x, grid) {
                             // Update all the variables
                             branchRoot.expandYDir = expandRoot[2];
                             branchRoot.expandXDir = expandRoot[3];
+                            // If heading in the same direction, same boundary
+                            if (branchRoot.expandXDir == curr.expandXDir) {
+                                branchRoot.boundaryXWithOtherFungi = curr.boundaryXWithOtherFungi;
+                                console.log("SAME BOUNDARY", branchRoot.expandXDir, branchRoot.boundaryXWithOtherFungi, branchRoot);
+                            }
                             branchRoot.branchCount = --curr.branchCount;
                             branchRoot.length = curr.length + 1;
                             branchRoot.branchElement = curr.branchElement;

@@ -30,7 +30,7 @@ export function chemicalBehavior(y, x, grid, gridHeight, topGrid) {
         topGrid[y][x] = null;
     }
 
-    if (topGrid[y+1][x] == 'chemInWater'){
+    if (topGrid[y+1][x] == 'chemInWater' && grid[y+1][x] == null){
         topGrid[y+1][x] = 'chemical';
         topGrid[y][x] = 'chemInWater';
         //topGrid[y][x] = null;

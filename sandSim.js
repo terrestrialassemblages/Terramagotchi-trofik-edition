@@ -159,7 +159,7 @@ export const elements = {
         behavior: [],
     },
     plant: {
-        color: '#4af05e',
+        color: '#2c7f3f',
         behavior: [],
         plantElements: [], 
     },
@@ -289,20 +289,8 @@ function drawGrid() {
                     let soilColor = calculateSoilColor('#26170d', elements.soil.color, elements.soil.soilAlpha[y + "," + x]);
                     ctx.fillStyle = soilColor;
                 }
-                if (grid[y][x] === 'plant') {
-                    const plantObj = elements.plant.plantElements.find(plant => plant.startingY === y && plant.startingX === x);
-                    if (plantObj) {
-                        ctx.fillStyle = elements.plant.color;
-                        if (plantObj && plantObj.heightMatrix) {
-                            for (let row = 0; row < plantObj.heightMatrix.length; row++) {
-                                for (let col = 0; col < plantObj.heightMatrix[row].length; col++) {
-                                    if (plantObj.heightMatrix[row][col] === 1) {
-                                        ctx.fillRect((x + col - Math.floor(plantPattern[0].length/2)) * cellSize, (y - row) * cellSize, cellSize, cellSize);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                if (grid[y][x] === 'plant') {                   
+                    ctx.fillStyle = elements.plant.color;                                        
                 }
                 /*
                 if (topGrid[y][x] === 'waterInSoil') {
@@ -507,7 +495,8 @@ function drawAutomatically() {
     let randomX = Math.round(Math.random() * (35 - 20) + 20);
 
     // 80 25
-    //  Create 2 fungi objects to encourage growing out wide
+    // Create 2 fungi objects to encourage growing out wide
+    // Growing left
     let fungiObj = new Fungi(currY + 1, randomX - 1, false, totalFungiIndex++);
     fungiObj.expandXDir = -1;
     grid[currY + 1][randomX - 1] = 'fungi';
@@ -523,21 +512,31 @@ function drawAutomatically() {
 
     plantAt(currY-1, randomX, fungiObj);
 
-    // 2nd fungi object with opposite grow direction
+    // 2nd fungi object with opposite grow direction, growing right
     fungiObj = new Fungi(currY + 1, randomX + 1, false, totalFungiIndex++);
     fungiObj.expandXDir = 1;
     grid[currY + 1][randomX + 1] = 'fungi';
     elements.fungi.fungiElements.push(fungiObj);
     fungiObj.parentRoot = rootObj;
 
+    let boundaryX = randomX;
 
+    // RandomX for next elements
     randomX = Math.round(Math.random() * (90 - 60) + 60);
+    // Set boundary to fungi growing towards the next fungi for cellular automata
+    fungiObj.calculateBoundary(boundaryX, randomX);
 
     // 80 75
+    // Middle fungi can grow to the left fungi object
     fungiObj = new Fungi(currY + 1, randomX - 1, false, totalFungiIndex++);
     fungiObj.expandXDir = -1;
     grid[currY+1][randomX - 1 ] = 'fungi';
     elements.fungi.fungiElements.push(fungiObj);
+
+    // Calculate boundary with previous fungi
+    fungiObj.calculateBoundary(boundaryX, randomX);
+    // Update it with current middle fungi X
+    boundaryX = randomX;
 
     grid[currY + 1][randomX] = 'fungi';
 
@@ -554,13 +553,20 @@ function drawAutomatically() {
     elements.fungi.fungiElements.push(fungiObj);
     fungiObj.parentRoot = rootObj;
 
+
     randomX = Math.round(Math.random() * (160 - 120) + 120);
+    // Calculate boundary with next fungi
+    fungiObj.calculateBoundary(boundaryX, randomX);
 
     // 81 140
     fungiObj = new Fungi(currY + 1, randomX - 1, false, totalFungiIndex++);
     fungiObj.expandXDir = -1;
     grid[currY + 1][randomX - 1] = 'fungi';
     elements.fungi.fungiElements.push(fungiObj);
+    // Calculate boundary with previous fungi
+    fungiObj.calculateBoundary(boundaryX, randomX);
+    console.log(fungiObj.boundaryXWithOtherFungi, fungiObj.x);
+
 
     grid[currY + 1][randomX] = 'fungi';
 
@@ -576,6 +582,7 @@ function drawAutomatically() {
     grid[currY + 1][randomX + 1] = 'fungi';
     elements.fungi.fungiElements.push(fungiObj);
     fungiObj.parentRoot = rootObj;
+
     // Call any other functions required to render the grid on the canvas.
 }
 

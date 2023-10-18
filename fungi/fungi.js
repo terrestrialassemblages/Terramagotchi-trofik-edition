@@ -11,29 +11,18 @@ export default class Fungi extends RootStructure {
     // Fungi will first start at a location and branch out normally like rootTip
     // It will then find the nearest rootTip and do 1 singular branch to it while still branching out normally
     constructor(startingY, startingX, branchingToRoot, index) {
-        if (branchingToRoot == true) {
-            super(startingY, startingX, 50, 700, 'fungi', 300, 0.9, index);
-        }
-        else {
-            super(startingY, startingX, 70, 400, 'fungi', 1000, 0.9, index);
-        }
-        // Variables for the fungi branch that will attach to the root
-        this.attached = false;
-        this.branchingToRoot = branchingToRoot;
-        this.attachedRootCoord = [null, null];
-        this.attachedRootDistance = [null, null];
-        this.nearestRootFound = false;
-        // Parent branched fungi element
-        this.branchElement = null;
-        // All the child roots that have branched on normally
-        this.branchedRoots = [];
-        this.parentRoot = null;
+        super(startingY, startingX, 70, 400, 'fungi', 1000, 0.9, index);
         this.forbElements = ['fungi'];
         // Remaining branch counts
-        this.branchCount = 15;
+        this.branchCount = 25;
         // Max cap for speed
         this.growthSpeedLimit = 1800;
+        this.boundaryXWithOtherFungi = null;
 
+    }
+
+    calculateBoundary(firstFungiX, secondFungiX) {
+        this.boundaryXWithOtherFungi = Math.round((firstFungiX + secondFungiX) / 2);
     }
 
     updateSpacing() {
