@@ -94,23 +94,22 @@ export default class RootStructure {
     findGrowDir(growOptions, expandYDir, expandXDir, isFungi, forbElements) {
         // Create copy of array so changes are not made to the actual growOptions
 /*        let growOptions = growOptionsPar.slice();
-*/        let finalGrowDir = null;
+*/      let finalGrowDir = null;
+        // Loops if there are still options and a final direction is not found yet
         while (finalGrowDir == null && growOptions.length != 0) {
             let growIndex = Math.floor(Math.random() * (growOptions.length));
             // Encourage plant root tips to grow vertically down instead of out
-            if (forbElements.length == 3 || forbElements.length == 2) {
-                if (!isFungi) {
-                    if (this.length < 5) {
-                        growIndex = 0;
-                    }
-                    else {
-                        growIndex = Math.round(Math.random());
-                    }
+            if (!isFungi && growOptions.length == 3 || growOptions.length == 2) {
+                if (this.length < 5) {
+                    growIndex = 0;
                 }
                 else {
-                    //  Encourage fungi to grow out
-                    growIndex = Math.random() < 0.5 ? 0 : 2;
+                    growIndex = Math.round(Math.random());
                 }
+            }
+            // Encourage fungi to grow out
+            if (isFungi && growOptions.length == 3 && this.length < 10) {
+                growIndex = Math.random() < 0.5 ? 0 : 2;
             }
             let testY = this.y;
             let testX = this.x;
@@ -151,7 +150,8 @@ export default class RootStructure {
                             continue;
                         }
                         // Get a pass even if it is another fungi to encourage cellular automata
-                        else if (element == 'fungi' && isFungi == true && (this.length / this.maxGrowthLength >= 0.55 && count < 1)) {
+                        else if (element == 'fungi' && isFungi == true && (this.length / this.maxGrowthLength >= 0.3 && count < 1)) {
+                            console.log("EXCEMPTION");
                             count++;
                             continue;
                         }
@@ -358,12 +358,9 @@ export default class RootStructure {
         }
         this.length++;
         // If root or root tip, just go under it by not changing grid to fungi
-        //console.log(this.growthSpeed, timeStep, "FUNGI BEFORE SPEED", Math.round(1.3 * this.growthSpeed));
+        // Update growth speed
         this.updateGrowthSpeed();
-        /* If below 5000 timeSteps, grow every 500 timeSteps max
-        /* If 5000 - 15000 timeSteps, grow every 800 timeSteps max
-        /* If >15000, grow every 1500 timesteps max */
-        //console.log("UPDATED VALUES", this.growthSpeed, this.spacing, this.length, totalFungiIndex);
+
         return (branchRoot);
 
     }
