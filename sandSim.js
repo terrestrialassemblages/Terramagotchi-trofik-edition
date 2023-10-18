@@ -284,20 +284,8 @@ function drawGrid() {
                     let soilColor = calculateSoilColor('#26170d', elements.soil.color, elements.soil.soilAlpha[y + "," + x]);
                     ctx.fillStyle = soilColor;
                 }
-                if (grid[y][x] === 'plant') {
-                    const plantObj = elements.plant.plantElements.find(plant => plant.startingY === y && plant.startingX === x);
-                    if (plantObj) {
-                        ctx.fillStyle = elements.plant.color;
-                        if (plantObj && plantObj.heightMatrix) {
-                            for (let row = 0; row < plantObj.heightMatrix.length; row++) {
-                                for (let col = 0; col < plantObj.heightMatrix[row].length; col++) {
-                                    if (plantObj.heightMatrix[row][col] === 1) {
-                                        ctx.fillRect((x + col - Math.floor(plantPattern[0].length/2)) * cellSize, (y - row) * cellSize, cellSize, cellSize);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                if (grid[y][x] === 'plant') {                   
+                    ctx.fillStyle = elements.plant.color;                                        
                 }
                 /*
                 if (topGrid[y][x] === 'waterInSoil') {
