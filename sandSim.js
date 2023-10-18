@@ -157,7 +157,7 @@ export const elements = {
         behavior: [],
     },
     plant: {
-        color: '#4af05e',
+        color: '#2c7f3f',
         behavior: [],
         plantElements: [], 
     },
