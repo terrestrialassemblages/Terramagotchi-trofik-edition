@@ -150,7 +150,7 @@ export default class RootStructure {
                             continue;
                         }
                         // Get a pass even if it is another fungi to encourage cellular automata
-                        else if (element == 'fungi' && isFungi == true && (this.length / this.maxGrowthLength >= 0.3 && count < 1)) {
+                        else if (element == 'fungi' && isFungi == true && (this.length / this.maxGrowthLength >= 0.5 && count < 1)) {
                             console.log("EXCEMPTION");
                             count++;
                             continue;
