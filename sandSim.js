@@ -486,7 +486,8 @@ function drawAutomatically() {
     let randomX = Math.round(Math.random() * (35 - 20) + 20);
 
     // 80 25
-    //  Create 2 fungi objects to encourage growing out wide
+    // Create 2 fungi objects to encourage growing out wide
+    // Growing left
     let fungiObj = new Fungi(currY + 1, randomX - 1, false, totalFungiIndex++);
     fungiObj.expandXDir = -1;
     grid[currY + 1][randomX - 1] = 'fungi';
@@ -502,21 +503,31 @@ function drawAutomatically() {
 
     plantAt(currY-1, randomX, fungiObj);
 
-    // 2nd fungi object with opposite grow direction
+    // 2nd fungi object with opposite grow direction, growing right
     fungiObj = new Fungi(currY + 1, randomX + 1, false, totalFungiIndex++);
     fungiObj.expandXDir = 1;
     grid[currY + 1][randomX + 1] = 'fungi';
     elements.fungi.fungiElements.push(fungiObj);
     fungiObj.parentRoot = rootObj;
 
+    let boundaryX = randomX;
 
+    // RandomX for next elements
     randomX = Math.round(Math.random() * (90 - 60) + 60);
+    // Set boundary to fungi growing towards the next fungi for cellular automata
+    fungiObj.calculateBoundary(boundaryX, randomX);
 
     // 80 75
+    // Middle fungi can grow to the left fungi object
     fungiObj = new Fungi(currY + 1, randomX - 1, false, totalFungiIndex++);
     fungiObj.expandXDir = -1;
     grid[currY+1][randomX - 1 ] = 'fungi';
     elements.fungi.fungiElements.push(fungiObj);
+
+    // Calculate boundary with previous fungi
+    fungiObj.calculateBoundary(boundaryX, randomX);
+    // Update it with current middle fungi X
+    boundaryX = randomX;
 
     grid[currY + 1][randomX] = 'fungi';
 
@@ -533,13 +544,20 @@ function drawAutomatically() {
     elements.fungi.fungiElements.push(fungiObj);
     fungiObj.parentRoot = rootObj;
 
+
     randomX = Math.round(Math.random() * (160 - 120) + 120);
+    // Calculate boundary with next fungi
+    fungiObj.calculateBoundary(boundaryX, randomX);
 
     // 81 140
     fungiObj = new Fungi(currY + 1, randomX - 1, false, totalFungiIndex++);
     fungiObj.expandXDir = -1;
     grid[currY + 1][randomX - 1] = 'fungi';
     elements.fungi.fungiElements.push(fungiObj);
+    // Calculate boundary with previous fungi
+    fungiObj.calculateBoundary(boundaryX, randomX);
+    console.log(fungiObj.boundaryXWithOtherFungi, fungiObj.x);
+
 
     grid[currY + 1][randomX] = 'fungi';
 
@@ -555,6 +573,7 @@ function drawAutomatically() {
     grid[currY + 1][randomX + 1] = 'fungi';
     elements.fungi.fungiElements.push(fungiObj);
     fungiObj.parentRoot = rootObj;
+
     // Call any other functions required to render the grid on the canvas.
 }
 

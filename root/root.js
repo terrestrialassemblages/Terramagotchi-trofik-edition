@@ -131,7 +131,7 @@ export default class RootStructure {
     canGrow(y, x, yDir, xDir, isFungi, forbElements) {
         let count = 0;
         // If exceeds boundaries
-        if (y > gridHeight || y < globalY || x < 0 || x > gridWidth) {
+        if (y > gridHeight -1 || y < globalY || x < 0 + 1 || x > gridWidth - 1) {
             return false;
         }
 
@@ -141,19 +141,24 @@ export default class RootStructure {
                 for (let element of forbElements) {
                     let newY = y + (yDir * spaceY);
                     let newX = x + (xDir * spaceX);
+                    // Exceeded boundary. Stil grow as long as current location is not exceeding boundaries but this will mean future growth is limited
                     if (newY > gridHeight - 1 || newY < globalY + 1 || newX > gridWidth - 1 || newX < 0 + 1) {
                         continue;
                     }
+                    // Nearby is a forbidden element
                     if (grid[newY][newX] == element) {
                         // canGrow is called at the location that we want to grow in, so it could be checking the original location
                         if (element == grid[this.y][this.x] && (newY == this.y && newX == this.x)) {
                             continue;
                         }
                         // Get a pass even if it is another fungi to encourage cellular automata
-                        else if (element == 'fungi' && isFungi == true && (this.length / this.maxGrowthLength >= 0.5 && count < 1)) {
-                            console.log("EXCEMPTION");
-                            count++;
-                            continue;
+                        // (this.length / this.maxGrowthLength >= 0.5
+                        else if (isFungi == true && element == 'fungi' && this.boundaryXWithOtherFungi != null && spaceX > 0 && count < 1) {
+                            // In the boundary with other fungi object and is growing horizontally
+                            if ((this.expandXDir == -1 && x < this.boundaryXWithOtherFungi) ||  (this.expandXDir == 1 && x > this.boundaryXWithOtherFungi)) {
+                                count++;
+                                continue;
+                            }
                         }
                         return false;
                     }
@@ -167,7 +172,6 @@ export default class RootStructure {
             }
             return false;
         }
-        //console.log("FUNGI CAN INDEED GROW HERE", y, x, xDir);
         return true;
     }
 
@@ -327,7 +331,8 @@ export default class RootStructure {
                 newXDir = -(this.expandXDir);
                 console.log("BRANCING DIAG", finalGrowY, finalGrowX);
             }*/
-            //console.log("CHECKING BRANCH", newXDir);
+
+            // Checking if it can grow for new branch values
             if (this.canGrow(newY, newX, newYDir, newXDir, isFungi, this.forbElements)) {
                 branchRoot = [newY, newX, newYDir, newXDir];
             }
