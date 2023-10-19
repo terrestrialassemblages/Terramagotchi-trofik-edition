@@ -62,7 +62,11 @@ signInAnonymously(auth)
                         push(instanceDB, value)
                         .then(() => {
                             console.log('Data added to DB: ' + type);
-                            updateStatus("Successfully sent " + type + "!");
+                            if (type == 'time') {
+                                updateStatus("Successfully changed time!");
+                            } else {
+                                updateStatus("Successfully sent " + type + "!");
+                            }
                         })
                         .catch((error) => {
                             console.error('Error adding data to DB: ', error);
