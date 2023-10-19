@@ -37,7 +37,7 @@ export function connectToDB() {
         createQR();
 
         // Remove older instances in the DB, if there are more than specified
-        removeOldInstances(database, 10);
+        removeOldInstances(database, 50);
 
         // DB listener, runs when a new user action is detected
         onChildAdded(instanceDB, (snapshot) => {
