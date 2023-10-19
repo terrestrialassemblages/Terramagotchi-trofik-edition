@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta name="viewport" content="width=device-width">
+    <!-- <meta content="width=device-width, initial-scale=1.0" name="viewport"/> -->
     <title>Terramagotchi Trōfik Edition</title>
     <style>
         /* Add this to your existing CSS styles */
@@ -96,7 +97,7 @@
             top: 0;
             left: 0;
             width: 100vw;  /* 100% of viewport width */
-            height: 100vh;  /* 100% of viewport height */
+            height: 100vh;  /*100% of viewport height */
             background: linear-gradient(to bottom, rgb(56, 58, 58), rgb(75, 87, 92));
             z-index: 999;
             opacity: 0;
@@ -109,7 +110,7 @@
             top: 0;
             left: 0;
             width: 100vw;  /* 100% of viewport width */
-            height: 100vh;  /* 100% of viewport height */
+            height: 100vh;  /*100% of viewport height */
             background: linear-gradient(to bottom, rgb(32, 34, 34), rgb(67, 85, 92));
             z-index: -1;
             opacity: 0;
@@ -173,10 +174,11 @@
         <div class="gradient-layer1"></div>
         <div class="gradient-layer2"></div>
         <div class="layer-night"></div>
+        <div class="layer-night-multiply"></div>
 
         <canvas height="600" id="sandCanvas" width="800"></canvas>
         <canvas height="600" id="topCanvas" width="800"></canvas>
-        <div class="layer-night-multiply"></div>
+        
     </div>
 
     <div id="image-container" style="width:100%; height:100%;">
@@ -199,8 +201,6 @@
         document.getElementById('topCanvas').width = window.innerWidth;
         document.getElementById('topCanvas').height = window.innerHeight;
 
-        
-
         // Your remote_url value
         const remote_url = "your_remote_url_here";
 
@@ -218,10 +218,12 @@
         qrFrame.style.width = `${qrSize}px`;
         qrFrame.style.height = `${qrSize}px`;
 
-        // More of your existing JavaScript code
+
         // Get the gradient layers by class name
         const gradientLayer1 = document.querySelector('.gradient-layer1');
         const gradientLayer2 = document.querySelector('.gradient-layer2');
+        const layerNight = document.querySelector('.layer-night');
+        const layerNightMultiply = document.querySelector('.layer-night-multiply');
 
         // Set the dimensions to cover the entire viewport
         gradientLayer1.style.width = `${window.innerWidth}px`;
@@ -229,6 +231,12 @@
 
         gradientLayer2.style.width = `${window.innerWidth}px`;
         gradientLayer2.style.height = `${window.innerHeight}px`;
+
+        layerNight.style.width = `${window.innerWidth}px`;
+        layerNight.style.height = `${window.innerHeight}px`;
+
+        layerNightMultiply.style.width = `${window.innerWidth}px`;
+        layerNightMultiply.style.height = `${window.innerHeight}px`;
 
         // Set the position to start at the top-left corner
         gradientLayer1.style.position = 'fixed';
@@ -239,9 +247,13 @@
         gradientLayer2.style.top = '0';
         gradientLayer2.style.left = '0';
 
+        layerNight.style.position = 'fixed';
+        layerNight.style.top = '0';
+        layerNight.style.left = '0';
 
-
-
+        layerNightMultiply.style.position = 'fixed';
+        layerNightMultiply.style.top = '0';
+        layerNightMultiply.style.left = '0';
 
     </script>
 </body>

@@ -21,13 +21,8 @@ import { connectToDB } from './firebase.js';
 export const canvas = document.getElementById('sandCanvas');
 const ctx = canvas.getContext('2d');
 
-
-
-
-
 export const gridWidth = 200;  // Change for finer granularity
 export const gridHeight = 150; // Change for finer granularity
-
 
 export let ratio = 1.0;
 let pixelSize = Math.ceil(4 * (canvas.height / 600));
@@ -35,19 +30,12 @@ if(canvas.width > canvas.height && canvas.width/canvas.height >1.33){
     pixelSize = Math.ceil(4 * (canvas.width / 800));
 }
 
-
 export let globalY = Math.ceil(canvas.height/3/pixelSize);
 export let rangeX = Math.ceil(canvas.width/pixelSize);
-
-
 
 export let cellSize = pixelSize;
 export const topCanvas = document.getElementById('topCanvas');
 const ctxTop = topCanvas.getContext('2d');
-
-
-
-
 
 export let topGrid = Array(gridHeight).fill().map(() => Array(gridWidth).fill(null));
 export let grid = Array(gridHeight).fill().map(() => Array(gridWidth).fill(null));
@@ -63,9 +51,11 @@ export let fungiIndex = 0;
 export let totalFungiIndex = 0;
 export let envTimeCounter = 0;
 
+
 // Bacteira related variables
 export let timeMove = 0;
 export let chosenDirection = null;
+
 
 // water related variables
 export let timeWaterSink = 0;
@@ -604,6 +594,8 @@ function handleFullScreenChange() {
 
     const gradientLayer1 = document.querySelector('.gradient-layer1');
     const gradientLayer2 = document.querySelector('.gradient-layer2');
+    const layerNight = document.querySelector('.layer-night');
+    const layerNightMultiply = document.querySelector('.layer-night-multiply');
 
     // Set the dimensions to cover the entire viewport
     gradientLayer1.style.width = `${window.innerWidth}px`;
@@ -611,6 +603,12 @@ function handleFullScreenChange() {
 
     gradientLayer2.style.width = `${window.innerWidth}px`;
     gradientLayer2.style.height = `${window.innerHeight}px`;
+
+    layerNight.style.width = `${window.innerWidth}px`;
+    layerNight.style.height = `${window.innerHeight}px`;
+
+    layerNightMultiply.style.width = `${window.innerWidth}px`;
+    layerNightMultiply.style.height = `${window.innerHeight}px`;
 
 
     cellSize = Math.ceil(4 * (canvas.height / 600));

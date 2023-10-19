@@ -62,7 +62,11 @@ signInAnonymously(auth)
                         push(instanceDB, value)
                         .then(() => {
                             console.log('Data added to DB: ' + type);
-                            updateStatus("Successfully sent " + type + "!");
+                            if (type == 'time') {
+                                updateStatus("Successfully changed time!");
+                            } else {
+                                updateStatus("Successfully sent " + type + "!");
+                            }
                         })
                         .catch((error) => {
                             console.error('Error adding data to DB: ', error);
@@ -121,7 +125,7 @@ const descriptions = {
     waterInfo: "Water is an essential element for sustaining all forms of life. Water droplets are held in organic matter, and in cracks and crevices in the soil. It can be retained for longer periods as it goes deeper into the soil, thus increasing drought resistance.",
     rootInfo: "The underground structure of plants allows the intake of water and nutrients from the soil. They extend and flourish in areas rich in aggregated soil and fungi, optimizing their growth and nourishment. With minimal space between the soil particles, plant roots can only grow deeper into the soil when the microbes (bacteria and fungi) form aggregates to create larger paths.",
     fungiInfo: "The white roots or hyphae of fungi play a crucial role in providing the plant with soil minerals, decomposing organic matter, and binding microaggregates (soil particles) together to form macroaggregates. This enhances soil structure and nutrient availability for the plant.",
-    sugarInfo: "Liquid sugars containing the nutrients the plant needs are created at the plant roots which feed the bacteria in the soil. Predatory organisms such as nematodes consume these bacteria and the waste produced are then absorbed by the plant, it to obtain the necessary nutrients needed.",
+    sugarInfo: "Liquid sugars are created by the plant and exuded through the roots to  exchange with water and nutrients from beneficial fungi and bacteria. Predatory microbes (like protozoa and nematodes) consume these bacteria, with the waste product being nutrients that are easily taken up by the plant roots.",
     bacteriaInfo: "Bacteria travels around the soil searching for liquid sugar to feed on. They interact with other clusters of bacteria to form the “glue” to bind the sand, silt, and clay into microaggregates. This aggregates the soil together to form spaces for the plant root to grow through."
 };
 

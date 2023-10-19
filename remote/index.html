@@ -16,9 +16,11 @@
     <!-- space out evenly vertically, with full screen height -->
     <div class="flex flex-col justify-evenly h-full">
 
+        <div>
+        </div>
 
         <div id="instanceInfo" class="flex flex-col mx-auto">
-            <div class=" flex flex-col text-center">
+            <div class="flex flex-col text-center">
                 <p> Connected to instance: </p>
                 <p id="instanceID" class="font-bold text-xl"> Loading... </p>
             </div>
@@ -46,12 +48,11 @@
                     <p class="m-auto"> CHEMICALS </p>
                 </button>
 
-                <!-- BUTTON TO CHANGE TIME (FUCTION NOT IMPLEMENTED YET) -->
                 <button id="changeTime" class="flex items-center my-2 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-8 rounded">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 float-left">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 float-left" style="display: block; margin-right: 5px;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg> 
-                    <p class="m-auto"> CHANGE TIME </p>
+                    <p class="m-auto ml-2 "> CHANGE TIME </p>
                 </button> 
 
             </div>
@@ -93,7 +94,7 @@
             </div>
 
             <div class="flex flex-row justify-center text-center my-2">
-                <p id="elementInfo" class="text-sm mx-2 max-w-2xl"> Click to show what each element does! </p>
+                <p id="elementInfo" class="text-sm mx-5 max-w-2xl"> Click to show what each element does! </p>
             </div>
             
         </div>
