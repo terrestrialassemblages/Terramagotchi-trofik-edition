@@ -56,11 +56,34 @@ export function bacteriaBehavior (y, x, grid){
             let newX = x + chosenDirection.dx;
 
             if (topGrid[newY][newX] === 'liquidSugar') {
-                
+    
                 topGrid[newY][newX] = null;
-                elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], newX, newY, 400000, grid[newY][newX]));
+                
+                // Create bacteria at the original position
+                elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], newX, newY, 4000, grid[newY][newX]));
                 grid[newY][newX] = 'bacteria';
-            } else {
+            
+                const numberOfBacteria = 3; // Number of bacteria to generate
+                const range = 3; // The range within which to generate bacteria
+            
+                for (let i = 0; i < numberOfBacteria; i++) {
+                    const randomDX = Math.floor(Math.random() * (range * 2 + 1)) - range;
+                    const randomDY = Math.floor(Math.random() * (range * 2 + 1)) - range;
+            
+                    const x = newX + randomDX;
+                    const y = newY + randomDY;
+            
+                    // Check grid boundaries if needed
+                    if (x >= 0 && x < grid[0].length && y >= 0 && y < grid.length) {
+                        
+                        topGrid[y][x] = null;
+                        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], x, y, 4000, grid[y][x]));
+                        grid[y][x] = 'bacteria';
+                        
+                    }
+                }
+            }
+             else {
                 currentBac.bacteriaMovement(newY, newX, grid, processed);
             }
             
@@ -124,7 +147,7 @@ export function generateBacterial() {
         const randomX = Math.floor(Math.random() * (200 - 0 + 1)) + 0;
         const randomY = Math.floor(Math.random() * ((currY+20) - currY + 1)) + currY;
         if (grid[randomY][randomX]== 'soil') {
-            elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 400000))
+            elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 4000))
             grid[randomY][randomX] = 'bacteria';
             //grid[randomY+1][randomX+1] = 'bacteria';
         }
@@ -146,7 +169,7 @@ export function generateBacterial() {
         }
 
 
-        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 400000))
+        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 4000))
 
 
     }
@@ -162,7 +185,7 @@ export function generateBacterial() {
         }
 
 
-        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 400000))
+        elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], randomX, randomY, 4000))
 
 
     }

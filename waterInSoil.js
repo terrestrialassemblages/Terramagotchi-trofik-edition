@@ -13,9 +13,16 @@ export function waterInSoilBehavior(y, x, grid){
         topGrid[y][x] = null;
         return;
     }
+
+    /*
+    if(topGrid[y + 1][x] === 'chemInWater'){
+        topGrid[y + 1][x] = null;
+    }  
+    */  
+    
     // If no block below, remove
     if (topGrid[y + 1][x] === null && (grid[y + 1][x] === 'soil' || grid[y + 1][x] === 'fungi'
-    || grid[y + 1][x] === 'root' || grid[y + 1][x] === 'rootTip')) {
+    || grid[y + 1][x] === 'root' || grid[y + 1][x] === 'rootTip' ||topGrid[y + 1][x] === 'chemInWater')) {
         //console.log(elements.soil.soilAlpha[(y+1) + "," + x])
         if (timeWaterSink % 60 == 0) {
 
@@ -41,7 +48,7 @@ export function waterInSoilBehavior(y, x, grid){
         }
         
     }
-    else if (topGrid[y + 1][x] === 'waterInSoil' || topGrid[y + 1][x] === 'liquidSugar' || topGrid[y + 1][x] === 'chemInWater'){
+    else if (topGrid[y + 1][x] === 'waterInSoil' || topGrid[y + 1][x] === 'liquidSugar'){
         topGrid[y][x] = null;
     }
     else{

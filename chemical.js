@@ -1,4 +1,6 @@
 import { elements, grid, topGrid, gridHeight, timeWaterSink, gridWidth, globalY} from "./sandSim.js";
+let life_span = 20;
+import {sunShow, sunValue} from './weather.js';
 
 export function chemicalBehavior(y, x, grid, gridHeight, topGrid) {
     const gridWidth = topGrid[0].length;
@@ -95,6 +97,28 @@ export function generateChemical(y, x) {
 }
 
 export function chemInWaterBehavior(y, x, gridHeight) {
+    if (sunShow) {
+        // Introduce a random factor to decide whether life_span should decrease.
+        let randomFactor = Math.random();  // This will generate a random number between 0 and 1
+        
+        // Calculate the probability for life_span to not decrease
+        // assuming sunValue is between 0 and 10.
+        let noDecreaseProbability = (10 - sunValue) / 10;
+
+        // Only decrease the life_span if the random factor is greater than the calculated probability.
+        if (randomFactor >= noDecreaseProbability) {
+            life_span--;
+            
+        }
+        // If life_span is 0, evaporate the water
+        if (life_span <= 0) {
+            //console.log(topGrid[y][x])
+            topGrid[y][x] = null;
+            //console.log(topGrid[y][x])
+            life_span = 20;
+            return;
+        }
+    }
     if (topGrid[y + 1][x] === 'chemInWater'){
         if (topGrid[y + 2][x] === 'chemInWater'){
             topGrid[y][x] = null;
@@ -108,16 +132,19 @@ export function chemInWaterBehavior(y, x, gridHeight) {
         }
     }
 
+    /*
     if (y + 1 == globalY){
         if (elements.soil.soilAlpha[(y+1) + "," + x] >= 0.5){
             return;
         }
     }
+    */
 
     // Check if the bottom is empty; if yes, move downward
     if (y + 1 < gridHeight && topGrid[y + 1][x] === null && grid[y + 1][x] === null) {
         topGrid[y + 1][x] = 'chemInWater';
         topGrid[y][x] = null;
+        life_span +=130;
         return;
     }
     // If the element below is 'chemical', then flow sideways
@@ -139,11 +166,27 @@ export function chemInWaterBehavior(y, x, gridHeight) {
         }
     }
 
+    if (grid[y][x] == 'fungi'){
+        grid[y][x] = 'soil';
+
+        let randomFac = Math.random();  // This will generate a random number between 0 and 1
+        
+        let restoreProbability = 0.4
+
+        // Only decrease the life_span if the random factor is greater than the calculated probability.
+        if (randomFac >=restoreProbability) {
+            //restoreFungi
+            
+        }
+        //topGrid[y][x] = null;
+    }
+
     // If no block below, remove
     if (topGrid[y + 1][x] === null && (grid[y + 1][x] === 'soil' || grid[y + 1][x] === 'fungi'
     || grid[y + 1][x] === 'root' || grid[y + 1][x] === 'rootTip')) {
         //console.log(elements.soil.soilAlpha[(y+1) + "," + x])
         if (timeWaterSink % 60 == 0) {
+            life_span +=130;
 
             if (elements.soil.soilAlpha[(y+1) + "," + x] <= 0.7){
                 topGrid[y][x] = null;
@@ -163,6 +206,7 @@ export function chemInWaterBehavior(y, x, gridHeight) {
             }
         }
         else{
+            life_span --;
             topGrid[y][x] = 'chemInWater';
         }
         
@@ -172,8 +216,10 @@ export function chemInWaterBehavior(y, x, gridHeight) {
     }
     
     else{
+        life_span --;
         topGrid[y][x] = 'chemInWater';
     }
+
 
     
 }
