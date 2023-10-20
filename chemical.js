@@ -1,4 +1,6 @@
-import { elements, grid, topGrid, gridHeight, timeWaterSink, gridWidth, globalY} from "./sandSim.js";
+import RootStructure from "./root/root.js";
+import Fungi from "./fungi/fungi.js";
+import { elements, grid, topGrid, gridHeight, timeWaterSink, gridWidth, globalY, totalFungiIndex, incrementTotalFungiIndex } from "./sandSim.js";
 let life_span = 20;
 import {sunShow, sunValue} from './weather.js';
 
@@ -176,7 +178,32 @@ export function chemInWaterBehavior(y, x, gridHeight) {
         // Only decrease the life_span if the random factor is greater than the calculated probability.
         if (randomFac >=restoreProbability) {
             //restoreFungi
-            
+            // Find the connected fungi around this location, prioritise from above
+            console.log("Trying to regrow fungi");
+            outerloop:
+                for (let i = -1; i <= 1; i++) {
+                    for (let j = -1; j <= 1; j++) {
+                        if (grid[y + i][x + j] == 'fungi') {
+                            // Create new fungi tip at this location
+                            // Direction shouldn't matter
+                            let restoredFungi = new Fungi(y + i, x + j, false, totalFungiIndex);
+                            elements.fungi.fungiElements.push(restoredFungi);
+                            incrementTotalFungiIndex(totalFungiIndex + 1);
+                            // Adjust class variables
+                            // Give it a rough length
+                            restoredFungi.length = Math.round(1.3 * Math.abs(y - globalY));
+                            restoredFungi.growthSpeedLimit = 2200;
+                            // If it can't grow in the randomised x direction, change it
+                            if (restoredFungi.expandRoot(elements.fungi.fungiElements, true) == false) {
+                                restoredFungi.expandXDir *= -1;
+                            }
+                            // Update growth speed will be called once in expandRoot already if it is true but thats fine as it is a "regrowing" fungi, so growing slower initially is fine
+                            restoredFungi.updateGrowthSpeed();
+                            console.log("Grew fungi", restoredFungi);
+                            break outerloop;
+                        }
+                    }
+                }
         }
         //topGrid[y][x] = null;
     }

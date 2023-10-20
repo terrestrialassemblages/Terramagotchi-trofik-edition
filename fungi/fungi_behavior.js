@@ -35,21 +35,22 @@ export function fungiBehavior(y, x, grid) {
                         DecrementFungiIndex(fungiIndex - 1);
                     }
                     else {
-                        curr.updateSpacing();
+                        //curr.updateSpacing();
                         if (expandRoot != null) {
                             // Create branch fungi object
                             let branchRoot = new Fungi(expandRoot[0], expandRoot[1], false, totalFungiIndex);
                             incrementTotalFungiIndex(totalFungiIndex + 1);
-                            // Add it to root tip array
-                            branchRoot.parentRoot = curr.parentRoot;
-                            curr.parentRoot.parentFungi.push(branchRoot);
+                            if (curr.parentRoot != null) {
+                                // Add it to root tip array
+                                branchRoot.parentRoot = curr.parentRoot;
+                                curr.parentRoot.parentFungi.push(branchRoot);
+                            }
                             // Update all the variables
                             branchRoot.expandYDir = expandRoot[2];
                             branchRoot.expandXDir = expandRoot[3];
                             // If heading in the same direction, same boundary
                             if (branchRoot.expandXDir == curr.expandXDir) {
                                 branchRoot.boundaryXWithOtherFungi = curr.boundaryXWithOtherFungi;
-                                console.log("SAME BOUNDARY", branchRoot.expandXDir, branchRoot.boundaryXWithOtherFungi, branchRoot);
                             }
                             branchRoot.branchCount = --curr.branchCount;
                             branchRoot.length = curr.length + 1;
@@ -67,7 +68,8 @@ export function fungiBehavior(y, x, grid) {
                                 branchRoot.branchProb = 0.75;
                             }
                             branchRoot.spacing = curr.spacing;
-                            branchRoot.updateSpacing();
+                            // Spacing to make it more spread out towards the bottom
+                            //branchRoot.updateSpacing();
                             // Add to general fungi array
                             elements.fungi.fungiElements.push(branchRoot);
                             grid[branchRoot.y][branchRoot.x] = 'fungi';

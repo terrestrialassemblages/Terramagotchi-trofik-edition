@@ -26,9 +26,17 @@ export default class RootTip extends RootStructure {
         If those don't work, then move horizontally
         checkedLength is a counter of path length and when it is 3, stop */
         let finalGrowBool = false;
+        // If it is an aggregate
+        if (checkedLength == 0) {
+            if (grid[y][x] == 'aggregate') {
+                return false;
+            }
+        }
         if (checkedLength >= 3) {
             return true;
         }
+        // Check future path to see if there is a path
+
         // Check boundaries as it will also be checking the 3 blocks below it 
         if (y > gridHeight - 2 || y < globalY || x > gridWidth - 2 || x < 0 + 2) {
             // Already grew at least once and it reached the boundary after which is still valid

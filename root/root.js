@@ -249,6 +249,8 @@ export default class RootStructure {
             if (this.canGrow(this.y - 1, this.x + this.expandXDir, -1, this.expandXDir, isFungi, this.forbElements)) {
                 finalGrowDir = [-1, this.expandXDir];
                 this.expandYDir = -1;
+                // Limit upward growth
+                this.maxGrowthLength = this.length + 5;
             }
             else {
                 remove = true;
@@ -259,8 +261,10 @@ export default class RootStructure {
         if (remove == true) {
             elementsArray.splice(this.index, 1);
             if (isFungi) {
-                // Remove from parent root array
-                this.parentRoot.parentFungi.splice(this.parentRoot.parentFungi.indexOf(this), 1);
+                if (this.parentRoot != null) {
+                    // Remove from parent root array
+                    this.parentRoot.parentFungi.splice(this.parentRoot.parentFungi.indexOf(this), 1);
+                }
                 decrementTotalFungiIndex(totalFungiIndex - 1);
                 // Update the index of all the fungiElements above it
                 for (let i = this.index; i < totalFungiIndex; i++) {
@@ -343,7 +347,7 @@ export default class RootStructure {
             // Increase changes of branching
             this.brancProb += 0.02;
         }
-
+        
         if (!isFungi) {
             grid[this.y][this.x] = 'root';
         }
