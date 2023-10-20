@@ -1,7 +1,7 @@
 import RootStructure from './root/root.js';
 import Fungi from './fungi/fungi.js';
 import RootTip from './root/rootTip.js';
-import { plantAt, updatePlantGrowth, plantPattern } from './plant/plant_behavior.js';
+import { plantAt, updatePlantGrowth } from './plant/plant_behavior.js';
 //import {calculateSoilColor} from './aggregate_behavior.js';
 import { updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor } from './aggregate/aggregate_behavior.js';
 import { chemicalBehavior, generateChemical, chemInWaterBehavior} from './chemical.js';
