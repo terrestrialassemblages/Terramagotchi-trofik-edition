@@ -88,10 +88,10 @@ export default class RootStructure {
             this.growthSpeed = timeStep + (speedCap * this.boostValue);
         }
         else {
-            console.log("BEFORE:", this.growthSpeed, this);
+            //console.log("BEFORE:", this.growthSpeed, this);
             this.growthSpeed = Math.min((Math.round(baseIncrement * this.growthSpeed)), this.growthSpeed + (speedCap * this.boostValue));
             this.growthSpeed = Math.round(this.growthSpeed * TIMEPLACEHOLDER);
-            console.log("AFTER:", this.growthSpeed, this);
+            //console.log("AFTER:", this.growthSpeed, this);
         }
     }
 

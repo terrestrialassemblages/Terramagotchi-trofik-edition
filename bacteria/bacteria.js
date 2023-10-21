@@ -1,5 +1,5 @@
 
-import { elements, topGrid } from '../sandSim.js';
+import { elements, topGrid, lifescale } from '../sandSim.js';
 import { findBacteriaByPosition } from './bacteria_behavior.js';
 import { updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor } from '../aggregate/aggregate_behavior.js';
 
@@ -27,7 +27,7 @@ export default class Bacteria {
     };
 
     decreaseLifespan() {
-        this.lifespan--;
+        this.lifespan-=(1*lifescale);
     }
 
     die() {
@@ -153,7 +153,7 @@ export default class Bacteria {
         const gridWidth = grid[0].length;
 
         if (this.aggregateCooldown > 0) {
-            this.aggregateCooldown--;
+            this.aggregateCooldown-=(1*lifescale);
         }
 
         for (let dy = -DISTANCE; dy <= DISTANCE; dy++) {
@@ -187,7 +187,7 @@ export default class Bacteria {
 
         if (bacNum >= number) {
             if (this.aggregateCooldown <= 0) {
-                this.aggregateCooldown = 4000; //adjust value to change how often bacteria can form aggregates
+                this.aggregateCooldown = 8000; //adjust value to change how often bacteria can form aggregates
                 return true;
             }
 

@@ -149,7 +149,7 @@ export default class RootTip extends RootStructure {
 
     boostGrowthSpeed(boostInput) {
         // boostValue will either be sunValue since sun affects growthSpeed or water
-        console.log("Boost value initial", this.boostValue, boostInput);
+        //console.log("Boost value initial", this.boostValue, boostInput);
         // Max will be 1.25, min will be 0.75
         if (boostInput == 0) {
             this.boostValue = 1.25;
@@ -160,7 +160,7 @@ export default class RootTip extends RootStructure {
         }
         if (this.growthSpeed > timeStep) {
             this.growthSpeed = Math.round(this.growthSpeed * this.boostValue);
-            console.log("Boosting value", this.growthSpeed, this.boostValue);
+            //console.log("Boosting value", this.growthSpeed, this.boostValue);
 
         }
     }

@@ -38,7 +38,7 @@ export function bacteriaBehavior (y, x, grid){
 
     if (ifNear) {
         //console.log(timeMove % elements.bacteria.frameTimer);
-        if (timeMove % elements.bacteria.frameTimer == 0) {
+        if (timeMove % (elements.bacteria.frameTimer) == 0) {
 
             changeChosenDirection(priorityDirection);
 
@@ -60,7 +60,7 @@ export function bacteriaBehavior (y, x, grid){
                 topGrid[newY][newX] = null;
                 
                 // Create bacteria at the original position
-                elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], newX, newY, 4000, grid[newY][newX]));
+                elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], newX, newY, 2000, grid[newY][newX]));
                 grid[newY][newX] = 'bacteria';
             
                 const numberOfBacteria = 3; // Number of bacteria to generate
@@ -73,6 +73,7 @@ export function bacteriaBehavior (y, x, grid){
                     const x = newX + randomDX;
                     const y = newY + randomDY;
             
+                    /*
                     // Check grid boundaries if needed
                     let newBac = 0
                     if (x >= 0 && x < grid[0].length && y >= 0 && y < grid.length) {
@@ -89,6 +90,7 @@ export function bacteriaBehavior (y, x, grid){
                         
                         
                     }
+                    */
                 }
             }
              else {
@@ -145,7 +147,7 @@ export function findBacteriaByPosition(bacteriaElements, x, y) {
 export function generateBacterial() {
     let currY = globalY;
 
-    const assignRandomLife = () => Math.floor(Math.random() * (4000 - 3000 + 1)) + 3000;
+    const assignRandomLife = () => Math.floor(Math.random() * (3000 - 2000 + 1)) + 2000;
 
     for (let i = 0; i < 50; i++) {
         const randomX = Math.floor(Math.random() * (200 - 0 + 1)) + 0;

@@ -18,6 +18,8 @@ import { connectToDB } from './firebase.js';
 
 
 export let TIMEPLACEHOLDER = 1;
+export let waterMoveTime = 1;
+export let lifescale = 1;
 
 // Initialize canvas
 export const canvas = document.getElementById('sandCanvas');
@@ -212,9 +214,26 @@ export function addToCanvas(element) {
         let randomX = Math.floor(Math.random() * rangeX);
         generateChemical(15, randomX);
     } else if (element == 'time') {
+        TIMEPLACEHOLDER = 0.1;
+        elements.bacteria.frameTimer = 3;
+        waterMoveTime = 6;
+        lifescale = 3;
+        //console.log('Initial:', TIMEPLACEHOLDER);
+        
+        // After 2 seconds (2000 milliseconds), set TIMEPLACEHOLDER back to 1
+        setTimeout(() => {
+            TIMEPLACEHOLDER = 1;
+            elements.bacteria.frameTimer = 15;
+            waterMoveTime = 1;
+            lifescale = 1;
+            //console.log('After setTimeout:', TIMEPLACEHOLDER);
+        }, 1000);
+        
+        //console.log('Before setTimeout executes:', TIMEPLACEHOLDER);
         setTime();
         resetLifeSpan();
     }
+    
 }
 
 elements.liquidSugar.behavior.push(function (y, x, grid) {
