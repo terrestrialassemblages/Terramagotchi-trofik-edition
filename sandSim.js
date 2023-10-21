@@ -555,7 +555,6 @@ function drawAutomatically() {
     elements.fungi.fungiElements.push(fungiObj);
     // Calculate boundary with previous fungi
     fungiObj.calculateBoundary(boundaryX, randomX);
-    console.log(fungiObj.boundaryXWithOtherFungi, fungiObj.x);
 
 
     grid[currY + 1][randomX] = 'fungi';

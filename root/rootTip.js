@@ -7,7 +7,7 @@ import { totalRootIndex, decrementTotalRootIndex } from '../sandSim.js';
 
 export default class RootTip extends RootStructure {
     constructor(startingY, startingX, fungiParent, index) {
-        super(startingY, startingX, 4, 500, 'rootTip', 1, index);
+        super(startingY, startingX, 2, 500, 'rootTip', 1, index);
         this.parentFungi = new Array();
         this.parentFungi.push(fungiParent);
         this.developed = false;    // If root is not developed, it will grow. If fully developed, it will produce sugar instead of growing
@@ -16,7 +16,9 @@ export default class RootTip extends RootStructure {
         this.branchCount = 5;
         // Max cap for speed
         this.growthSpeedLimit = 2200;
-
+        this.sugarProducedCount = 0;
+        this.sugarProduceSpeed = 0;
+        this.increaseLengthBool = false;
         //console.log(this.parentFungi);
     }
 
@@ -77,17 +79,31 @@ export default class RootTip extends RootStructure {
             else {
                 // Let it continue growing to free up some more space
                 this.developed = false;
-                this.maxGrowthLength++;
+                if (this.sugarProduceSpeed == 0) {
+                    this.maxGrowthLength++;
+                }
             }
+        }
+        if (this.sugarProduceSpeed == 0) {
+            this.updateGrowthSpeed();
         }
     }
 
     // Function to check if liquid sugar has been eaten. If yes, allows root to grow larger
     sugarEaten() {
         if (this.developed == true && grid[this.y + 1][this.x] == 'bacteria') {
-            // Increase max length of rootTip
+            if (this.sugarProduceSpeed == 0) {
+                // Increase max length of rootTip
+                this.maxGrowthLength += 2;
+            }
             this.developed = false;
-            this.maxGrowthLength += 2;
+
+            if (this.length > 8 && this.sugarProducedCount == 0) {
+                this.sugarProduceSpeed = timeStep + Math.round((this.growthSpeed - timeStep) / (3 + 1 - this.sugarProducedCount));
+            }
+            else if (this.length <= 8 && this.sugarProducedCount == 0) {
+                this.sugarProduceSpeed = timeStep + Math.round((this.growthSpeed - timeStep) / (2 + 1 - this.sugarProducedCount));
+            }
 /*            for (let i = 0; i < this.parentFungi.length; i++) {
                 this.parentFungi[i].expandRoot(elements.fungi.fungiElements, true);
             }*/
@@ -104,5 +120,29 @@ export default class RootTip extends RootStructure {
             elements.rootTip.rootElements[i].index = i;
         }
 
+    }
+
+    produceSugarBeforeGrowth() {
+        this.sugarProducedCount++;
+        // Produce sugar
+        this.produceSugar();
+        if (this.length > 4) {
+            if (this.sugarProducedCount == 3) {
+                this.sugarProduceSpeed = 0;
+                this.sugarProducedCount = 0;
+                this.increaseLengthBool = true;
+                return;
+            }
+            this.sugarProduceSpeed = timeStep + Math.round((this.growthSpeed - timeStep) / (3 + 1 - this.sugarProducedCount));
+        }
+        else {
+            if (this.sugarProducedCount == 2) {
+                this.sugarProduceSpeed = 0;
+                this.sugarProducedCount = 0;
+                this.increaseLengthBool = true;
+                return;
+            }
+            this.sugarProduceSpeed = timeStep + Math.round((this.growthSpeed - timeStep) / (2 + 1 - this.sugarProducedCount));
+        }
     }
 }
