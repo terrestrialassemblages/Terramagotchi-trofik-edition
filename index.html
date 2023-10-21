@@ -181,9 +181,7 @@
         
     </div>
 
-    <div id="image-container" style="width:100%; height:100%;">
-        <img id="qrFrame" src="qrCodeFrame.png" alt="Background" style="width:100%; height:100%;">
-    </div>
+    <div id="image-container" style="width:100%; height:100%;"></div>
 
     <div id="qr-container" class="qr-overlay">
         <canvas id="qr-code"></canvas>
@@ -210,13 +208,9 @@
 
         // Set the size for both the QR code and the QR frame
         const qrContainer = document.getElementById('qr-container');
-        const qrFrame = document.getElementById('qrFrame');
-
         qrContainer.style.width = `${qrSize}px`;
         qrContainer.style.height = `${qrSize}px`;
 
-        qrFrame.style.width = `${qrSize}px`;
-        qrFrame.style.height = `${qrSize}px`;
 
 
         // Get the gradient layers by class name
