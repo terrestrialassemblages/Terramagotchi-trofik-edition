@@ -10,7 +10,7 @@ import { waterInSoilBehavior } from './weather/waterInSoil.js'
 import { soilBehavior } from './soil_behavior.js';
 import { rootBehavior } from './root/root_behavior.js';
 import { rootTipBehavior } from './root/roottip_behavior.js';
-import { sunShow, drawSun, rainTimeout, generateRain, rainShow, addSunvalue, reduceSunvalue, startRain, sunlight, getNextsunValue, sunValue, setTime } from './weather/weather.js';
+import { sunShow, drawSun, rainTimeout, generateRain, rainShow, addSunvalue, reduceSunvalue, changeRainShow, changeSunShow, startRain, sunlight, getNextsunValue, sunValue, setTime } from './weather/weather.js';
 import { drawGrass } from './grass_draw.js';
 import { findBacteriaByPosition, generateBacterial, bacteriaBehavior } from './bacteria/bacteria_behavior.js';
 import { fungiBehavior } from './fungi/fungi_behavior.js';
@@ -184,16 +184,18 @@ export function addToCanvas(element) {
     const x = Math.floor(Math.random() * (gridWidth - 0 + 1)) + 0;
     const y = 10;
 
-    if (element == 'water') {
+    if (element == 'addWater') {
         if (sunShow) {
             startRain();
         } else if (rainShow){
             clearTimeout(rainTimeout);
             startRain();
         }
-    } else if (element == 'chemical') {
-        let randomX = Math.floor(Math.random() * rangeX);
-        generateChemical(15, randomX);
+    } else if (element == 'stopRain') {
+        changeRainShow(false);
+        setTimeout(() => {
+            changeSunShow(true);
+        }, 1 * 1000);
     } else if (element == 'addSunvalue') {
         if (sunValue < 10) {
             addSunvalue();
@@ -204,6 +206,9 @@ export function addToCanvas(element) {
             reduceSunvalue();
             console.log('sunvalue: ', sunValue);
         }
+    } else if (element == 'chemical') {
+        let randomX = Math.floor(Math.random() * rangeX);
+        generateChemical(15, randomX);
     } else if (element == 'time') {
         setTime();
         resetLifeSpan();
