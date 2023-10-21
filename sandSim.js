@@ -10,7 +10,7 @@ import { waterInSoilBehavior } from './waterInSoil.js'
 import { soilBehavior } from './soil_behavior.js';
 import { rootBehavior } from './root/root_behavior.js';
 import { rootTipBehavior } from './root/roottip_behavior.js';
-import { sunShow, drawSun, rainTimeout, generateRain, rainShow, changeRainShow, changeSunShow, sunlight, getNextsunValue, sunValue, setTime } from './weather.js';
+import { sunShow, drawSun, rainTimeout, generateRain, rainShow, addSunvalue, reduceSunvalue, startRain, sunlight, getNextsunValue, sunValue, setTime } from './weather.js';
 import { drawGrass } from './grass_draw.js';
 import { findBacteriaByPosition, generateBacterial, bacteriaBehavior } from './bacteria/bacteria_behavior.js';
 import { fungiBehavior } from './fungi/fungi_behavior.js';
@@ -186,40 +186,25 @@ export function addToCanvas(element) {
 
     if (element == 'water') {
         if (sunShow) {
-            changeRainShow(true);
-            changeSunShow(false);
-
-            setTimeout(() => {
-                changeRainShow(false);
-            }, 10 * 1000);
-
-            setTimeout(() => {
-                changeSunShow(true);
-            }, 12 * 1000);
-
+            startRain();
         } else if (rainShow){
             clearTimeout(rainTimeout);
-
-            rainTimeout = setTimeout(() => {
-                changeRainShow(false);
-            }, 10 * 1000);
-
-            setTimeout(() => {
-                changeSunShow(true);
-            }, 12 * 1000);
+            startRain();
         }
     } else if (element == 'chemical') {
         let randomX = Math.floor(Math.random() * rangeX);
         generateChemical(15, randomX);
-
-
-    } else if (element == 'sunlight') {
-        changeRainShow(false);
-        setTimeout(() => {
-            changeSunShow(true);
-        }, 1 * 1000);
-    } 
-    else if (element == 'time') {
+    } else if (element == 'addSunvalue') {
+        if (sunValue < 10) {
+            addSunvalue();
+            console.log('sunvalue: ', sunValue);
+        }
+    } else if (element == 'reduceSunvalue') {
+        if (sunValue > 0) {
+            reduceSunvalue();
+            console.log('sunvalue: ', sunValue);
+        }
+    } else if (element == 'time') {
         setTime();
         resetLifeSpan();
     }

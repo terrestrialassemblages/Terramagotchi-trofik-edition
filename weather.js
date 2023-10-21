@@ -93,6 +93,13 @@ export function changeSunShow(boolean) {
     sunShow = boolean;
 }
 
+export function addSunvalue() {
+    sunValue++;
+}
+export function reduceSunvalue() {
+    sunValue--;
+}
+
 export function drawSun(ctx, canvas, pixelSize) {
     if (sunShow) {
         var div = document.querySelector('.gradient-layer2');
@@ -199,7 +206,7 @@ export function startRainCycle() {
 }
 */
 
-setInterval(() => {
+/*setInterval(() => {
     rainShow = true;  // Start rain
     sunShow = false;
 
@@ -211,5 +218,20 @@ setInterval(() => {
         sunShow = true;  // Show sun after 12s (10s rain + 2s nothing)
     }, 12 * 1000);
 
-}, 27 * 1000);
+}, 27 * 1000);*/
+
+export function startRain() {
+    changeRainShow(true); // Start rain
+    changeSunShow(false);
+
+    rainTimeout = setTimeout(() => {
+        changeRainShow(false); // Stop rain after 10s
+    }, 10 * 1000);
+
+    setTimeout(() => {
+        changeSunShow(true); // Show sun after 12s (10s rain + 2s nothing)
+    }, 12 * 1000);
+}
+
+setInterval(startRain, 27 * 1000);
 
