@@ -2,12 +2,12 @@ import RootStructure from './root.js';
 import { gridWidth, gridHeight } from '../sandSim.js';
 import { timeStep, globalY, elements } from '../sandSim.js';
 import { grid, topGrid, canvas } from '../sandSim.js';
-
+import { totalRootIndex, decrementTotalRootIndex } from '../sandSim.js';
 
 
 export default class RootTip extends RootStructure {
     constructor(startingY, startingX, fungiParent, index) {
-        super(startingY, startingX, 4, 500, 'rootTip', 900, 1, index);
+        super(startingY, startingX, 4, 500, 'rootTip', 1, index);
         this.parentFungi = new Array();
         this.parentFungi.push(fungiParent);
         this.developed = false;    // If root is not developed, it will grow. If fully developed, it will produce sugar instead of growing
@@ -94,5 +94,15 @@ export default class RootTip extends RootStructure {
             // this.growthSpeed = Math.round(this.growthSpeed * (2 / 3));
             //console.log("SUGAR EATEN, INCREASING LENGTH FOR ROOT: ", this.index);
         }
+    }
+
+    remove() {
+        elements.rootTip.rootElements.splice(this.index, 1);
+        decrementTotalRootIndex(totalRootIndex - 1);
+        // Update the index of all the rootElements above it
+        for (let i = this.index; i < totalRootIndex; i++) {
+            elements.rootTip.rootElements[i].index = i;
+        }
+
     }
 }

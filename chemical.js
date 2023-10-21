@@ -179,7 +179,6 @@ export function chemInWaterBehavior(y, x, gridHeight) {
         if (randomFac >=restoreProbability) {
             //restoreFungi
             // Find the connected fungi around this location, prioritise from above
-            console.log("Trying to regrow fungi");
             outerloop:
                 for (let i = -1; i <= 1; i++) {
                     for (let j = -1; j <= 1; j++) {
@@ -191,6 +190,7 @@ export function chemInWaterBehavior(y, x, gridHeight) {
                             incrementTotalFungiIndex(totalFungiIndex + 1);
                             // Adjust class variables
                             // Give it a rough length
+                            restoredFungi.regrow = true;
                             restoredFungi.length = Math.round(1.3 * Math.abs(y - globalY));
                             restoredFungi.growthSpeedLimit = 2200;
                             // If it can't grow in the randomised x direction, change it
@@ -199,7 +199,6 @@ export function chemInWaterBehavior(y, x, gridHeight) {
                             }
                             // Update growth speed will be called once in expandRoot already if it is true but thats fine as it is a "regrowing" fungi, so growing slower initially is fine
                             restoredFungi.updateGrowthSpeed();
-                            console.log("Grew fungi", restoredFungi);
                             break outerloop;
                         }
                     }
