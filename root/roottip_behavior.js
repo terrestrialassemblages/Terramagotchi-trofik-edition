@@ -26,7 +26,6 @@ export function rootTipBehavior(y, x, grid) {
             curr.produceSugarBeforeGrowth();
         }
 
-        console.log(totalRootIndex);
         // If sunValue changed, change growth speed
         if (sunValue != curr.prevSunValue) {
             curr.boostGrowthSpeed(sunValue);
@@ -84,6 +83,8 @@ export function rootTipBehavior(y, x, grid) {
                 branchRoot.parentFungi = curr.parentFungi;
                 branchRoot.sugarProduceSpeed = curr.sugarProduceSpeed;
                 branchRoot.sugarProduceCount = curr.sugarProduceCount;
+                branchRoot.boostValue = curr.boostValue;
+                branchRoot.prevSunValue = curr.preSunValue;
 
                 elements.rootTip.rootElements.push(branchRoot);
                 grid[branchRoot.y][branchRoot.x] = 'rootTip';

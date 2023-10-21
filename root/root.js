@@ -79,7 +79,7 @@ export default class RootStructure {
             speedCap = this.growthSpeedLimit;
         }
         // Introduce variability in speed for fungi
-        if (speedCap >= 900) {
+        if (speedCap >= 900 * TIMEPLACEHOLDER) {
             // Generate random speedCap between 75% and 100%
             speedCap = Math.round(Math.random() * (speedCap - (0.75 * speedCap)) + (0.75 * speedCap));
         }
@@ -90,6 +90,7 @@ export default class RootStructure {
         else {
             console.log("BEFORE:", this.growthSpeed, this);
             this.growthSpeed = Math.min((Math.round(baseIncrement * this.growthSpeed)), this.growthSpeed + (speedCap * this.boostValue));
+            this.growthSpeed = Math.round(this.growthSpeed * TIMEPLACEHOLDER);
             console.log("AFTER:", this.growthSpeed, this);
         }
     }
