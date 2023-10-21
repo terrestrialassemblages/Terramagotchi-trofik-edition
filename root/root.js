@@ -129,8 +129,8 @@ export default class RootStructure {
                     growIndex = Math.round(Math.random());
                 }
             }
-            // Encourage fungi to grow out
-            if (isFungi && growOptions.length == 3 && this.length < 10) {
+            // Encourage fungi to grow out in the beginning
+            if (isFungi && growOptions.length == 3 && this.length < 5) {
                 growIndex = Math.random() < 0.5 ? 0 : 2;
             }
             let testY = this.y;
@@ -231,13 +231,13 @@ export default class RootStructure {
         // 3 regular options
         let growOptions = [[this.expandYDir, this.expandXDir], [this.expandYDir, 0], [0, this.expandXDir]];
 
-        // Don't grow vertically, been growing vertically for 2 pixels or just grew horizontally to prevent 90 degrees turn
-        if (this.countY >= 2 || (this.countX > 0 && this.countX != 2)) {
+        // Don't grow vertically, been growing vertically for 3 pixels or just grew horizontally to prevent 90 degrees turn
+        if (this.countY >= 3 || (this.countX > 0 && this.countX != 2)) {
             growOptions.splice(2, 1);
         }
 
         // Don't grow horizontally, been growing horizontally for 2 pixels or just grew vertically
-        else if (this.countX >= 2 || (this.countY > 0 && this.countY != 2)) {
+        else if (this.countX >= 2 || (this.countY > 0 && this.countY != 3)) {
             growOptions.splice(1, 1);
         }
         // Don't grow diagonally
@@ -246,7 +246,7 @@ export default class RootStructure {
         }
 
         // Resetting maxed out counters, can't go in same direction again and would have been removed if no valid options
-        if (this.countY == 2) {
+        if (this.countY == 3) {
             this.countY = 0;
         }
         else if (this.countX == 2) {

@@ -176,33 +176,43 @@ export function chemInWaterBehavior(y, x, gridHeight) {
         let restoreProbability = 0.4
 
         // Only decrease the life_span if the random factor is greater than the calculated probability.
-        if (randomFac >=restoreProbability) {
+        if (randomFac >= restoreProbability) {
             //restoreFungi
+            let fungiCount = 0;
+            let restoredFungiY = null;
+            let restoredFungiX = null;
             // Find the connected fungi around this location, prioritise from above
-            outerloop:
-                for (let i = -1; i <= 1; i++) {
-                    for (let j = -1; j <= 1; j++) {
-                        if (grid[y + i][x + j] == 'fungi') {
-                            // Create new fungi tip at this location
-                            // Direction shouldn't matter
-                            let restoredFungi = new Fungi(y + i, x + j, false, totalFungiIndex);
-                            elements.fungi.fungiElements.push(restoredFungi);
-                            incrementTotalFungiIndex(totalFungiIndex + 1);
-                            // Adjust class variables
-                            // Give it a rough length
-                            restoredFungi.regrow = true;
-                            restoredFungi.length = Math.round(1.3 * Math.abs(y - globalY));
-                            restoredFungi.growthSpeedLimit = 2200;
-                            // If it can't grow in the randomised x direction, change it
-                            if (restoredFungi.expandRoot(elements.fungi.fungiElements, true) == false) {
-                                restoredFungi.expandXDir *= -1;
-                            }
-                            // Update growth speed will be called once in expandRoot already if it is true but thats fine as it is a "regrowing" fungi, so growing slower initially is fine
-                            restoredFungi.updateGrowthSpeed();
-                            break outerloop;
+            for (let i = -1; i <= 1; i++) {
+                for (let j = -1; j <= 1; j++) {
+                    if (grid[y + i][x + j] == 'fungi') {
+                        fungiCount++;
+                        if (restoredFungiY == null && restoredFungiX == null) {
+                            restoredFungiY = y + i;
+                            restoredFungiX = x + j;
                         }
                     }
                 }
+            }
+
+            // If just meeting fungi as fungiCount >= 2 means this fungi is still between 2 or more fungi blocks
+            if (fungiCount >= 2 && restoredFungiY != null && restoredFungiX != null) {
+                // Create new fungi tip at this location
+                // Direction shouldn't matter
+                let restoredFungi = new Fungi(restoredFungiY, restoredFungiX, false, totalFungiIndex);
+                elements.fungi.fungiElements.push(restoredFungi);
+                incrementTotalFungiIndex(totalFungiIndex + 1);
+                // Adjust class variables
+                // Give it a rough length
+                restoredFungi.regrow = true;
+                restoredFungi.length = Math.round(1.3 * Math.abs(restoredFungi.y - globalY));
+                restoredFungi.growthSpeedLimit = 2200;
+                // If it can't grow in the randomised x direction, change it
+                if (restoredFungi.expandRoot(elements.fungi.fungiElements, true) == false) {
+                    restoredFungi.expandXDir *= -1;
+                }
+                // Update growth speed will be called once in expandRoot already if it is true but thats fine as it is a "regrowing" fungi, so growing slower initially is fine
+                restoredFungi.updateGrowthSpeed();
+            }
         }
         //topGrid[y][x] = null;
     }
