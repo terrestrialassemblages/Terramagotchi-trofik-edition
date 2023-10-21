@@ -86,9 +86,13 @@ signInAnonymously(auth)
             water_button.addEventListener('click', () => {
                 particle_button_click('water')
             })
-            const sun_button = document.getElementById('addSun')
-            sun_button.addEventListener('click', () => {
-                particle_button_click('sunlight')
+            const addSun_button = document.getElementById('addSun')
+            addSun_button.addEventListener('click', () => {
+                particle_button_click('addSunvalue')
+            })
+            const reduceSun_button = document.getElementById('reduceSun')
+            reduceSun_button.addEventListener('click', () => {
+                particle_button_click('reduceSunvalue')
             })
             const chemical_button = document.getElementById('addChemicals')
             chemical_button.addEventListener('click', () => {
