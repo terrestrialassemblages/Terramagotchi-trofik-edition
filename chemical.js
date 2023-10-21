@@ -2,7 +2,7 @@ import RootStructure from "./root/root.js";
 import Fungi from "./fungi/fungi.js";
 import { elements, grid, topGrid, gridHeight, timeWaterSink, gridWidth, globalY, totalFungiIndex, incrementTotalFungiIndex } from "./sandSim.js";
 let life_span = 20;
-import {sunShow, sunValue} from './weather.js';
+import {sunShow, sunValue} from './weather/weather.js';
 
 export function chemicalBehavior(y, x, grid, gridHeight, topGrid) {
     const gridWidth = topGrid[0].length;
@@ -28,7 +28,7 @@ export function chemicalBehavior(y, x, grid, gridHeight, topGrid) {
         return;
     }
 
-    if (grid[y+1][x] == 'water'){
+    if (topGrid[y+1][x] == 'water'){
         topGrid[y+1][x] = 'chemInWater';
         grid[y][x] = null;
         topGrid[y][x] = null;
@@ -126,12 +126,14 @@ export function chemInWaterBehavior(y, x, gridHeight) {
             topGrid[y][x] = null;
             return;
         }
+        
         if (grid[y + 2][x] === 'aggregate'){
             topGrid[y][x] = null;
             //topGrid[y+1][x] = null;
             return;
         
         }
+        
     }
 
     /*
@@ -143,7 +145,7 @@ export function chemInWaterBehavior(y, x, gridHeight) {
     */
 
     // Check if the bottom is empty; if yes, move downward
-    if (y + 1 < gridHeight && topGrid[y + 1][x] === null && grid[y + 1][x] === null) {
+    if (y + 1 < gridHeight && topGrid[y + 1][x] === null && (grid[y + 1][x] === null ||grid[y + 1][x] === 'plant' )) {
         topGrid[y + 1][x] = 'chemInWater';
         topGrid[y][x] = null;
         life_span +=130;
@@ -218,7 +220,7 @@ export function chemInWaterBehavior(y, x, gridHeight) {
     }
 
     // If no block below, remove
-    if (topGrid[y + 1][x] === null && (grid[y + 1][x] === 'soil' || grid[y + 1][x] === 'fungi'
+    if (topGrid[y + 1][x] === null && (grid[y + 1][x] === 'soil' || grid[y + 1][x] === 'fungi' 
     || grid[y + 1][x] === 'root' || grid[y + 1][x] === 'rootTip')) {
         //console.log(elements.soil.soilAlpha[(y+1) + "," + x])
         if (timeWaterSink % 60 == 0) {

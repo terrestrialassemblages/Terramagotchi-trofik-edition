@@ -5,12 +5,12 @@ import { plantAt, updatePlantGrowth } from './plant/plant_behavior.js';
 //import {calculateSoilColor} from './aggregate_behavior.js';
 import { updateSoilcolor, updateSoilAlpha, updateInitialAlpha, initSoilGradient, calculateSoilColor } from './aggregate/aggregate_behavior.js';
 import { chemicalBehavior, generateChemical, chemInWaterBehavior } from './chemical.js';
-import { waterBehavior, resetLifeSpan } from './water_behavior.js';
-import { waterInSoilBehavior } from './waterInSoil.js'
+import { waterBehavior, resetLifeSpan } from './weather/water_behavior.js';
+import { waterInSoilBehavior } from './weather/waterInSoil.js'
 import { soilBehavior } from './soil_behavior.js';
 import { rootBehavior } from './root/root_behavior.js';
 import { rootTipBehavior } from './root/roottip_behavior.js';
-import { sunShow, drawSun, rainTimeout, generateRain, rainShow, addSunvalue, reduceSunvalue, startRain, sunlight, getNextsunValue, sunValue, setTime } from './weather.js';
+import { sunShow, drawSun, rainTimeout, generateRain, rainShow, addSunvalue, reduceSunvalue, startRain, sunlight, getNextsunValue, sunValue, setTime } from './weather/weather.js';
 import { drawGrass } from './grass_draw.js';
 import { findBacteriaByPosition, generateBacterial, bacteriaBehavior } from './bacteria/bacteria_behavior.js';
 import { fungiBehavior } from './fungi/fungi_behavior.js';
@@ -540,7 +540,6 @@ function drawAutomatically() {
     elements.fungi.fungiElements.push(fungiObj);
     // Calculate boundary with previous fungi
     fungiObj.calculateBoundary(boundaryX, randomX);
-    console.log(fungiObj.boundaryXWithOtherFungi, fungiObj.x);
 
 
     grid[currY + 1][randomX] = 'fungi';

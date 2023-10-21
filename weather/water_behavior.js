@@ -1,4 +1,4 @@
-import { elements , topGrid} from "./sandSim.js";
+import { elements , topGrid} from "../sandSim.js";
 import {sunShow, sunValue} from './weather.js';
 import WaterInSoil from './waterInSoil.js';
 
@@ -12,8 +12,8 @@ export function waterBehavior(y, x, grid, gridHeight) {
     try{
         // Check for an empty space below and move water down
         if (y + 1 < gridHeight && grid[y + 1][x] === null && topGrid[y + 1][x] === null) {
-            grid[y + 1][x] = 'water';
-            grid[y][x] = null;
+            topGrid[y + 1][x] = 'water';
+            topGrid[y][x] = null;
         } else if( y + 1 < gridHeight && grid[y + 1][x] === 'soil') {
             if (elements.soil.soilAlpha[(y+1) + "," + x] <= 0.49){
                 if (grid[y + 1][x] = 'soil'){
@@ -21,12 +21,12 @@ export function waterBehavior(y, x, grid, gridHeight) {
                     //console.log("behavior", x, y+1);
                     elements.waterInSoil.waterElements.push(new WaterInSoil(x, y+1, 1200));
                     
-                    grid[y][x] = null;
+                    topGrid[y][x] = null;
                     
                 }
             }
             else {
-                grid[y][x] = 'water';
+                topGrid[y][x] = 'water';
                 
                 if (sunShow) {
                     // Introduce a random factor to decide whether life_span should decrease.
@@ -50,7 +50,7 @@ export function waterBehavior(y, x, grid, gridHeight) {
             
                     // If life_span is 0, evaporate the water
                     if (life_span <= 0) {
-                        grid[y][x] = null;
+                        topGrid[y][x] = null;
                         life_span = 20;
                     }
                 }
@@ -86,13 +86,14 @@ export function waterBehavior(y, x, grid, gridHeight) {
             //console.log('chemInWater');
         }
         
-        /*
+        
         else if ( y + 1 < gridHeight && grid[y + 1][x] === 'plant'){
-            grid[y][x] = 'water';
+            topGrid[y][x] = null;
+            topGrid[y+1][x] = 'water';
         }
-        */
+        
         else {
-            grid[y][x] = null;
+            topGrid[y][x] = null;
         }
     }catch (error) {
         // If an error occurs, log it and return from the function

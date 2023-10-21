@@ -40,7 +40,7 @@ export default class RootStructure {
     growBool(totalIndex) {
         /*        try {*/
         // If root is at max size, stop growing
-        if (this.length >= this.maxGrowthLength) {
+        if (this.length >= this.maxGrowthLength && this.elementName == 'rootTip') {
             // Mark the root as Developed
             this.developed = true;
         }
@@ -187,6 +187,7 @@ export default class RootStructure {
                             else if (isFungi == true && element == 'fungi' && this.boundaryXWithOtherFungi != null && spaceX > 0 && count < 1) {
                                 // In the boundary with other fungi object and is growing horizontally
                                 if ((this.expandXDir == -1 && x < this.boundaryXWithOtherFungi) || (this.expandXDir == 1 && x > this.boundaryXWithOtherFungi)) {
+                                    console.log("Boundary exception");
                                     count++;
                                     continue;
                                 }
@@ -231,13 +232,13 @@ export default class RootStructure {
         // 3 regular options
         let growOptions = [[this.expandYDir, this.expandXDir], [this.expandYDir, 0], [0, this.expandXDir]];
 
-        // Don't grow vertically, been growing vertically for 3 pixels or just grew horizontally to prevent 90 degrees turn
-        if (this.countY >= 3 || (this.countX > 0 && this.countX != 2)) {
+        // Don't grow vertically, been growing vertically for 2 pixels or just grew horizontally to prevent 90 degrees turn
+        if (this.countY >= 2 || (this.countX > 0 && this.countX != 2)) {
             growOptions.splice(2, 1);
         }
 
         // Don't grow horizontally, been growing horizontally for 2 pixels or just grew vertically
-        else if (this.countX >= 2 || (this.countY > 0 && this.countY != 3)) {
+        else if (this.countX >= 2 || (this.countY > 0 && this.countY != 2)) {
             growOptions.splice(1, 1);
         }
         // Don't grow diagonally
@@ -316,52 +317,51 @@ export default class RootStructure {
             // If going diagonal, branch the other diagonal
             else if (finalGrowX == this.expandXDir && finalGrowY == this.expandYDir) {
                 newY = this.y + 1;
+            }
 
-                // Checking if it can grow for new branch values
-                if (this.canGrow(newY, newX, newYDir, newXDir, isFungi, this.forbElements)) {
-                    // Set branch root to the new parameters to be returned
-                    branchRoot = [newY, newX, newYDir, newXDir];
-                }
-                else {
-                    // Increase probability for next time
-                    this.branchProb += 0.02;
-                }
+            // Checking if it can grow for new branch values
+            if (this.canGrow(newY, newX, newYDir, newXDir, isFungi, this.forbElements)) {
+                // Set branch root to the new parameters to be returned
+                branchRoot = [newY, newX, newYDir, newXDir];
             }
             else {
-                // Increase changes of branching
-                this.brancProb += 0.02;
+                // Increase probability for next time
+                this.branchProb += 0.02;
             }
-
-            if (!isFungi) {
-                grid[this.y][this.x] = 'root';
-            }
-
-            // Update this object's y and x values
-            this.y += finalGrowY;
-            this.x += finalGrowX;
-
-            // If regrown fungi and there is already an adjacent fungi, set regrow to false to prevent messy fungi as it will allow more exceptions to be adjacent
-            if (isFungi && this.regrow == true) {
-                if (this.checkSurroundingForFungi(this.y, this.x) == true) {
-                    this.regrow = false;
-                }
-            }
-
-            // If not root or root tip, grow over it
-            //  && grid[this.y][this.x] != 'aggregate' to avoid aggregate but looks weird
-            if (isFungi && grid[this.y][this.x] != 'root' && grid[this.y][this.x] != 'rootTip') {
-                grid[this.y][this.x] = 'fungi';
-            }
-            if (!isFungi) {
-                grid[this.y][this.x] = 'rootTip';
-            }
-            this.length++;
-            // If root or root tip, just go under it by not changing grid to fungi
-            // Update growth speed
-            this.updateGrowthSpeed();
-
-            return (branchRoot);
-
         }
+        else {
+            // Increase changes of branching
+            this.brancProb += 0.02;
+        }
+
+        if (!isFungi) {
+            grid[this.y][this.x] = 'root';
+        }
+
+        // Update this object's y and x values
+        this.y += finalGrowY;
+        this.x += finalGrowX;
+
+        // If regrown fungi and there is already an adjacent fungi, set regrow to false to prevent messy fungi as it will allow more exceptions to be adjacent
+        if (isFungi && this.regrow == true) {
+            if (this.checkSurroundingForFungi(this.y, this.x) == true) {
+                this.regrow = false;
+            }
+        }
+
+        // If not root or root tip, grow over it
+        //  && grid[this.y][this.x] != 'aggregate' to avoid aggregate but looks weird
+        if (isFungi && grid[this.y][this.x] != 'root' && grid[this.y][this.x] != 'rootTip') {
+            grid[this.y][this.x] = 'fungi';
+        }
+        if (!isFungi) {
+            grid[this.y][this.x] = 'rootTip';
+        }
+        this.length++;
+        // If root or root tip, just go under it by not changing grid to fungi
+        // Update growth speed
+        this.updateGrowthSpeed();
+
+        return (branchRoot);
     }
 }
