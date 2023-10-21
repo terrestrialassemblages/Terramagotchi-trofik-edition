@@ -29,9 +29,15 @@ export function rootTipBehavior(y, x, grid) {
         // If sunValue changed, change growth speed
         if (sunValue != curr.prevSunValue) {
             curr.boostGrowthSpeed(sunValue);
+        }
+
+        curr.prevSunValue = sunValue;
+
+        if (curr.checkSurroundingForElement(curr.y, curr.x, 'water')) {
+            curr.boostValue = Math.max(curr.boostValue - 0.1, 0.5);
+            console.log("New boostValue", curr.boostValue);
 
         }
-        curr.prevSunValue = sunValue;
 
         // Check if root can grow
         let result = curr.growBool(totalRootIndex);

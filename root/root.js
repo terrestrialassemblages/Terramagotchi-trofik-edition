@@ -79,7 +79,7 @@ export default class RootStructure {
             speedCap = this.growthSpeedLimit;
         }
         // Introduce variability in speed for fungi
-        if (speedCap >= 900 * TIMEPLACEHOLDER) {
+        if (speedCap >= 900) {
             // Generate random speedCap between 75% and 100%
             speedCap = Math.round(Math.random() * (speedCap - (0.75 * speedCap)) + (0.75 * speedCap));
         }
@@ -88,10 +88,8 @@ export default class RootStructure {
             this.growthSpeed = timeStep + (speedCap * this.boostValue);
         }
         else {
-            console.log("BEFORE:", this.growthSpeed, this);
             this.growthSpeed = Math.min((Math.round(baseIncrement * this.growthSpeed)), this.growthSpeed + (speedCap * this.boostValue));
-            this.growthSpeed = Math.round(this.growthSpeed * TIMEPLACEHOLDER);
-            console.log("AFTER:", this.growthSpeed, this);
+            this.growthSpeed = Math.round(this.growthSpeed);
         }
     }
 
@@ -101,6 +99,7 @@ export default class RootStructure {
                 if (y + i < gridHeight - 1 && y - i > globalY + 1 && x + j < gridWidth - 1 && x - j > 0 + 1) {
                     if (grid[y + i][x + j] == element) {
                         if (element == 'water') {
+                            console.log("Removing water");
                             topGrid[y + i][x + j] = null;
                         }
                         return true;
