@@ -1,3 +1,4 @@
+import { elements , topGrid} from "../sandSim.js";
 
 
 export let sunShow = true;
@@ -158,8 +159,8 @@ export function generateRain(grid, gridWidth) {
             let raindropLength = Math.floor(Math.random() * 3) + 1; // Random number between 1 and 3
 
             for (let i = 0; i < raindropLength; i++) {
-                if (grid[i][x] === null) {
-                    grid[i][x] = 'water';
+                if (topGrid[i][x] === null) {
+                    topGrid[i][x] = 'water';
                 }
             }
         }
