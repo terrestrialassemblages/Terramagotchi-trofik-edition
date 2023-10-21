@@ -31,12 +31,17 @@ function createQRCode(remote_url) {
     //const qrCodeElement = document.getElementById('qrCodeElement');
     
     const qrSize = window.innerHeight * 0.12;
+
+    // Check if qrSize is less than 128
+    const adjustedQrSize = qrSize < 60 ? 60 : qrSize;
+
     // Initialize the QR code generator
     new QRCode(qrCodeElement, {
         text: remote_url,
-        width: qrSize,
-        height: qrSize
+        width: adjustedQrSize,
+        height: adjustedQrSize
     });
+
 
     // Clear existing content in the container and append the new QR code element
     const container = document.getElementById('remote-url');
