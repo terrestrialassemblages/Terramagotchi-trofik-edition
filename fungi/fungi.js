@@ -1,5 +1,5 @@
 import RootStructure from '../root/root.js';
-import { grid, canvas, globalY } from '../sandSim.js';
+import { grid, canvas, globalY, TIMEPLACEHOLDER} from '../sandSim.js';
 import { currentParticleType } from '../sandSim.js';
 import { elements } from '../sandSim.js';
 import { timeStep } from '../sandSim.js';
@@ -15,12 +15,12 @@ export default class Fungi extends RootStructure {
     // Fungi will first start at a location and branch out normally like rootTip
     // It will then find the nearest rootTip and do 1 singular branch to it while still branching out normally
     constructor(startingY, startingX, branchingToRoot, index) {
-        super(startingY, startingX, 90, 400, 'fungi', 0.9, index);
+        super(startingY, startingX, 90, 400 * TIMEPLACEHOLDER, 'fungi', 0.9, index);
         this.forbElements = ['fungi'];
         // Remaining branch counts
         this.branchCount = 25;
         // Max cap for speed
-        this.growthSpeedLimit = 1800;
+        this.growthSpeedLimit = 1800 * TIMEPLACEHOLDER;
         this.boundaryXWithOtherFungi = null;
         this.parentRoot = null;
         this.regrow = false;
@@ -36,20 +36,6 @@ export default class Fungi extends RootStructure {
         if (this.length / this.maxGrowthLength > 0.75) {
             this.spacing = 2;
         }
-    }
-
-    checkSurroundingForFungi(y, x) {
-        for (let i = -1; i <= 1; i++) {
-            for (let j = -1; j <= 1; j++) {
-                if (y + i < gridHeight - 1 && y - i > globalY + 1 && x + j < gridWidth - 1 && x - j > 0 + 1) {
-                    if (grid[y + i][x + j] == "fungi") {
-                        return true;
-                    }
-
-                }
-            }
-        }
-        return false;
     }
 
     remove() {

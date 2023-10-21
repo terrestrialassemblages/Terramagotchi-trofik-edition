@@ -1,4 +1,4 @@
-import { grid, topGrid } from '../sandSim.js';
+import { grid, topGrid , TIMEPLACEHOLDER} from '../sandSim.js';
 import Plant from '../plant/plant.js';
 import { timeStep, globalY } from '../sandSim.js';
 import { incrementTotalFungiIndex, decrementTotalFungiIndex, incrementTotalRootIndex, decrementTotalRootIndex } from '../sandSim.js';
@@ -8,6 +8,7 @@ import { totalRootIndex } from '../sandSim.js';
 import { totalFungiIndex } from '../sandSim.js';
 import { fungiIndex } from '../sandSim.js';
 import { elements } from '../sandSim.js';
+import { sunValue } from '../weather.js';
 
 
 export default class RootStructure {
@@ -34,6 +35,8 @@ export default class RootStructure {
         this.countY = 0;
         // Amount of times diagonal
         this.countDiag = 0;
+        // Boost value that will adjust growth speed, affected by sun and water, mainly for plant root
+        this.boostValue = 1;
     }
 
     // Determines if root should grow or not
@@ -64,7 +67,7 @@ export default class RootStructure {
         // Have tos cale it to1
         //let baseIncrement = 1 + ((this.maxGrowthLength - this.length) / this.maxGrowthLength);
         let baseIncrement = 1 + (1 - (Math.abs(this.length - this.maxGrowthLength)) / this.maxGrowthLength);
-        baseIncrement = Math.max(1.05, baseIncrement);
+        baseIncrement = Math.max(1.05, baseIncrement + 1 - this.boostValue);
         let speedCap = 0;
         if (this.length <= 20) {
             speedCap = Math.round(this.growthSpeedLimit * 0.5);
@@ -76,17 +79,37 @@ export default class RootStructure {
             speedCap = this.growthSpeedLimit;
         }
         // Introduce variability in speed for fungi
-        if (speedCap >= 900) {
+        if (speedCap >= 900 * TIMEPLACEHOLDER) {
             // Generate random speedCap between 75% and 100%
             speedCap = Math.round(Math.random() * (speedCap - (0.75 * speedCap)) + (0.75 * speedCap));
         }
         // If it stopped growing for a long time (ie root waiting for sugar to be eaten) and growthSpeed is very behind compared to timeStep, update with timeStep
         if (timeStep > this.growthSpeed) {
-            this.growthSpeed = timeStep + speedCap;
+            this.growthSpeed = timeStep + (speedCap * this.boostValue);
         }
         else {
-            this.growthSpeed = Math.min((Math.round(baseIncrement * this.growthSpeed)), this.growthSpeed + speedCap);
+            console.log("BEFORE:", this.growthSpeed, this);
+            this.growthSpeed = Math.min((Math.round(baseIncrement * this.growthSpeed)), this.growthSpeed + (speedCap * this.boostValue));
+            this.growthSpeed = Math.round(this.growthSpeed * TIMEPLACEHOLDER);
+            console.log("AFTER:", this.growthSpeed, this);
         }
+    }
+
+    checkSurroundingForElement(y, x, element) {
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                if (y + i < gridHeight - 1 && y - i > globalY + 1 && x + j < gridWidth - 1 && x - j > 0 + 1) {
+                    if (grid[y + i][x + j] == element) {
+                        if (element == 'water') {
+                            topGrid[y + i][x + j] = null;
+                        }
+                        return true;
+                    }
+
+                }
+            }
+        }
+        return false;
     }
 
     resetCounters(finalGrowY, finalGrowX) {
@@ -344,7 +367,7 @@ export default class RootStructure {
 
         // If regrown fungi and there is already an adjacent fungi, set regrow to false to prevent messy fungi as it will allow more exceptions to be adjacent
         if (isFungi && this.regrow == true) {
-            if (this.checkSurroundingForFungi(this.y, this.x) == true) {
+            if (this.checkSurroundingForElement(this.y, this.x, 'fungi') == true) {
                 this.regrow = false;
             }
         }

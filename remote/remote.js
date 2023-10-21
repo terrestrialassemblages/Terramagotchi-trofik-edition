@@ -82,9 +82,13 @@ signInAnonymously(auth)
                     updateStatus("Error connecting to the game, please reload the app");
                 });
             }
-            const water_button = document.getElementById('addWater')
-            water_button.addEventListener('click', () => {
-                particle_button_click('water')
+            const addWater_button = document.getElementById('addWater')
+            addWater_button.addEventListener('click', () => {
+                particle_button_click('addWater')
+            })
+            const stopRain_button = document.getElementById('stopRain')
+            stopRain_button.addEventListener('click', () => {
+                particle_button_click('stopRain')
             })
             const addSun_button = document.getElementById('addSun')
             addSun_button.addEventListener('click', () => {
