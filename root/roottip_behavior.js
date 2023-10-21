@@ -29,6 +29,14 @@ export function rootTipBehavior(y, x, grid) {
 
             // If it can grow, expand root
             if (result[0]) {
+                // Let it branch again after growing longer
+                if (curr.length >= 20 && curr.length % 10 == 0) {
+                    if (curr.branchCount < 3) {
+                        // Cap it to 5
+                        curr.branchCount = Math.min(curr.branchCount + 2, 3);
+                        curr.branchProb = 0.4;
+                    }
+                }
                 let expandRoot = curr.expandRoot(elements.rootTip.rootElements, false);
                 // Removed a root
                 if (expandRoot == false) {
