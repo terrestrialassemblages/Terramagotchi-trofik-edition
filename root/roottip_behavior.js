@@ -7,6 +7,7 @@ import { timeStep, globalY } from '../sandSim.js';
 import { gridWidth, gridHeight } from '../sandSim.js';
 import { totalFungiIndex } from '../sandSim.js';
 import { fungiIndex } from '../sandSim.js';
+import { sunValue } from '../weather.js';
 
 
 export function rootTipBehavior(y, x, grid) {
@@ -22,9 +23,16 @@ export function rootTipBehavior(y, x, grid) {
 
         // Check to make liquid sugar
         if (curr.sugarProduceSpeed != 0 && timeStep >= curr.sugarProduceSpeed) {
-            console.log("running new function");
             curr.produceSugarBeforeGrowth();
         }
+
+        console.log(totalRootIndex);
+        // If sunValue changed, change growth speed
+        if (sunValue != curr.prevSunValue) {
+            curr.boostGrowthSpeed(sunValue);
+
+        }
+        curr.prevSunValue = sunValue;
 
         // Check if root can grow
         let result = curr.growBool(totalRootIndex);

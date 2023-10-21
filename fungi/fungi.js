@@ -38,11 +38,11 @@ export default class Fungi extends RootStructure {
         }
     }
 
-    checkSurroundingForFungi(y, x) {
+    checkSurroundingForElement(y, x, element) {
         for (let i = -1; i <= 1; i++) {
             for (let j = -1; j <= 1; j++) {
                 if (y + i < gridHeight - 1 && y - i > globalY + 1 && x + j < gridWidth - 1 && x - j > 0 + 1) {
-                    if (grid[y + i][x + j] == "fungi") {
+                    if (grid[y + i][x + j] == element) {
                         return true;
                     }
 
