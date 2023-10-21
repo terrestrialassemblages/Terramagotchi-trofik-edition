@@ -12,7 +12,12 @@ export function plantAt(y, x, root) {
 export function updatePlantGrowth() {
     for (const plantObj of elements.plant.plantElements) {
         plantObj.grow(plantObj.root.length);
-        if (plantObj.heightMatrix) {
+        if (plantObj.root.length <= 11) {
+            let y = plantObj.startingY - Math.floor(plantObj.root.length / 2);
+            let x = plantObj.startingX; 
+            grid[y][x] = 'plant';
+        }
+        else if (plantObj.heightMatrix) {
             for (let row = 0; row < plantObj.heightMatrix.length; row++) {
                 for (let col = 0; col < plantObj.heightMatrix[row].length; col++) {
                     if (plantObj.heightMatrix[row][col] === 1) {
@@ -20,6 +25,11 @@ export function updatePlantGrowth() {
                         let x = plantObj.startingX + col - Math.floor(plantObj.pattern[0].length / 2);
                         grid[y][x] = 'plant';
                     }
+                    else{
+                        let y = plantObj.startingY - row;
+                        let x = plantObj.startingX + col - Math.floor(plantObj.pattern[0].length / 2);
+                        grid[y][x] = 'null';
+                    }                   
                 }
             }
         }
