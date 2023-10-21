@@ -464,10 +464,6 @@ window.addEventListener('load', function () {
 
 function drawAutomatically() {
     // Logic to preload elements onto the grid
-    generateChemical(globalY - 10, 40);
-    generateChemical(globalY - 10, 60);
-    generateChemical(globalY - 10, 90);
-
 
     // fill background up with soil
     let currY = globalY;
