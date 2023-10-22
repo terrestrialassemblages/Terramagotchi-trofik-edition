@@ -36,7 +36,7 @@ export function rootTipBehavior(y, x, grid) {
             // If sunValue changed, change growth speed
             if (sunValue != curr.prevSunValue) {
                 curr.boostGrowthSpeed(sunValue);
-                console.log(sunValue);
+                // Add liquid sugar when changing from night to day and day to night to prevent bacteria from all dying
                 if (sunValue <= 6 && sunValue >= 3 && curr.sugarProduceSpeed != 0) {;
                     curr.produceSugar();
                 }
