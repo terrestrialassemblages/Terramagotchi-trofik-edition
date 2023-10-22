@@ -1,4 +1,4 @@
-import { grid, topGrid , TIMEPLACEHOLDER} from '../sandSim.js';
+import { grid, topGrid , TIMESCALE} from '../sandSim.js';
 import Plant from '../plant/plant.js';
 import { timeStep, globalY } from '../sandSim.js';
 import { incrementTotalFungiIndex, decrementTotalFungiIndex, incrementTotalRootIndex, decrementTotalRootIndex } from '../sandSim.js';
@@ -69,6 +69,7 @@ export default class RootStructure {
         let baseIncrement = 1 + (1 - (Math.abs(this.length - this.maxGrowthLength)) / this.maxGrowthLength);
         baseIncrement = Math.max(1.05, baseIncrement + 1 - this.boostValue);
         let speedCap = 0;
+        // Adjust speed limit based on how much it has grown
         if (this.length <= 20) {
             speedCap = Math.round(this.growthSpeedLimit * 0.5);
         }
@@ -79,7 +80,7 @@ export default class RootStructure {
             speedCap = this.growthSpeedLimit;
         }
         // Introduce variability in speed for fungi
-        if (speedCap >= 900 * TIMEPLACEHOLDER) {
+        if (speedCap >= 900) {
             // Generate random speedCap between 75% and 100%
             speedCap = Math.round(Math.random() * (speedCap - (0.75 * speedCap)) + (0.75 * speedCap));
         }
@@ -88,21 +89,32 @@ export default class RootStructure {
             this.growthSpeed = timeStep + (speedCap * this.boostValue);
         }
         else {
-            //console.log("BEFORE:", this.growthSpeed, this);
             this.growthSpeed = Math.min((Math.round(baseIncrement * this.growthSpeed)), this.growthSpeed + (speedCap * this.boostValue));
-            this.growthSpeed = Math.round(this.growthSpeed * TIMEPLACEHOLDER);
-            //console.log("AFTER:", this.growthSpeed, this);
+            this.growthSpeed = Math.round(this.growthSpeed);
         }
     }
 
     checkSurroundingForElement(y, x, element) {
-        for (let i = -1; i <= 1; i++) {
-            for (let j = -1; j <= 1; j++) {
+        let searchSpacing = 1;
+        if (element == 'waterInSoil') {
+            searchSpacing = 1;
+        }
+        // Check searchSpacing x searchSpacing grid around block
+        for (let i = -searchSpacing; i <= searchSpacing; i++) {
+            for (let j = searchSpacing; j <= searchSpacing; j++) {
                 if (y + i < gridHeight - 1 && y - i > globalY + 1 && x + j < gridWidth - 1 && x - j > 0 + 1) {
-                    if (grid[y + i][x + j] == element) {
-                        if (element == 'water') {
-                            topGrid[y + i][x + j] = null;
+                    // If water
+                    if (element == 'waterInSoil') {
+                        if (topGrid[y + i][x + j] == 'waterInSoil') {
+                            // Remove water with 0.5 chance
+                            if (Math.random() > 0.5) {
+                                topGrid[y + i][x + j] = null;
+                            }
+                            return true;
                         }
+                    }
+                    // Found fungi
+                    else if (grid[y + i][x + j] == element){
                         return true;
                     }
 

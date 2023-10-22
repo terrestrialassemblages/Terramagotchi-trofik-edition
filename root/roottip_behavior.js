@@ -29,9 +29,25 @@ export function rootTipBehavior(y, x, grid) {
         // If sunValue changed, change growth speed
         if (sunValue != curr.prevSunValue) {
             curr.boostGrowthSpeed(sunValue);
-
         }
+
         curr.prevSunValue = sunValue;
+
+        // Only check if its greater than 0.5 because it will go down to min 0.5 anyway
+        if (curr.boostValue > 0.5) {
+            if (curr.checkSurroundingForElement(curr.y, curr.x, 'waterInSoil')) {
+                console.log("Found water");
+                // Limit to 0.7 if sunny
+                if (curr.prevSunValue >= 5) {
+                    curr.boostValue = Math.max(curr.boostValue - 0.1, 0.7);
+                }
+                // Limit to 1.05 if night and decrement less
+                else {
+                    curr.boostValue = Math.max(curr.boostValue - 0.05, 1.05);
+                }
+            }
+        }
+
 
         // Check if root can grow
         let result = curr.growBool(totalRootIndex);

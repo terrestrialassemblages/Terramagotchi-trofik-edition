@@ -1,5 +1,5 @@
 import RootStructure from './root.js';
-import { gridWidth, gridHeight, TIMEPLACEHOLDER } from '../sandSim.js';
+import { gridWidth, gridHeight, TIMESCALE } from '../sandSim.js';
 import { timeStep, globalY, elements } from '../sandSim.js';
 import { grid, topGrid, canvas } from '../sandSim.js';
 import { totalRootIndex, decrementTotalRootIndex } from '../sandSim.js';
@@ -7,7 +7,7 @@ import { totalRootIndex, decrementTotalRootIndex } from '../sandSim.js';
 
 export default class RootTip extends RootStructure {
     constructor(startingY, startingX, fungiParent, index) {
-        super(startingY, startingX, 2, 500 * TIMEPLACEHOLDER, 'rootTip', 1, index);
+        super(startingY, startingX, 2, 400 * TIMESCALE, 'rootTip', 1, index);
         this.parentFungi = new Array();
         this.parentFungi.push(fungiParent);
         this.developed = false;    // If root is not developed, it will grow. If fully developed, it will produce sugar instead of growing
@@ -15,7 +15,7 @@ export default class RootTip extends RootStructure {
         // Remaining branch counts
         this.branchCount = 5;
         // Max cap for speed
-        this.growthSpeedLimit = 1600 * TIMEPLACEHOLDER;
+        this.growthSpeedLimit = 2200 * TIMESCALE;
         this.sugarProducedCount = 0;
         this.sugarProduceSpeed = 0;
         this.prevSunValue = 10;
@@ -149,7 +149,6 @@ export default class RootTip extends RootStructure {
 
     boostGrowthSpeed(boostInput) {
         // boostValue will either be sunValue since sun affects growthSpeed or water
-        //console.log("Boost value initial", this.boostValue, boostInput);
         // Max will be 1.25, min will be 0.75
         if (boostInput == 0) {
             this.boostValue = 1.25;
@@ -160,7 +159,6 @@ export default class RootTip extends RootStructure {
         }
         if (this.growthSpeed > timeStep) {
             this.growthSpeed = Math.round(this.growthSpeed * this.boostValue);
-            //console.log("Boosting value", this.growthSpeed, this.boostValue);
 
         }
     }

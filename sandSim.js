@@ -17,7 +17,7 @@ import { fungiBehavior } from './fungi/fungi_behavior.js';
 import { connectToDB } from './firebase.js';
 
 
-export let TIMEPLACEHOLDER = 1;
+export let TIMESCALE = 1;
 export let waterMoveTime = 1;
 export let lifescale = 1;
 
@@ -213,23 +213,38 @@ export function addToCanvas(element) {
     } else if (element == 'chemical') {
         let randomX = Math.floor(Math.random() * rangeX);
         generateChemical(15, randomX);
-    } else if (element == 'time') {
-        TIMEPLACEHOLDER = 0.1;
+
+    } 
+    else if (element[0] == 'restart'){
+        let userInput = element[1];
+        //console.log(userInput);
+        localStorage.setItem("userInput", userInput);
+
+        location.reload();
+    }
+    else if (element == 'time') {
+        //TIMESCALE = 0.1;
         elements.bacteria.frameTimer = 3;
         waterMoveTime = 6;
         lifescale = 3;
-        //console.log('Initial:', TIMEPLACEHOLDER);
-        
-        // After 2 seconds (2000 milliseconds), set TIMEPLACEHOLDER back to 1
+
+        changeRainShow(false);
         setTimeout(() => {
-            TIMEPLACEHOLDER = 1;
+            changeSunShow(true);
+        }, 1 * 1000);
+        
+        //console.log('Initial:', TIMESCALE);
+        
+        // After 2 seconds (2000 milliseconds), set TIMESCALE back to 1
+        setTimeout(() => {
+            //TIMESCALE = 1;
             elements.bacteria.frameTimer = 15;
             waterMoveTime = 1;
             lifescale = 1;
-            //console.log('After setTimeout:', TIMEPLACEHOLDER);
+            //console.log('After setTimeout:', TIMESCALE);
         }, 1000);
         
-        //console.log('Before setTimeout executes:', TIMEPLACEHOLDER);
+        //console.log('Before setTimeout executes:', TIMESCALE);
         setTime();
         resetLifeSpan();
     }
@@ -455,6 +470,12 @@ window.addEventListener('load', function () {
     //generateChemical(0, 200);
 
     //topGrid[0][0] = "chemical";
+    const savedInput = localStorage.getItem("userInput");
+    const initialValue = savedInput ? savedInput : 1;
+    console.log("save input:", initialValue)
+
+    TIMESCALE = 1/initialValue;
+
     loop();
 
     drawAutomatically();
@@ -475,6 +496,10 @@ window.addEventListener('load', function () {
 
 function drawAutomatically() {
     // Logic to preload elements onto the grid
+/*    generateChemical(globalY - 20, 30);
+    generateChemical(globalY - 20, 60);
+    generateChemical(globalY - 20, 90);*/
+
 
     // fill background up with soil
     let currY = globalY;
