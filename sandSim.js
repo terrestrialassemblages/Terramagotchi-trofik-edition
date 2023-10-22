@@ -465,16 +465,21 @@ function loop() {
 }
 
 window.addEventListener('load', function () {
-    // Logic to draw sand on the canvas automatically
-    // This is a placeholder; the actual logic will depend on the structure of the JS code.
-    //generateChemical(0, 200);
+    const navigationEntries = window.performance.getEntriesByType("navigation");
 
-    //topGrid[0][0] = "chemical";
-    const savedInput = localStorage.getItem("userInput");
-    const initialValue = savedInput ? savedInput : 1;
-    console.log("save input:", initialValue)
+    if (navigationEntries.length > 0 && navigationEntries[0].type === "navigate") {
+        // This is a first-time load or coming from another page
+        localStorage.removeItem("userInput"); 
+        console.log("This is a first-time load or a navigation from another page.");
+    } else if (navigationEntries.length > 0 && navigationEntries[0].type === "reload") {
+        // This is a reload
+        const savedInput = localStorage.getItem("userInput");
+        const initialValue = savedInput ? savedInput : 1;
+        console.log("save input:", initialValue);
 
-    TIMESCALE = 1/initialValue;
+        TIMESCALE = 1/initialValue;
+    }
+
 
     loop();
 
