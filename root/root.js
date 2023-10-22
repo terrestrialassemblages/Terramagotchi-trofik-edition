@@ -94,8 +94,12 @@ export default class RootStructure {
     }
 
     checkSurroundingForElement(y, x, element) {
-        for (let i = -1; i <= 1; i++) {
-            for (let j = -1; j <= 1; j++) {
+        let searchSpacing = 1;
+        if (element == 'water') {
+            searchSpacing = 3;
+        }
+        for (let i = -searchSpacing; i <= searchSpacing; i++) {
+            for (let j = searchSpacing; j <= searchSpacing; j++) {
                 if (y + i < gridHeight - 1 && y - i > globalY + 1 && x + j < gridWidth - 1 && x - j > 0 + 1) {
                     if (grid[y + i][x + j] == element) {
                         if (element == 'water') {
