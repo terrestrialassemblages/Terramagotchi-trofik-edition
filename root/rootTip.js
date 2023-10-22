@@ -16,6 +16,7 @@ export default class RootTip extends RootStructure {
         this.branchCount = 5;
         // Max cap for speed
         this.growthSpeedLimit = Math.round(2200 * TIMESCALE);
+        this.baseGrowthSpeedLimit = 2200;
         this.sugarProducedCount = 0;
         this.sugarProduceSpeed = 0;
         this.prevSunValue = 10;

@@ -6,6 +6,7 @@ import { elements } from '../sandSim.js';
 
 export function fungiBehavior(y, x, grid) {
     if (totalFungiIndex > 0) {
+        console.log(TIMESCALE);
         try {
             if (fungiIndex >= totalFungiIndex) {
                 console.log('An error occured with fungiIndex: ', fungiIndex, totalFungiIndex, elements.fungi.fungiElements, this);
@@ -13,9 +14,8 @@ export function fungiBehavior(y, x, grid) {
             }
             let curr = elements[grid[y][x]].fungiElements[fungiIndex];
 
-            // Update based on time
-            curr.growthSpeedLimit = Math.round(curr.growthSpeedLimit * TIMESCALE);
-
+            // Update based on changing TIMESCALE
+            curr.growthSpeedLimit = Math.round(curr.baseGrowthSpeedLimit * TIMESCALE);
 
             // Check for water, only increase when root boostValue is greater than 0.5 as the min is 0.5 anyway
             if (curr.parentRoot.boostValue > 0.5) {

@@ -41,23 +41,23 @@ export default class RootStructure {
 
     // Determines if root should grow or not
     growBool(totalIndex) {
-        /*        try {*/
-        // If root is at max size, stop growing
-        if (this.length >= this.maxGrowthLength && this.elementName == 'rootTip') {
-            // Mark the root as Developed
-            this.developed = true;
+        try {
+            // If root is at max size, stop growing
+            if (this.length >= this.maxGrowthLength && this.elementName == 'rootTip') {
+                // Mark the root as Developed
+                this.developed = true;
+            }
+            if ((timeStep >= this.growthSpeed) && this.developed == true && this.elementName == 'rootTip') {
+                // If root is developed, produce sugar
+                this.produceSugar();
+                return ([false, totalIndex]);
+            }
+            return ([(timeStep >= this.growthSpeed) && (this.length < this.maxGrowthLength), (totalIndex)]);
+        } catch (error) {
+            // If an error occurs, log it and return from the function
+            console.error('An error occurred:', error.message);
+            return;
         }
-        if ((timeStep >= this.growthSpeed) && this.developed == true && this.elementName == 'rootTip') {
-            // If root is developed, produce sugar
-            this.produceSugar();
-            return ([false, totalIndex]);
-        }
-        return ([(timeStep >= this.growthSpeed) && (this.length < this.maxGrowthLength), (totalIndex)]);
-        /*        } catch (error) {
-                    // If an error occurs, log it and return from the function
-                    console.error('An error occurred:', error.message);
-                    return;
-                }*/
     }
 
     // Adjusts the growth speed depending on the current length
@@ -67,9 +67,7 @@ export default class RootStructure {
         // Have tos cale it to1
         //let baseIncrement = 1 + ((this.maxGrowthLength - this.length) / this.maxGrowthLength);
         let baseIncrement = 1 + (1 - (Math.abs(this.length - this.maxGrowthLength)) / this.maxGrowthLength);
-        console.log("This is base increment test", baseIncrement, (this.boostValue / 1.25 * 0.1), this.boostValue);
         baseIncrement = Math.max(1.05, baseIncrement + (this.boostValue / 1.25 * 0.1));
-        console.log("This is base increment", baseIncrement);
         let speedCap = 0;
         // Adjust speed limit based on how much it has grown
         if (this.length <= 20) {
@@ -91,7 +89,10 @@ export default class RootStructure {
             this.growthSpeed = timeStep + (speedCap * this.boostValue);
         }
         else {
-            console.log("Comparing both speeds", baseIncrement * this.growthSpeed, this.growthSpeed + (speedCap * this.boostValue));
+/*            console.log("Comparing both speeds", baseIncrement * this.growthSpeed, this.growthSpeed + (speedCap * this.boostValue), speedCap, this.growthSpeedLimit);
+            if (Math.round(this.growthSpeed * baseIncrement) - this.growthSpeed <= 200) {
+                baseIncrement = (this.growthSpeed + 200) / this.growthSpeed; 
+            }*/
             this.growthSpeed = Math.min((baseIncrement * this.growthSpeed), this.growthSpeed + (speedCap * this.boostValue));
             this.growthSpeed = Math.round(this.growthSpeed);
         }
@@ -207,7 +208,6 @@ export default class RootStructure {
                 // Lets it reconnect with other fungi
                 if (isFungi && this.regrow == true) {
                     if (grid[newY][newX] == 'fungi' && spaceX > 0  && count < 1) {
-                        console.log("Found fungi near");
                         count++;
                         continue;
                     }
@@ -225,7 +225,6 @@ export default class RootStructure {
                             else if (isFungi == true && element == 'fungi' && this.boundaryXWithOtherFungi != null && spaceX > 0 && count < 1) {
                                 // In the boundary with other fungi object and is growing horizontally
                                 if ((this.expandXDir == -1 && x < this.boundaryXWithOtherFungi) || (this.expandXDir == 1 && x > this.boundaryXWithOtherFungi)) {
-                                    console.log("Boundary exception");
                                     count++;
                                     continue;
                                 }

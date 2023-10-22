@@ -21,6 +21,7 @@ export default class Fungi extends RootStructure {
         this.branchCount = 25;
         // Max cap for speed
         this.growthSpeedLimit = Math.round(1800 * TIMESCALE);
+        this.baseGrowthSpeedLimit = 1800;
         this.boundaryXWithOtherFungi = null;
         this.parentRoot = null;
         this.regrow = false;
