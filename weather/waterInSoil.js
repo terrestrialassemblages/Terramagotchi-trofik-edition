@@ -1,5 +1,7 @@
-import { elements , topGrid, timeWaterSink} from "../sandSim.js";
+import { elements , topGrid, timeWaterSink, waterMoveTime} from "../sandSim.js";
 import { sunShow } from "./weather.js";
+
+
 
 export function waterInSoilBehavior(y, x, grid){
     //console.log(elements.waterInSoil.waterElements);
@@ -24,7 +26,7 @@ export function waterInSoilBehavior(y, x, grid){
     if ((topGrid[y + 1][x]=== null || topGrid[y + 1][x] === 'chemInWater')  && (grid[y + 1][x] === 'soil' || grid[y + 1][x] === 'fungi'
     || grid[y + 1][x] === 'root' || grid[y + 1][x] === 'rootTip' ||topGrid[y + 1][x] === 'chemInWater')) {
         //console.log(elements.soil.soilAlpha[(y+1) + "," + x])
-        if (timeWaterSink % 60 == 0) {
+        if (timeWaterSink % (60/waterMoveTime) == 0) {
 
             if (elements.soil.soilAlpha[(y+1) + "," + x] <= 0.7){
                 topGrid[y][x] = null;

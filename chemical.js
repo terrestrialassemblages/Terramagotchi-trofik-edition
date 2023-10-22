@@ -1,6 +1,6 @@
 import RootStructure from "./root/root.js";
 import Fungi from "./fungi/fungi.js";
-import { elements, grid, topGrid, gridHeight, timeWaterSink, gridWidth, globalY, totalFungiIndex, incrementTotalFungiIndex } from "./sandSim.js";
+import { elements, grid, topGrid, gridHeight, timeWaterSink, gridWidth, globalY, totalFungiIndex, incrementTotalFungiIndex, waterMoveTime } from "./sandSim.js";
 let life_span = 20;
 import {sunShow, sunValue} from './weather/weather.js';
 
@@ -223,7 +223,7 @@ export function chemInWaterBehavior(y, x, gridHeight) {
     if (topGrid[y + 1][x] === null && (grid[y + 1][x] === 'soil' || grid[y + 1][x] === 'fungi' 
     || grid[y + 1][x] === 'root' || grid[y + 1][x] === 'rootTip')) {
         //console.log(elements.soil.soilAlpha[(y+1) + "," + x])
-        if (timeWaterSink % 60 == 0) {
+        if (timeWaterSink % (60/waterMoveTime) == 0) {
             life_span +=130;
 
             if (elements.soil.soilAlpha[(y+1) + "," + x] <= 0.7){

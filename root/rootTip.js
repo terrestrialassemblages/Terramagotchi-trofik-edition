@@ -1,5 +1,5 @@
 import RootStructure from './root.js';
-import { gridWidth, gridHeight } from '../sandSim.js';
+import { gridWidth, gridHeight, TIMESCALE } from '../sandSim.js';
 import { timeStep, globalY, elements } from '../sandSim.js';
 import { grid, topGrid, canvas } from '../sandSim.js';
 import { totalRootIndex, decrementTotalRootIndex } from '../sandSim.js';
@@ -7,7 +7,7 @@ import { totalRootIndex, decrementTotalRootIndex } from '../sandSim.js';
 
 export default class RootTip extends RootStructure {
     constructor(startingY, startingX, fungiParent, index) {
-        super(startingY, startingX, 2, 400 * TIMEPLACEHOLDER, 'rootTip', 1, index);
+        super(startingY, startingX, 2, 400 * TIMESCALE, 'rootTip', 1, index);
         this.parentFungi = new Array();
         this.parentFungi.push(fungiParent);
         this.developed = false;    // If root is not developed, it will grow. If fully developed, it will produce sugar instead of growing
@@ -15,7 +15,7 @@ export default class RootTip extends RootStructure {
         // Remaining branch counts
         this.branchCount = 5;
         // Max cap for speed
-        this.growthSpeedLimit = 2200 * TIMEPLACEHOLDER;
+        this.growthSpeedLimit = 2200 * TIMESCALE;
         this.sugarProducedCount = 0;
         this.sugarProduceSpeed = 0;
         this.prevSunValue = 10;

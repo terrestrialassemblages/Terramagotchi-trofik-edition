@@ -13,13 +13,13 @@ export function fungiBehavior(y, x, grid) {
             }
             let curr = elements[grid[y][x]].fungiElements[fungiIndex];
 
-            // Check for water
-            if (curr.checkSurroundingForElement(curr.y, curr.x, 'water')) {
-                // Cap min to 0.5
-                curr.parentRoot.boostValue = Math.max(curr.parentRoot.boostValue - 0.1, 0.5);
-                console.log("New boostValue", curr.parentRoot.boostValue);
-
-            }
+            // Check for water, only increase when root boostValue is greater than 0.5 as the min is 0.5 anyway
+/*            if (curr.parentRoot.boostValue > 0.5) {
+                if (curr.checkSurroundingForElement(curr.y, curr.x, 'waterInSoil')) {
+                    // Cap min to 0.5
+                    curr.parentRoot.boostValue = Math.max(curr.parentRoot.boostValue - 0.1, 0.5);
+                }
+            }*/
 
             // If root is not at max size, expand root
             let result = curr.growBool(totalFungiIndex);
