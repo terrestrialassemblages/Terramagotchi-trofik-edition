@@ -68,7 +68,9 @@ Once you have completed all necessary steps then you can deploy the application 
 ```
 firebase deploy
 ```
-### Windows using Google Chrome: Set up as the host to go fullscreen (For Windows using Google Chrome)
+
+
+### Windows using Google Chrome: Set up as the host to go fullscreen 
 Go to where Chrome is located, it should be in 
 ```
 C:\Program Files\Google\Chrome\Application
