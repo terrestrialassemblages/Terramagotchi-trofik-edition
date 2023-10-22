@@ -2,8 +2,7 @@
 website deployed at: https://terramagotchi-trofik-edition.web.app
 
 ## Project Management Tool
-ADD LINK HERE
-
+https://app.ganttpro.com/#/project/1691728466403/gantt
 
 ## Project Description
 Terramagotchi Trōfik edition is a minimally interactive 2D web application showcasing the intricacies of the elements beneath the soil. Our goal is to educate users by illustrating the interactions among the elements in the soil ecosystem as users can watch how the plants and their root systems develop over time. The application comes in two parts, the main application featuring the 2D canvas, and a remote application accessible through the QR code displayed on the main interface. The remote application provides ways for users to interact with the main application with options such as controlling the weather and changing time.
@@ -86,6 +85,6 @@ The project is an application created for display in museums.
 5. Educational Resources: Incorporate educational resources like articles, videos, and quizzes to provide users with in-depth knowledge about soil ecosystems, plant biology, and the role of temperature in plant development.
 
 ## Acknowledgements
-
+- [The information on miro board](https://miro.com/app/board/uXjVOigGsjY=/).
 - [Firebase Youtube Channel](https://www.youtube.com/@Firebase)
 
