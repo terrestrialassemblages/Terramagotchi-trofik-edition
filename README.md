@@ -72,10 +72,18 @@ firebase deploy
 
 
 ## Usage Examples
-
+The project is an application created for display in museums.
 
 ## Future Plans
+1. Temperature Variability: Introduce temperature as a vital environmental factor. The temperature will vary over time, affecting plant growth and interactions within the ecosystem. 
 
+2. Diverse Flora: Introduce a wider range of plant species, including colorful flowers and trees. Users can choose from an array of flora to cultivate and learn about, each with specific temperature preferences.
+
+3. Dynamic Lighting: Implement a more realistic representation of sunlight changes. A visible beam of light will gradually move from right to left, simulating the sun's path across the sky and influencing the temperature of the environment.
+
+4. Cloud Formation: Enhance the environmental elements by modeling cloud formation. As water evaporates from the soil, it will transform into cloud particles, gradually accumulating into moving cloud layers that traverse the screen from right to left, affecting temperature and weather patterns.
+
+5. Educational Resources: Incorporate educational resources like articles, videos, and quizzes to provide users with in-depth knowledge about soil ecosystems, plant biology, and the role of temperature in plant development.
 
 ## Acknowledgements
 
