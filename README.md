@@ -68,16 +68,27 @@ Once you have completed all necessary steps then you can deploy the application 
 ```
 firebase deploy
 ```
-### To set up as the host to go fullscreen (For Windows using Google Chrome)
-Go to where Chrome is located (it should be in C:\Program Files\Google\Chrome\Application. If not, just search in taskbar for Chrome and then open file location)
+### Windows using Google Chrome: Set up as the host to go fullscreen (For Windows using Google Chrome)
+Go to where Chrome is located (it should be in 
+```
+C:\Program Files\Google\Chrome\Application
+```
+If not, search in taskbar for Chrome and then right click and open file location
+
 Right click on chrome.exe and create shortcut, it will then ask if it can create it in desktop because it can't create it in the folder, click yes
+
 Right click on the new shortcut in desktop and right click and go to properties
+
 At the end of whatever that is in the <b>target</b> box, add this:<b>--new-window  --start-fullscreen https://terramagotchi-trofik-edition.web.app/</b>
+
 The shortcut will be on your desktop and rename it as needed. To automatically open the application in fullscreen, use the shortcut.
+
 <b>Please restart your device if it is not working, Google Chrome often doesn't go fullscreen if there is an update for it so please restart to ensure it works.</b>
 
 Alternatively, go to the application https://terramagotchi-trofik-edition.web.app/, click on the three vertical dots under the "X" close button. 
+
 Go down to <b>Save and Share</b> and <b>Create shortcut...</b>.
+
 The shortcut will be on your desktop and although it is not fully frameless, it is an alternative if --start-fullscreen doesn't work.
 
 
