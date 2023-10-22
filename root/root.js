@@ -8,7 +8,7 @@ import { totalRootIndex } from '../sandSim.js';
 import { totalFungiIndex } from '../sandSim.js';
 import { fungiIndex } from '../sandSim.js';
 import { elements } from '../sandSim.js';
-import { sunValue } from '../weather.js';
+
 
 
 export default class RootStructure {
