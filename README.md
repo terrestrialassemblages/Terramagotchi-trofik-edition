@@ -27,7 +27,7 @@ Terramagotchi Trōfik edition is a minimally interactive 2D web application show
 
 Ensure that Node.js is installed on your desktop and clone the git repository.
 
-Navigate to the directory and edit the `firebase_config.js file to connect to your own Firebase Realtime Database if needed. More details on how to create a Firebase project and setup the Realtime Database [here](https://firebase.google.com/docs/web/setup)
+Navigate to the directory and edit the `firebase_config.js` file to connect to your own Firebase Realtime Database if needed. More details on how to create a Firebase project and setup the Realtime Database [here](https://firebase.google.com/docs/web/setup)
 ```
 // Change the following according to your Firebase project configuration
 const FIREBASE_CONFIG = {
