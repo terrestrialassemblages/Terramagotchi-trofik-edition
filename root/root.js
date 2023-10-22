@@ -86,7 +86,7 @@ export default class RootStructure {
         }
         // If it stopped growing for a long time (ie root waiting for sugar to be eaten) and growthSpeed is very behind compared to timeStep, update with timeStep
         if (timeStep > this.growthSpeed) {
-            this.growthSpeed = timeStep + (speedCap * this.boostValue);
+            this.growthSpeed = Math.round(timeStep + (speedCap * this.boostValue));
         }
         else {
 /*            console.log("Comparing both speeds", baseIncrement * this.growthSpeed, this.growthSpeed + (speedCap * this.boostValue), speedCap, this.growthSpeedLimit);

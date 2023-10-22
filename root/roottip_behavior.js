@@ -24,6 +24,10 @@ export function rootTipBehavior(y, x, grid) {
             // Update based on changing TIMESCALE
             curr.growthSpeedLimit = Math.round(curr.baseGrowthSpeedLimit * TIMESCALE);
 
+            if (curr.sugarProduceSpeed == 0) {
+                curr.sugarProduceCount = 0;
+            }
+
             // Check to make liquid sugar
             if (curr.sugarProduceSpeed != 0 && timeStep >= curr.sugarProduceSpeed) {
                 curr.produceSugarBeforeGrowth();
@@ -32,6 +36,10 @@ export function rootTipBehavior(y, x, grid) {
             // If sunValue changed, change growth speed
             if (sunValue != curr.prevSunValue) {
                 curr.boostGrowthSpeed(sunValue);
+                // Add liquid sugar when changing from night to day and day to night to prevent bacteria from all dying
+                if (sunValue <= 6 && sunValue >= 3 && curr.sugarProduceSpeed != 0) {;
+                    curr.produceSugar();
+                }
             }
 
             curr.prevSunValue = sunValue;
@@ -39,7 +47,6 @@ export function rootTipBehavior(y, x, grid) {
             // Only check if its greater than 0.5 because it will go down to min 0.5 anyway
             if (curr.boostValue > 0.5) {
                 if (curr.checkSurroundingForElement(curr.y, curr.x, 'waterInSoil')) {
-                    console.log("Found water");
                     // Limit to 0.7 if sunny
                     if (curr.prevSunValue >= 5) {
                         curr.boostValue = Math.max(curr.boostValue - 0.1, 0.7);

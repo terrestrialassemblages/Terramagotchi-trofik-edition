@@ -63,6 +63,7 @@ export function bacteriaBehavior (y, x, grid){
                 topGrid[newY][newX] = null;
                 
                 // Create bacteria at the original position
+<<<<<<< HEAD
                 if(TIMESCALE>1){
                     elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], newX, newY, 4000*TIMESCALE, grid[newY][newX]));
                 }
@@ -70,6 +71,9 @@ export function bacteriaBehavior (y, x, grid){
                     elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], newX, newY, 4000, grid[newY][newX]));
                 }
                 
+=======
+                elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], newX, newY, 5500, grid[newY][newX]));
+>>>>>>> 928ad8061d01332f7493eb1196dcb66740918364
                 grid[newY][newX] = 'bacteria';
             
                 const numberOfBacteria = 3; // Number of bacteria to generate
