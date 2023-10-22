@@ -82,7 +82,7 @@ export default class RootTip extends RootStructure {
                 topGrid[this.y + 1][this.x] = 'liquidSugar';
             }
             else {
-                console.log("Not working", this);
+                //console.log("Not working", this);
                 // Let it continue growing to free up some more space
                 this.developed = false;
                 if (this.sugarProduceSpeed == 0) {
@@ -136,7 +136,7 @@ export default class RootTip extends RootStructure {
         this.produceSugar();
         if (this.length > 4) {
             if (this.sugarProducedCount == 5) {
-                console.log("Resetting");
+                //console.log("Resetting");
                 this.sugarProduceSpeed = 0;
                 this.sugarProducedCount = 0;
                 this.increaseLengthBool = true;
@@ -146,7 +146,7 @@ export default class RootTip extends RootStructure {
         }
         else {
             if (this.sugarProducedCount == 2) {
-                console.log("Resetting");
+                //console.log("Resetting");
                 this.sugarProduceSpeed = 0;
                 this.sugarProducedCount = 0;
                 this.increaseLengthBool = true;

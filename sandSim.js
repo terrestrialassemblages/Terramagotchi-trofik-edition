@@ -475,7 +475,7 @@ window.addEventListener('load', function () {
         // This is a reload
         const savedInput = localStorage.getItem("userInput");
         const initialValue = savedInput ? savedInput : 1;
-        console.log("save input:", initialValue);
+        //console.log("save input:", initialValue);
 
         TIMESCALE = 1/initialValue;
     }

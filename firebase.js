@@ -17,7 +17,7 @@ export function connectToDB() {
     .then((userCredential) => {
         // Anonymous user sign in
         const user = userCredential.user;
-        console.log("Anonymous user ID:", user.uid);
+        //console.log("Anonymous user ID:", user.uid);
 
         // Create table for current instance
         const instanceDB = ref(database, 'instances/' + INSTANCE_ID);
@@ -30,7 +30,7 @@ export function connectToDB() {
         }
         set(instanceDB, initialData)
         .then(() => {
-            console.log("CREATED DB: ", INSTANCE_ID);
+            //console.log("CREATED DB: ", INSTANCE_ID);
         })
 
         // Create QR code for remote app
