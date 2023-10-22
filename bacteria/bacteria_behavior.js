@@ -60,7 +60,7 @@ export function bacteriaBehavior (y, x, grid){
                 topGrid[newY][newX] = null;
                 
                 // Create bacteria at the original position
-                elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], newX, newY, 2000, grid[newY][newX]));
+                elements.bacteria.bacteriaElements.push(new Bacteria("#800080", 15, null, 0, [], newX, newY, 5500, grid[newY][newX]));
                 grid[newY][newX] = 'bacteria';
             
                 const numberOfBacteria = 3; // Number of bacteria to generate

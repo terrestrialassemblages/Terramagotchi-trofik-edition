@@ -78,7 +78,11 @@ export default class RootTip extends RootStructure {
             else if (grid[this.y][this.x - this.expandXDir] == 'soil' || grid[this.y][this.x - this.expandXDir] == 'fungi') {
                 topGrid[this.y][this.x - this.expandXDir] = 'liquidSugar';
             }
+            else if (grid[this.y + 1][this.x] === 'soil' || grid[this.y + 1][this.x] === 'fungi' || grid[this.y + 1][this.x] == 'aggregate') {
+                topGrid[this.y + 1][this.x] = 'liquidSugar';
+            }
             else {
+                console.log("Not working", this);
                 // Let it continue growing to free up some more space
                 this.developed = false;
                 if (this.sugarProduceSpeed == 0) {
@@ -88,7 +92,9 @@ export default class RootTip extends RootStructure {
         }
         if (this.sugarProduceSpeed == 0) {
             this.updateGrowthSpeed();
+
         }
+
     }
 
     // Function to check if liquid sugar has been eaten. If yes, allows root to grow larger
@@ -100,10 +106,10 @@ export default class RootTip extends RootStructure {
             }
             this.developed = false;
 
-            if (this.length > 8 && this.sugarProducedCount == 0) {
-                this.sugarProduceSpeed = timeStep + Math.round((this.growthSpeed - timeStep) / (3 + 1 - this.sugarProducedCount));
+            if (this.length > 4 && this.sugarProducedCount == 0) {
+                this.sugarProduceSpeed = timeStep + Math.round((this.growthSpeed - timeStep) / (5 + 1 - this.sugarProducedCount));
             }
-            else if (this.length <= 8 && this.sugarProducedCount == 0) {
+            else if (this.length <= 4 && this.sugarProducedCount == 0) {
                 this.sugarProduceSpeed = timeStep + Math.round((this.growthSpeed - timeStep) / (2 + 1 - this.sugarProducedCount));
             }
 /*            for (let i = 0; i < this.parentFungi.length; i++) {
@@ -129,16 +135,18 @@ export default class RootTip extends RootStructure {
         // Produce sugar
         this.produceSugar();
         if (this.length > 4) {
-            if (this.sugarProducedCount == 3) {
+            if (this.sugarProducedCount == 5) {
+                console.log("Resetting");
                 this.sugarProduceSpeed = 0;
                 this.sugarProducedCount = 0;
                 this.increaseLengthBool = true;
                 return;
             }
-            this.sugarProduceSpeed = timeStep + Math.round((this.growthSpeed - timeStep) / (3 + 1 - this.sugarProducedCount));
+            this.sugarProduceSpeed = timeStep + Math.round((this.growthSpeed - timeStep) / (5 + 1 - this.sugarProducedCount));
         }
         else {
             if (this.sugarProducedCount == 2) {
+                console.log("Resetting");
                 this.sugarProduceSpeed = 0;
                 this.sugarProducedCount = 0;
                 this.increaseLengthBool = true;

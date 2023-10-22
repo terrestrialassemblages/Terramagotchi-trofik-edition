@@ -69,21 +69,35 @@ Once you have completed all necessary steps then you can deploy the application 
 ```
 firebase deploy
 ```
+### To set up as the host to go fullscreen (For Windows using Google Chrome)
+Go to where Chrome is located (it should be in C:\Program Files\Google\Chrome\Application. If not, just search in taskbar for Chrome and then open file location)
+Right click on chrome.exe and create shortcut, it will then ask if it can create it in desktop because it can't create it in the folder, click yes
+Right click on the new shortcut in desktop and right click and go to properties
+At the end of whatever that is in the <b>target</b> box, add this:<b>--new-window  --start-fullscreen https://terramagotchi-trofik-edition.web.app/</b>
+The shortcut will be on your desktop and rename it as needed. To automatically open the application in fullscreen, use the shortcut.
+<b>Please restart your device if it is not working, Google Chrome often doesn't go fullscreen if there is an update for it so please restart to ensure it works.</b>
+
+Alternatively, go to the application https://terramagotchi-trofik-edition.web.app/, click on the three vertical dots under the "X" close button. 
+Go down to <b>Save and Share</b> and <b>Create shortcut...</b>.
+The shortcut will be on your desktop and although it is not fully frameless, it is an alternative if --start-fullscreen doesn't work.
+
 
 
 ## Usage Examples
 The project is an application created for display in museums.
 
 ## Future Plans
-1. Temperature Variability: Introduce temperature as a vital environmental factor. The temperature will vary over time, affecting plant growth and interactions within the ecosystem. 
+1. Incoporate the rest of the soil food web such as nematodes and higher level predators. This will show the dynamic relationship between how nature balances out the population of the elements in the soil and how they interact with each other. 
 
-2. Diverse Flora: Introduce a wider range of plant species, including colorful flowers and trees. Users can choose from an array of flora to cultivate and learn about, each with specific temperature preferences.
+2. Temperature Variability: Introduce temperature as a vital environmental factor. The temperature will vary over time, affecting plant growth and interactions within the ecosystem. 
 
-3. Dynamic Lighting: Implement a more realistic representation of sunlight changes. A visible beam of light will gradually move from right to left, simulating the sun's path across the sky and influencing the temperature of the environment.
+3. Diverse Flora: Introduce a wider range of plant species, including colorful flowers and trees. Users can choose from an array of flora to cultivate and learn about, each with specific temperature preferences.
 
-4. Cloud Formation: Enhance the environmental elements by modeling cloud formation. As water evaporates from the soil, it will transform into cloud particles, gradually accumulating into moving cloud layers that traverse the screen from right to left, affecting temperature and weather patterns.
+4. Dynamic Lighting: Implement a more realistic representation of sunlight changes. A visible beam of light will gradually move from right to left, simulating the sun's path across the sky and influencing the temperature of the environment.
 
-5. Educational Resources: Incorporate educational resources like articles, videos, and quizzes to provide users with in-depth knowledge about soil ecosystems, plant biology, and the role of temperature in plant development.
+5. Cloud Formation: Enhance the environmental elements by modeling cloud formation. As water evaporates from the soil, it will transform into cloud particles, gradually accumulating into moving cloud layers that traverse the screen from right to left, affecting temperature and weather patterns.
+
+6. Educational Resources: Incorporate educational resources like articles, videos, and quizzes to provide users with in-depth knowledge about soil ecosystems, plant biology, and the role of temperature in plant development.
 
 ## Acknowledgements
 

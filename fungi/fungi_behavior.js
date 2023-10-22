@@ -19,7 +19,6 @@ export function fungiBehavior(y, x, grid) {
             // Check for water, only increase when root boostValue is greater than 0.5 as the min is 0.5 anyway
             if (curr.parentRoot.boostValue > 0.5) {
                 if (curr.checkSurroundingForElement(curr.y, curr.x, 'waterInSoil')) {
-                    console.log("Found water");
                     // Decrease by less since it is fungi
                     // Limit to 0.75 if sunny
                     if (curr.parentRoot.prevSunValue >= 5) {
