@@ -67,7 +67,9 @@ export default class RootStructure {
         // Have tos cale it to1
         //let baseIncrement = 1 + ((this.maxGrowthLength - this.length) / this.maxGrowthLength);
         let baseIncrement = 1 + (1 - (Math.abs(this.length - this.maxGrowthLength)) / this.maxGrowthLength);
-        baseIncrement = Math.max(1.05, baseIncrement + 1 - this.boostValue);
+        console.log("This is base increment test", baseIncrement, (this.boostValue / 1.25 * 0.1), this.boostValue);
+        baseIncrement = Math.max(1.05, baseIncrement + (this.boostValue / 1.25 * 0.1));
+        console.log("This is base increment", baseIncrement);
         let speedCap = 0;
         // Adjust speed limit based on how much it has grown
         if (this.length <= 20) {
@@ -89,7 +91,8 @@ export default class RootStructure {
             this.growthSpeed = timeStep + (speedCap * this.boostValue);
         }
         else {
-            this.growthSpeed = Math.min((Math.round(baseIncrement * this.growthSpeed)), this.growthSpeed + (speedCap * this.boostValue));
+            console.log("Comparing both speeds", baseIncrement * this.growthSpeed, this.growthSpeed + (speedCap * this.boostValue));
+            this.growthSpeed = Math.min((baseIncrement * this.growthSpeed), this.growthSpeed + (speedCap * this.boostValue));
             this.growthSpeed = Math.round(this.growthSpeed);
         }
     }

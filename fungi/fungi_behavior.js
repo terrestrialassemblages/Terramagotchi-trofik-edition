@@ -1,6 +1,6 @@
 import Fungi from './fungi.js';
 import { totalFungiIndex, fungiIndex, IncrementFungiIndex, DecrementFungiIndex, resetFungiIndex } from '../sandSim.js';
-import { incrementTotalFungiIndex,  decrementTotalFungiIndex} from '../sandSim.js';
+import { incrementTotalFungiIndex, decrementTotalFungiIndex, TIMESCALE } from '../sandSim.js';
 import { elements } from '../sandSim.js';
 
 
@@ -13,13 +13,25 @@ export function fungiBehavior(y, x, grid) {
             }
             let curr = elements[grid[y][x]].fungiElements[fungiIndex];
 
+            // Update based on time
+            curr.growthSpeedLimit = Math.round(curr.growthSpeedLimit * TIMESCALE);
+
+
             // Check for water, only increase when root boostValue is greater than 0.5 as the min is 0.5 anyway
-/*            if (curr.parentRoot.boostValue > 0.5) {
+            if (curr.parentRoot.boostValue > 0.5) {
                 if (curr.checkSurroundingForElement(curr.y, curr.x, 'waterInSoil')) {
-                    // Cap min to 0.5
-                    curr.parentRoot.boostValue = Math.max(curr.parentRoot.boostValue - 0.1, 0.5);
+                    console.log("Found water");
+                    // Decrease by less since it is fungi
+                    // Limit to 0.75 if sunny
+                    if (curr.parentRoot.prevSunValue >= 5) {
+                        curr.boostValue = Math.max(curr.boostValue - 0.01, 0.75);
+                    }
+                    // Limit to 1.10 if night and decrement less
+                    else {
+                        curr.boostValue = Math.max(curr.boostValue - 0.01, 1.10);
+                    }
                 }
-            }*/
+            }
 
             // If root is not at max size, expand root
             let result = curr.growBool(totalFungiIndex);

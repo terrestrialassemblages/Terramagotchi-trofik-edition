@@ -15,12 +15,12 @@ export default class Fungi extends RootStructure {
     // Fungi will first start at a location and branch out normally like rootTip
     // It will then find the nearest rootTip and do 1 singular branch to it while still branching out normally
     constructor(startingY, startingX, branchingToRoot, index) {
-        super(startingY, startingX, 90, 400 * TIMESCALE, 'fungi', 0.9, index);
+        super(startingY, startingX, 90, Math.round(400 * TIMESCALE), 'fungi', 0.9, index);
         this.forbElements = ['fungi'];
         // Remaining branch counts
         this.branchCount = 25;
         // Max cap for speed
-        this.growthSpeedLimit = 1800 * TIMESCALE;
+        this.growthSpeedLimit = Math.round(1800 * TIMESCALE);
         this.boundaryXWithOtherFungi = null;
         this.parentRoot = null;
         this.regrow = false;

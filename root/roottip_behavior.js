@@ -3,7 +3,7 @@ import Fungi from '../fungi/fungi.js';
 import { elements } from '../sandSim.js';
 import { grid, canvas } from '../sandSim.js';
 import { totalRootIndex, rootIndex, IncrementRootIndex, resetRootIndex, incrementTotalRootIndex, decrementRootIndex } from '../sandSim.js';
-import { timeStep, globalY } from '../sandSim.js';
+import { timeStep, globalY, TIMESCALE } from '../sandSim.js';
 import { gridWidth, gridHeight } from '../sandSim.js';
 import { totalFungiIndex } from '../sandSim.js';
 import { fungiIndex } from '../sandSim.js';
@@ -20,6 +20,9 @@ export function rootTipBehavior(y, x, grid) {
 
         // Check if sugar produced has been eaten
         curr.sugarEaten()
+
+        // Update based on time
+        curr.growthSpeedLimit = Math.round(curr.growthSpeedLimit * TIMESCALE);
 
         // Check to make liquid sugar
         if (curr.sugarProduceSpeed != 0 && timeStep >= curr.sugarProduceSpeed) {
