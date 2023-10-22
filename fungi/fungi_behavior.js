@@ -6,7 +6,6 @@ import { elements } from '../sandSim.js';
 
 export function fungiBehavior(y, x, grid) {
     if (totalFungiIndex > 0) {
-        console.log(TIMESCALE);
         try {
             if (fungiIndex >= totalFungiIndex) {
                 console.log('An error occured with fungiIndex: ', fungiIndex, totalFungiIndex, elements.fungi.fungiElements, this);
