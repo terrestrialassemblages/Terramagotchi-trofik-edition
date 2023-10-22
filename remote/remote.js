@@ -107,6 +107,17 @@ signInAnonymously(auth)
             time_button.addEventListener('click', () => {
                 particle_button_click('time')
             })
+
+            const restart_button = document.getElementById('restart')
+            restart_button.addEventListener('click', () => {
+                const userInput = document.getElementById("userInput").value;
+                //localStorage.setItem("userInput", userInput);
+                particle_button_click(['restart', userInput])
+            })
+
+            
+                
+            
             
         } else {
             console.log("Game instance does not exist");

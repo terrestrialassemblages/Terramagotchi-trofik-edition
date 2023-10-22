@@ -7,7 +7,7 @@ import { timeStep, globalY, TIMESCALE } from '../sandSim.js';
 import { gridWidth, gridHeight } from '../sandSim.js';
 import { totalFungiIndex } from '../sandSim.js';
 import { fungiIndex } from '../sandSim.js';
-import { sunValue } from '../weather.js';
+import { sunValue } from '../weather/weather.js';
 
 
 export function rootTipBehavior(y, x, grid) {

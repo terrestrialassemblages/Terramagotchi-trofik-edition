@@ -213,16 +213,31 @@ export function addToCanvas(element) {
     } else if (element == 'chemical') {
         let randomX = Math.floor(Math.random() * rangeX);
         generateChemical(15, randomX);
-    } else if (element == 'time') {
-        TIMESCALE = 0.1;
+
+    } 
+    else if (element[0] == 'restart'){
+        let userInput = element[1];
+        //console.log(userInput);
+        localStorage.setItem("userInput", userInput);
+
+        location.reload();
+    }
+    else if (element == 'time') {
+        //TIMESCALE = 0.1;
         elements.bacteria.frameTimer = 3;
         waterMoveTime = 6;
         lifescale = 3;
+
+        changeRainShow(false);
+        setTimeout(() => {
+            changeSunShow(true);
+        }, 1 * 1000);
+        
         //console.log('Initial:', TIMESCALE);
         
         // After 2 seconds (2000 milliseconds), set TIMESCALE back to 1
         setTimeout(() => {
-            TIMESCALE = 1;
+            //TIMESCALE = 1;
             elements.bacteria.frameTimer = 15;
             waterMoveTime = 1;
             lifescale = 1;
@@ -450,11 +465,22 @@ function loop() {
 }
 
 window.addEventListener('load', function () {
-    // Logic to draw sand on the canvas automatically
-    // This is a placeholder; the actual logic will depend on the structure of the JS code.
-    //generateChemical(0, 200);
+    const navigationEntries = window.performance.getEntriesByType("navigation");
 
-    //topGrid[0][0] = "chemical";
+    if (navigationEntries.length > 0 && navigationEntries[0].type === "navigate") {
+        // This is a first-time load or coming from another page
+        localStorage.removeItem("userInput"); 
+        console.log("This is a first-time load or a navigation from another page.");
+    } else if (navigationEntries.length > 0 && navigationEntries[0].type === "reload") {
+        // This is a reload
+        const savedInput = localStorage.getItem("userInput");
+        const initialValue = savedInput ? savedInput : 1;
+        console.log("save input:", initialValue);
+
+        TIMESCALE = 1/initialValue;
+    }
+
+
     loop();
 
     drawAutomatically();
