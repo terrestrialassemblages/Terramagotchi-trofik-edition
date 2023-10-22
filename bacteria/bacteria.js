@@ -95,6 +95,7 @@ export default class Bacteria {
 
     // Check for nearby liquidSugar
     IfNearLiquidSugar(DISTANCE, grid) {
+        try{
         const directions = [
             { dy: -1, dx: 0 },  // Up
             { dy: 1, dx: 0 },  // Down
@@ -140,6 +141,9 @@ export default class Bacteria {
             ifNear: false,
             priorityDirection: directions[0]
         };
+        }catch(error){
+            console.log(error);
+        }
     }
 
 

@@ -18,5 +18,8 @@
   "homepage": "https://github.com/uoa-compsci399-s2-2023/team-36#readme",
   "devDependencies": {
     "tailwindcss": "^3.3.3"
+  },
+  "dependencies": {
+    "http-server": "^14.1.1"
   }
 }
