@@ -25,6 +25,51 @@ Terramagotchi Trōfik edition is a minimally interactive 2D web application show
 
 ## Installation and setup
 
+Ensure that Node.js is installed on your desktop and clone the git repository.
+
+Navigate to the directory and edit the `firebase_config.js file to connect to your own Firebase Realtime Database if needed. More details on how to create a Firebase project and setup the Realtime Database [here](https://firebase.google.com/docs/web/setup)
+```
+// Change the following according to your Firebase project configuration
+const FIREBASE_CONFIG = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_DOMAIN",
+    databaseURL: "YOUR_APP_URL",
+    projectId: "YOUR_PROJECT",
+    storageBucket: "YOUR_APP.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID",
+    measurementId: "YOUR_MEASUREMENT_ID"
+};
+```
+
+Once you have setup the firebase_config.js file you can install the required dependencies with
+```
+npm install
+```
+And host the app locally with
+```
+npm run dev
+```
+You will be able to access your application in the browser from `http://localhost:8080/`
+
+### Deploying using Firebase Hosting
+To deploy the web application using Firebase Hosting, first install Firebase Tools. 
+```
+npm install -g firebase-tools
+```
+Then login to your Google Firebase account. Make sure you have created a Firebase project beforehand. If you created your own Realtime Database, use the same email address and project associated with that database to log in.
+```
+firebase login
+```
+Then run the setup wizard for Firebase with
+```
+firebase init
+```
+Once you have completed all necessary steps then you can deploy the application with
+```
+firebase deploy
+```
+
 
 ## Usage Examples
 
