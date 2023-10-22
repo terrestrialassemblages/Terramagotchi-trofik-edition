@@ -234,5 +234,5 @@ export function startRain() {
     }, 12 * 1000);
 }
 
-setInterval(startRain, 27 * 1000);
+setInterval(startRain, 37 * 1000);
 
