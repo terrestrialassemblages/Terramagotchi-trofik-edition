@@ -1,13 +1,13 @@
 // Change the following according to your Firebase project configuration
 const FIREBASE_CONFIG = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_DOMAIN",
-    databaseURL: "YOUR_APP_URL",
-    projectId: "YOUR_PROJECT",
-    storageBucket: "YOUR_APP.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID",
-    measurementId: "YOUR_MEASUREMENT_ID"
+    apiKey: "AIzaSyCWXtadqvzfXVN95olGEmOVrozV8SVqONs",
+    authDomain: "terramagotchi-trofik-edition.firebaseapp.com",
+    databaseURL: "https://terramagotchi-trofik-edition-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "terramagotchi-trofik-edition",
+    storageBucket: "terramagotchi-trofik-edition.appspot.com",
+    messagingSenderId: "155568148343",
+    appId: "1:155568148343:web:ee221579eb985628441b72",
+    measurementId: "G-NHB6KJDMR8"
 };
 
 export default FIREBASE_CONFIG;
